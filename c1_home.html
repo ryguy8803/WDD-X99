@@ -8,25 +8,81 @@
     <link rel="stylesheet" href="styles/styles.css">
 </head>
 <body>
-    <header>
-        <div>
-            <section>            
-                <h1>PerfectDate</h1>
-                <img src="images/Logo.svg" alt="PerfectDate Logo">
-            </section>           
-            <img src="images/person.svg" alt="Person Icon">
+    
+    <header class="app-header">
+        <div class="header-brand">
+            <h1 class="brand-text">PerfectDate</h1>
+            <img src="images/Logo.svg" alt="PerfectDate Logo" class="brand-icon">
         </div>
+        <img src="images/person.svg" alt="Profile" class="profile-icon">
     </header>
 
-    <main> 
+    <main class="scroll-container">
         
+        <section class="content-section">
+            <h2 class="section-title">Explore date ideas</h2>
+            <div class="card event-card"> 
+            <img src="images/trampoline park.jpg" alt="Trampoline Park Picture" class="hero">
+            <div class="card-body">
+                <div class="top-half">
+                    <section class="top3rd">
+                        <h3>Trampoline Park</h3>
+                        <div>
+                            <img src="images/Dollar.svg" alt="Dollar Icon">
+                            <img src="images/Dollar.svg" alt="Dollar Icon">
+                        </div>
+                    </section>
+                    <p>Go Jumping</p>
+                </div>
+                <section class="bottom3rd">
+                    <span class="tag">Fitness</span>
+                    <img src="images/Heart.svg" alt="Heart Icon">
+                </section>
+                 </div>
+            </div>
+            <button class="btn btn-explore">Explore</button>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">Your favorites</h2>
+            <p class="empty-state-text">You don’t have any favorites yet. Explore ideas or add your own!</p>
+            
+            <div class="button-row">
+                <button class="btn btn-primary">View Favorites</button>
+                <button class="btn btn-outline">Add an Idea</button>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">Surprise me!</h2>
+            
+            <div class="surprise-card">
+                <div class="surprise-icon">
+                    <img src="images/Shuffle.svg" alt="Shuffle" width="40">
+                </div>
+                <div class="surprise-text">
+                    <h3>Get a random date idea</h3>
+                    <p>Let us pick the perfect date for you!</p>
+                </div>
+            </div>
+        </section>
+
     </main>
 
-    <footer>
-        <img src="images/Home.svg" alt="Home">
-        <img src="images/Shuffle.svg" alt="Randomize">
-        <img src="images/Search.svg" alt="Explore">
-        <img src="images/Calendar.svg" alt="Calendar">
+    <footer class="app-nav">
+        <div class="nav-icon active">
+            <img src="images/Home.svg" alt="Home">
+        </div>
+        <div class="nav-icon">
+            <img src="images/Shuffle.svg" alt="Randomize">
+        </div>
+        <div class="nav-icon">
+            <img src="images/Search.svg" alt="Explore">
+        </div>
+        <div class="nav-icon">
+            <img src="images/Calendar.svg" alt="Calendar">
+        </div>
     </footer>
+
 </body>
 </html>

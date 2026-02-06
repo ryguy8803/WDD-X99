@@ -8,25 +8,82 @@
     <link rel="stylesheet" href="styles/styles.css">
 </head>
 <body>
-    <header>
-        <div>
-            <section>            
-                <h1>PerfectDate</h1>
-                <img src="images/Logo.svg" alt="PerfectDate Logo">
-            </section>           
-            <img src="images/person.svg" alt="Person Icon">
+    
+    <header class="app-header">
+        <div class="header-brand">
+            <h1 class="brand-text">PerfectDate</h1>
+            <img src="images/Logo.svg" alt="PerfectDate Logo" class="brand-icon">
         </div>
+        <img src="images/person.svg" alt="Profile" class="profile-icon">
     </header>
 
-    <main> 
+    <main class="scroll-container">
         
+        <div class="search-bar-container">
+            <input type="text" placeholder="Search..." class="search-input">
+            <img src="images/Search.svg" alt="Search" class="search-icon-overlay">
+        </div>
+
+        <div class="filter-tags-row">
+            <button class="filter-tag">Food & Drink</button>
+            <button class="filter-tag">Fitness</button>
+            <button class="filter-tag">Creative</button>
+            <button class="filter-tag">Games</button>
+            <button class="filter-tag">Learning & Culture</button>
+            <button class="filter-tag active">Nature</button>
+        </div>
+
+        <div class="vertical-card-list">
+            
+            <div class="date-card full-width">
+                <div class="card-header">
+                    <h3>Walk in the Park</h3>
+                </div>
+                <p class="card-desc">Go for a walk in the park</p>
+                <div class="card-footer">
+                    <span class="tag">Nature</span>
+                    <img src="images/Heart.svg" alt="Heart Icon">
+                </div>
+            </div>
+
+            <div class="date-card full-width">
+                <div class="card-header">
+                    <h3>Go to the Beach</h3>
+                </div>
+                <p class="card-desc">Play in the sand. Make a sand castle!</p>
+                <div class="card-footer">
+                    <span class="tag">Nature</span>
+                    <img src="images/Heart.svg" alt="Heart Icon">
+                </div>
+            </div>
+
+            <div class="date-card full-width">
+                <div class="card-header">
+                    <h3>Watch the Sunset</h3>
+                </div>
+                <p class="card-desc">Sit on the grass and watch the sunset.</p>
+                <div class="card-footer">
+                    <span class="tag">Nature</span>
+                    <img src="images/Heart.svg" alt="Heart Icon">
+                </div>
+            </div>
+        </div>
     </main>
 
-    <footer>
-        <img src="images/Home.svg" alt="Home">
-        <img src="images/Shuffle.svg" alt="Randomize">
-        <img src="images/Search.svg" alt="Explore">
-        <img src="images/Calendar.svg" alt="Calendar">
+    <footer class="app-nav">
+        <div class="nav-icon">
+            <img src="images/Home.svg" alt="Home">
+        </div>
+        <div class="nav-icon">
+            <img src="images/Shuffle.svg" alt="Randomize">
+        </div>
+        <div class="nav-icon active">
+            <img src="images/Search.svg" alt="Explore">
+        </div>
+        <div class="nav-icon">
+            <img src="images/Calendar.svg" alt="Calendar">
+        </div>
     </footer>
+
 </body>
 </html>
