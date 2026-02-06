@@ -126,10 +126,8 @@ button {
     }
 }
 
-/* Checkbox */
 
-
-/* Input & Label */
+/* Label */
 label {
     display: flex;
     flex-direction: column;
@@ -146,18 +144,35 @@ label {
         pointer-events: none;
         margin: var(--small-spacing);
     }
-    input[type="text"] {
-        padding: var(--small-spacing) var(--small-medium-spacing);
-        border: 1.5px solid var(--gray-30);
-        border-radius: var(--small-spacing);
-        width: 100%;
-        &:focus, &:focus-visible {
-            outline: 2px solid var(--purple);
-            outline-offset: 1px;
-        }
-        &::placeholder {
-            color: var(--gray-30);
-        }
+}
+
+/* Text Field */
+input[type="text"] {
+    padding: var(--small-spacing) var(--small-medium-spacing);
+    border: 1.5px solid var(--gray-30);
+    border-radius: var(--small-spacing);
+    width: 100%;
+    &:focus, &:focus-visible {
+        outline: 2px solid var(--purple);
+        outline-offset: 1px;
+    }
+    &::placeholder {
+        color: var(--gray-30);
+    }
+    }
+
+
+/* Drop Down Select */
+select {
+    padding: var(--small-spacing) var(--small-medium-spacing);
+    border: 1.5px solid var(--gray-30);
+    border-radius: var(--small-spacing);
+     &:focus, &:focus-visible {
+        outline: 2px solid var(--purple);
+        outline-offset: 1px;
+    }
+    &::placeholder {
+        color: var(--gray-30);
     }
 }
 
@@ -165,6 +180,7 @@ label {
 .checkbox {
     display: inline-flex;
     align-items: center;
+    flex-direction: row;
     gap: 0.5rem;
     cursor: pointer;
     position: relative;
@@ -209,6 +225,7 @@ label {
 .radio {
     display: inline-flex;
     align-items: center;
+    flex-direction: row;
     gap: 0.5rem;
     cursor: pointer;
     position: relative;
@@ -248,6 +265,14 @@ label {
     input:checked + .dot {
         border-color: var(--purple);
     }
+}
+
+/* Tag */ 
+.tag {
+    border: 1.5px solid var(--gray-70);
+    border-radius: var(--large-spacing);
+    padding: var(--small-spacing) var(--small-medium-spacing);
+    font-size: var(--p);
 }
 
 /* Card */
@@ -321,14 +346,6 @@ label {
         grid-column: 2/4;
         align-self: center;
     }
-}
-
-/* Tag */ 
-.tag {
-    border: 1.5px solid var(--gray-70);
-    border-radius: var(--large-spacing);
-    padding: var(--small-spacing) var(--small-medium-spacing);
-    font-size: var(--p);
 }
 
 /* Special Color Classes */
