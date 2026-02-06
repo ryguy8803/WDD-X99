@@ -1,0 +1,163 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+:root {
+    /* Colors */
+    --gray-10: rgb(255,255,255);
+    --gray-20: rgb(246,246,246);
+    --gray-30: rgb(217,217,217);
+    --gray-40: rgb(170,170,170);
+    --gray-50: rgb(104,140,140);
+    --gray-60: rgb(0,0,0);
+
+    --purple: rgb(62,0,84);
+    --red: rgb(180, 0, 0);
+
+    /* Font Family */
+    --inter-font: 'Inter', 'sans-serif';
+
+    /* Font Sizes */
+    --h1: 28px;
+    --h2: 24px;
+    --h3: 20px;
+    --p: 16px;
+
+    /* Margins */
+    --small-spacing: 5px;
+    --small-medium-spacing: 10px;
+    --medium-spacing: 15px;
+    --large-spacing: 30px;
+}
+
+/* CSS Reset */
+*, *::before, *::after {
+  box-sizing: border-box; 
+}
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+    font-family: "Inter", sans-serif;
+}
+
+/* Header */
+header {
+    padding: var(--medium-spacing);
+    max-height: 70px;
+    box-shadow: 0px 5px 7px var(--gray-30);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: var(--gray-10);
+    h1 {
+        color: var(--purple)
+    }
+    div {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    section:first-of-type {
+        display: flex;
+        flex-direction: row;
+        gap: var(--small-spacing);
+    }
+}
+
+/* Main */
+main {
+    flex: 1;
+    background-color: var(--gray-20);
+}
+
+/* Footer */
+footer {
+    padding: var(--medium-spacing);
+    max-height: 70px;
+    box-shadow: 0px -5px 7px var(--gray-30);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    background-color: var(--gray-10);
+}
+
+/* Button */
+button {
+    padding: var(--small-spacing) var(--small-medium-spacing);
+    border-radius: var(--small-spacing);
+    color: var(--purple);
+    font-size: (var(--p));
+    &.low{
+        border: none;
+        background-color: transparent;
+        text-decoration: underline;
+        padding: var(--small-spacing) var(--small-spacing)
+    }
+    &.medium {
+        border: 2px solid var(--purple);
+        background-color: transparent;
+    }
+    &.high {
+        border: none;
+        background-color: var(--purple);
+        color: var(--gray-10);
+    }
+}
+
+/* Input & Label */
+label {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--small-spacing);
+    margin: var(--small-spacing);
+    padding: var(--small-spacing) var(--small-medium-spacing);
+    font-size: var(--p);
+    input {
+        padding: var(--small-spacing) var(--small-medium-spacing);
+        border: 1.5px solid var(--gray-30);
+        border-radius: var(--small-spacing);
+        width: 100%;
+        &:focus, &:focus-visible {
+            outline: 2px solid var(--purple);
+            outline-offset: 1px;
+        }
+        &::placeholder {
+            color: var(--gray-30);
+        }
+    }
+}
+
+/* Card */
+.card {
+    background-color: var(--gray-10);
+    border-radius: var(--small-spacing);
+    padding: var(--small-medium-spacing);
+    margin: var(--medium-spacing);
+    div {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    .hero {
+        overflow: hidden;
+    }
+}
+
+/* Tag */ 
+.tag {
+    border: 1.5px solid var(--gray-60);
+    border-radius: var(--large-spacing);
+    padding: var(--small-spacing) var(--small-medium-spacing);
+    font-size: var(--p);
+    margin: var(--small-spacing);
+}
+
+
+main section {
+    height: 20px;
+}
