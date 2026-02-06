@@ -6,8 +6,9 @@
     --gray-20: rgb(246,246,246);
     --gray-30: rgb(217,217,217);
     --gray-40: rgb(170,170,170);
-    --gray-50: rgb(104,140,140);
-    --gray-60: rgb(0,0,0);
+    --gray-50: rgb(140,140,140);
+    --gray-60: rgb(104, 104, 104);
+    --gray-70: rgb(0,0,0);
 
     --purple: rgb(62,0,84);
     --red: rgb(180, 0, 0);
@@ -25,7 +26,8 @@
     --small-spacing: 5px;
     --small-medium-spacing: 10px;
     --medium-spacing: 15px;
-    --large-spacing: 30px;
+    --medium-large-spacing: 20px;
+    --large-spacing: 25px;
 }
 
 /* CSS Reset */
@@ -39,6 +41,22 @@
 
 body {
     font-family: "Inter", sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+h1 {
+    font-size: var(--h1);
+}
+h2 {
+    font-size: var(--h2);
+}
+h3 {
+    font-size: var(--h3);
+}
+p {
+    font-size: var(--p);
 }
 
 /* Header */
@@ -117,6 +135,14 @@ label {
     margin: var(--small-spacing);
     padding: var(--small-spacing) var(--small-medium-spacing);
     font-size: var(--p);
+    svg {
+        width: var(--medium-large-spacing);
+        height: var(--medium-large-spacing);
+        position: absolute;
+        align-self: flex-end;
+        pointer-events: none;
+        margin: var(--small-spacing);
+    }
     input {
         padding: var(--small-spacing) var(--small-medium-spacing);
         border: 1.5px solid var(--gray-30);
@@ -135,28 +161,90 @@ label {
 /* Card */
 .card {
     background-color: var(--gray-10);
-    border-radius: var(--small-spacing);
-    padding: var(--small-medium-spacing);
+    border-radius: var(--medium-spacing);
+    overflow: hidden;
     margin: var(--medium-spacing);
-    div {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-    }
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Event Card */
+.event-card {
     .hero {
-        overflow: hidden;
+        display: block;
+        width: 100%;
+        height: 150px;
+        margin: 0;
+        padding: 0;
+        object-fit: cover;
+    }
+    .card-body {
+        padding: var(--medium-spacing) var(--medium-spacing) var(--medium-large-spacing)var(--medium-spacing);
+        display: flex;
+        flex-direction: column;
+        gap: var(--large-spacing);
+        .top-half {
+            display: flex;
+            flex-direction: column;
+            gap: var(--small-spacing);
+        }
+        .top3rd {
+            display: flex;
+            align-items: center;
+            gap: var(--small-medium-spacing);
+            div {
+                display: flex;
+                img {
+                    width: var(--large-spacing);
+                }
+            }
+        }
+        p {
+            color: var(--gray-60);
+            font-size: var(--p);
+        }
+        .bottom3rd {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            img {
+                width: var(--large-spacing);
+            }
+        }
+    }
+}
+
+/* Icon Card */
+.icon-card {
+    display: grid;
+    gap: var(--large-spacing);
+    grid-template-columns: repeat(3, 1fr);
+    height: 200px;
+    color: var(--purple);
+    svg {
+        align-self: center;
+        justify-self: end;
+        grid-column: 1/2;
+    }
+    div {
+        grid-column: 2/4;
+        align-self: center;
     }
 }
 
 /* Tag */ 
 .tag {
-    border: 1.5px solid var(--gray-60);
+    border: 1.5px solid var(--gray-70);
     border-radius: var(--large-spacing);
     padding: var(--small-spacing) var(--small-medium-spacing);
     font-size: var(--p);
-    margin: var(--small-spacing);
 }
 
+
+.purple {
+    color: var(--gray-10);
+    background-color: var(--purple);
+    border: none;
+}
 
 main section {
     height: 20px;
