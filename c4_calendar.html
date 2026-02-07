@@ -8,25 +8,124 @@
     <link rel="stylesheet" href="styles/styles.css">
 </head>
 <body>
-    <header>
-        <div>
-            <section>            
-                <h1>PerfectDate</h1>
-                <img src="images/Logo.svg" alt="PerfectDate Logo">
-            </section>           
-            <img src="images/person.svg" alt="Person Icon">
-        </div>
-    </header>
     
-    <main> 
+    <header class="app-header">
+        <div class="header-brand">
+            <h1 class="brand-text">PerfectDate</h1>
+            <img src="images/Logo.svg" alt="PerfectDate Logo" class="brand-icon">
+        </div>
+        <img src="images/person.svg" alt="Profile" class="profile-icon">
+    </header>
+
+    <main class="scroll-container">
         
+        <div class="calendar-controls">
+            <button class="nav-arrow">&lt;</button>
+            <h2 class="month-title">January 2026</h2>
+            <button class="nav-arrow">&gt;</button>
+        </div>
+
+        <div class="calendar-grid">
+            <div class="day-name">Sun</div>
+            <div class="day-name">Mon</div>
+            <div class="day-name">Tue</div>
+            <div class="day-name">Wed</div>
+            <div class="day-name">Thu</div>
+            <div class="day-name">Fri</div>
+            <div class="day-name">Sat</div>
+
+            <div class="calendar-day empty"></div>
+            <div class="calendar-day empty"></div>
+            <div class="calendar-day empty"></div>
+            <div class="calendar-day empty"></div>
+
+            <div class="calendar-day">1</div>
+            <div class="calendar-day">2</div>
+            <div class="calendar-day">3</div>
+            <div class="calendar-day">4</div>
+            <div class="calendar-day">5</div>
+            <div class="calendar-day">6</div>
+            <div class="calendar-day">7</div>
+            <div class="calendar-day">8</div>
+            <div class="calendar-day">9</div>
+            <div class="calendar-day">10</div>
+            <div class="calendar-day">11</div>
+            <div class="calendar-day">12</div>
+            <div class="calendar-day">13</div>
+            <div class="calendar-day">14</div>
+            <div class="calendar-day">15</div>
+            <div class="calendar-day">16</div>
+            <div class="calendar-day">17</div>
+            <div class="calendar-day">18</div>
+            <div class="calendar-day">19</div>
+            <div class="calendar-day">20</div>
+            <div class="calendar-day">21</div>
+            
+            <div class="calendar-day">
+                <span class="day-number circle-highlight">22</span>
+            </div>
+            
+            <div class="calendar-day">23</div>
+            <div class="calendar-day">24</div>
+            <div class="calendar-day">25</div>
+            <div class="calendar-day">26</div>
+            
+            <div class="calendar-day">
+                27
+                <div class="event-pill">G...</div>
+            </div>
+            
+            <div class="calendar-day">28</div>
+            <div class="calendar-day">29</div>
+            
+            <div class="calendar-day">
+                30
+                <div class="event-pill">Tr...</div>
+            </div>
+            
+            <div class="calendar-day">31</div>
+        </div>
+
+        <div class="add-event-container">
+            <button class="btn btn-primary btn-sm">Add New Event</button>
+        </div>
+
+        <div class="upcoming-section">
+            <h2 class="section-title">Upcoming Dates</h2>
+            
+            <div class="date-card upcoming-card">
+                <div class="card-header">
+                    <h3>Go to the Beach</h3>
+                    <img src="images/Edit.svg" alt="Edit" class="edit-icon" onerror="this.style.display='none'">
+                </div>
+                
+                <div class="event-details">
+                    <p class="event-time">Jan 25, 2026 at 2:00 PM</p>
+                    <p class="event-location">Long Beach, California</p>
+                </div>
+
+                <div class="card-footer">
+                    <span class="tag">Nature</span>
+                </div>
+            </div>
+        </div>
+
     </main>
 
-     <footer>
-        <img src="images/Home.svg" alt="Home">
-        <img src="images/Shuffle.svg" alt="Randomize">
-        <img src="images/Search.svg" alt="Explore">
-        <img src="images/Calendar.svg" alt="Calendar">
+    <footer class="app-nav">
+        <div class="nav-icon">
+            <img src="images/Home.svg" alt="Home">
+        </div>
+        <div class="nav-icon">
+            <img src="images/Shuffle.svg" alt="Randomize">
+        </div>
+        <div class="nav-icon">
+            <img src="images/Search.svg" alt="Explore">
+        </div>
+        <div class="nav-icon active">
+            <img src="images/Calendar.svg" alt="Calendar">
+        </div>
     </footer>
+
 </body>
 </html>
