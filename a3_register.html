@@ -9,25 +9,19 @@
 </head>
 
 <body>
-    <main>
+    <main class="middle-page">
         <div class="app-container">
-            
-            <h1 class="page-title">Register</h1>
 
-            <form id="register-form" autocomplete="off">
+            <form class="register-form">
                 
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" required>
-                </div>
+                <h1 class="page-title">Register</h1>
 
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
+                <label for="username">Username <input type="text" id="username" name="username" required></label>
 
-                <div class="form-actions-column">
-                    <button type="submit" class="btn btn-login full-width">Create Account</button>
+                <label for="password">Password <input type="password" name="password" required></label>
+
+                <div class="register-actions">
+                    <button type="submit" class="high">Create Account</button>
                     
                     <p class="auth-switch">
                         Already have account? <a href="a2_login.html">Login</a>

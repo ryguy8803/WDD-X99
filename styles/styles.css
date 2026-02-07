@@ -28,6 +28,7 @@
     --medium-spacing: 15px;
     --medium-large-spacing: 20px;
     --large-spacing: 25px;
+    --extra-large-spacing: 50px;
 }
 
 /* CSS Reset */
@@ -46,8 +47,35 @@ body {
     flex-direction: column;
 }
 
+main {
+    flex: 1;
+    background-color: var(--gray-20);
+}
+
+.middle-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--gray-10);
+}
+
+.left-page {
+    display: flex;
+    margin: var(--extra-large-spacing);
+    background-color: var(--gray-10);
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--small-medium-spacing)
+}
+
 h1 {
     font-size: var(--h1);
+    color: var(--purple);
 }
 h2 {
     font-size: var(--h2);
@@ -68,25 +96,20 @@ header {
     top: 0;
     z-index: 1;
     background-color: var(--gray-10);
-    h1 {
-        color: var(--purple)
-    }
     div {
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
-    section:first-of-type {
-        display: flex;
-        flex-direction: row;
-        gap: var(--small-spacing);
-    }
 }
-
-/* Main */
-main {
-    flex: 1;
-    background-color: var(--gray-20);
+.logo-wrapper{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--small-spacing);
+    h1 {
+        color: var(--purple)
+    }
 }
 
 /* Footer */
@@ -109,23 +132,37 @@ button {
     border-radius: var(--small-spacing);
     color: var(--purple);
     font-size: (var(--p));
-    &.low{
-        border: none;
-        background-color: transparent;
-        text-decoration: underline;
-        padding: var(--small-spacing) var(--small-spacing)
-    }
-    &.medium {
-        border: 2px solid var(--purple);
-        background-color: transparent;
+    display: inline-block;
+    width: auto;
+}
+
+/* Link */
+a {
+    color: black;
+    display: inline-block;
+    width: auto;
+    :visited {
+        color: var(--purple)
     }
     &.high {
-        border: none;
+        text-decoration: none;
         background-color: var(--purple);
         color: var(--gray-10);
+        padding: var(--small-spacing) var(--small-medium-spacing);
+        border-radius: var(--small-spacing);
     }
 }
 
+/* Emphasises */
+.medium {
+    border: 2px solid var(--purple);
+    background-color: transparent;
+}
+.high {
+    border: none;
+    background-color: var(--purple);
+    color: var(--gray-10);
+}
 
 /* Label */
 label {
@@ -133,8 +170,6 @@ label {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--small-spacing);
-    margin: var(--small-spacing);
-    padding: var(--small-spacing) var(--small-medium-spacing);
     font-size: var(--p);
     svg {
         width: var(--medium-large-spacing);
@@ -147,7 +182,7 @@ label {
 }
 
 /* Text Field */
-input[type="text"] {
+input[type="text"], input[type="password"] {
     padding: var(--small-spacing) var(--small-medium-spacing);
     border: 1.5px solid var(--gray-30);
     border-radius: var(--small-spacing);
@@ -349,7 +384,7 @@ select {
 }
 
 /* Special Color Classes */
-.purple {
+button.purple {
     color: var(--gray-10);
     background-color: var(--purple);
     border: none;
@@ -359,7 +394,69 @@ button.red {
     border: 2px solid var(--red);
 }
 
+/* Start Page --------------------------------------------------- */
 
-main section {
-    height: 20px;
+.title-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--small-spacing);
+}
+
+.nav-grid {
+    display: flex;
+    flex-direction: row;
+    color: var(--gray-40);
+    margin: var(--large-spacing);
+    gap: var(--large-spacing);
+    div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* Login & Register Page --------------------------------------------------- */
+
+.login-actions {
+    display: flex;
+    flex-direction: row;
+    gap: var(--large-spacing);
+    align-items: center;
+}
+
+.register-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--small-medium-spacing);
+    justify-content: center;
+    align-items: end;
+}
+
+.login-form, .register-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--medium-spacing)
+}
+
+/* Onboarding --------------------------------------------------- */
+
+.welcome {
+    color: var(--purple);
+    font-size: var(--p);
+}
+
+.onboarding {
+    display: flex;
+    flex-direction: column;
+    gap: var(--extra-large-spacing);
+    align-items: flex-start;
+}
+
+.onboarding-footer {
+    margin-top: var(--extra-large-spacing);
+    display: flex;
+    align-items: center;
+    gap: var(--small-medium-spacing);
 }
