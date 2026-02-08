@@ -73,6 +73,19 @@ main {
     gap: var(--small-medium-spacing)
 }
 
+.scroll-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--extra-large-spacing);
+    padding: var(--medium-large-spacing) var(--medium-spacing);
+}
+
+.layout-band {
+    display: flex;
+    flex-direction: column;
+    gap: var(--large-spacing);
+}
+
 h1 {
     font-size: var(--h1);
     color: var(--purple);
@@ -96,6 +109,9 @@ header {
     top: 0;
     z-index: 1;
     background-color: var(--gray-10);
+    a {
+        text-decoration: none;
+    }
     div {
         display: flex;
         justify-content: space-between;
@@ -115,11 +131,13 @@ header {
 /* Footer */
 footer {
     padding: var(--medium-spacing);
-    max-height: 70px;
+    padding-bottom: var(--large-spacing);
+    max-height: 80px;
     box-shadow: 0px -5px 7px var(--gray-30);
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
     position: sticky;
     bottom: 0;
     width: 100%;
@@ -127,13 +145,17 @@ footer {
 }
 
 /* Button */
-button {
+.button {
     padding: var(--small-spacing) var(--small-medium-spacing);
     border-radius: var(--small-spacing);
     color: var(--purple);
     font-size: (var(--p));
     display: inline-block;
     width: auto;
+}
+button {
+    border: none;
+    background-color: transparent;
 }
 
 /* Link */
@@ -177,13 +199,13 @@ label {
         position: absolute;
         align-self: flex-end;
         pointer-events: none;
-        margin: var(--small-spacing);
+        margin: var(--small-medium-spacing);
     }
 }
 
 /* Text Field */
 input[type="text"], input[type="password"] {
-    padding: var(--small-spacing) var(--small-medium-spacing);
+    padding: var(--small-medium-spacing) var(--small-medium-spacing);
     border: 1.5px solid var(--gray-30);
     border-radius: var(--small-spacing);
     width: 100%;
@@ -304,10 +326,12 @@ select {
 
 /* Tag */ 
 .tag {
-    border: 1.5px solid var(--gray-70);
+    border: 1.5px solid var(--gray-40);
     border-radius: var(--large-spacing);
     padding: var(--small-spacing) var(--small-medium-spacing);
     font-size: var(--p);
+    background-color: white;
+    color: var(--gray-70);
 }
 
 /* Card */
@@ -315,12 +339,11 @@ select {
     background-color: var(--gray-10);
     border-radius: var(--medium-spacing);
     overflow: hidden;
-    margin: var(--medium-spacing);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* Event Card */
-.event-card {
+/* Idea Card */
+.idea-card {
     .hero {
         display: block;
         width: 100%;
@@ -330,7 +353,7 @@ select {
         object-fit: cover;
     }
     .card-body {
-        padding: var(--medium-spacing) var(--medium-spacing) var(--medium-large-spacing)var(--medium-spacing);
+        padding: var(--medium-spacing) var(--medium-spacing) var(--medium-large-spacing) var(--medium-spacing);
         display: flex;
         flex-direction: column;
         gap: var(--large-spacing);
@@ -365,11 +388,42 @@ select {
     }
 }
 
+/* Event Card */
+.event-card {
+    padding: var(--medium-spacing);
+    display: flex;
+    flex-direction: column;
+    gap: var(--extra-large-spacing);
+    img {
+        width: 25px;
+    }
+    .card-header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .event-details {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-end;
+        div {
+            display: flex;
+            flex-direction: column;
+            gap: var(--small-spacing);
+            p:first-of-type {
+                color: var(--gray-60);
+            }
+        }
+    }
+}
+
 /* Icon Card */
 .icon-card {
     display: grid;
-    gap: var(--large-spacing);
-    grid-template-columns: repeat(3, 1fr);
+    gap: var(--medium-spacing);
+    grid-template-columns: repeat(4, 1fr);
     height: 200px;
     color: var(--purple);
     svg {
@@ -378,18 +432,26 @@ select {
         grid-column: 1/2;
     }
     div {
-        grid-column: 2/4;
+        grid-column: 2/5;
         align-self: center;
     }
 }
+.icon-card.purple {
+    color: var(--gray-10);
+    background-color: var(--purple);
+}
+.icon-card.gradient {
+    color: var(--gray-10);
+    background: linear-gradient(90deg, var(--purple),rgb(98, 34, 121));
+}
 
 /* Special Color Classes */
-button.purple {
+.button.purple {
     color: var(--gray-10);
     background-color: var(--purple);
     border: none;
 }
-button.red {
+.button.red {
     color: var(--red);
     border: 2px solid var(--red);
 }
@@ -459,4 +521,96 @@ button.red {
     display: flex;
     align-items: center;
     gap: var(--small-medium-spacing);
+}
+
+/* Home ---------------------------------------------------------- */
+
+.favorites {
+    margin: var(--extra-large-spacing) 0;
+}
+
+/* Randomize ---------------------------------------------------------- */
+
+.cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--small-medium-spacing);
+}
+
+.center-content {
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* Explore ---------------------------------------------------------- */
+
+.tags {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    row-gap: var(--small-spacing);
+    column-gap: var(--small-spacing);
+    margin: var(--medium-spacing) 0;
+}
+
+.card-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--medium-spacing);
+    margin: var(--medium-spacing) 0;
+}
+
+/* Calendar ---------------------------------------------------------- */
+
+.calendar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--medium-spacing);
+    padding: var(--medium-spacing)
+}
+
+.calendar-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    h2 {
+        color: var(--purple);
+    }
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: var(--small-spacing);
+}
+
+.calendar-day {
+    padding: 2px;
+    border: solid 1px var(--gray-30);
+    height: 50px;
+}
+.empty {
+    border: none;
+}
+
+.circle-highlight {
+    background-color: var(--purple);
+    color: var(--gray-10);
+    border-radius: 100px;
+    padding: 2px;
+}
+
+.event-pill {
+    background-color: var(--purple);
+    color: var(--gray-10);
+    border-radius: 2px;
+    padding: 2px;
+}
+
+.event-title {
+    display: flex;
+    flex-direction: row;
+    gap: var(--small-spacing);
 }
