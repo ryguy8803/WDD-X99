@@ -28,6 +28,12 @@
     --medium-spacing: 15px;
     --medium-large-spacing: 20px;
     --large-spacing: 25px;
+    --extra-large-spacing: 50px;
+
+    /* Tablet and Desktop Margins */
+     --tablet-margin: 50px;
+     --desktop-margin: 100px;
+
 }
 
 /* CSS Reset */
@@ -46,8 +52,48 @@ body {
     flex-direction: column;
 }
 
+main {
+    flex: 1;
+    background-color: var(--gray-20);
+}
+
+.middle-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--gray-10);
+}
+
+.left-page {
+    display: flex;
+    margin: var(--extra-large-spacing);
+    background-color: var(--gray-10);
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--small-medium-spacing)
+}
+
+.scroll-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--extra-large-spacing);
+    padding: var(--medium-large-spacing) var(--medium-spacing);
+}
+
+.layout-band {
+    display: flex;
+    flex-direction: column;
+    gap: var(--large-spacing);
+}
+
 h1 {
     font-size: var(--h1);
+    color: var(--purple);
 }
 h2 {
     font-size: var(--h2);
@@ -68,64 +114,100 @@ header {
     top: 0;
     z-index: 1;
     background-color: var(--gray-10);
-    h1 {
-        color: var(--purple)
+    a {
+        text-decoration: none;
     }
     div {
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
-    section:first-of-type {
-        display: flex;
-        flex-direction: row;
-        gap: var(--small-spacing);
-    }
 }
-
-/* Main */
-main {
-    flex: 1;
-    background-color: var(--gray-20);
+.logo-wrapper{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--small-spacing);
+    h1 {
+        color: var(--purple)
+    }
 }
 
 /* Footer */
 footer {
     padding: var(--medium-spacing);
-    max-height: 70px;
+    padding-bottom: var(--large-spacing);
+    max-height: 80px;
     box-shadow: 0px -5px 7px var(--gray-30);
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
     position: sticky;
     bottom: 0;
     width: 100%;
     background-color: var(--gray-10);
+    a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        position: relative;
+    }
+    span {
+        height: 5px;
+        width: 40px;
+        background-color: var(--purple);
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
 }
 
 /* Button */
-button {
+.button {
+    cursor: pointer;
     padding: var(--small-spacing) var(--small-medium-spacing);
     border-radius: var(--small-spacing);
     color: var(--purple);
     font-size: (var(--p));
-    &.low{
-        border: none;
-        background-color: transparent;
-        text-decoration: underline;
-        padding: var(--small-spacing) var(--small-spacing)
-    }
-    &.medium {
-        border: 2px solid var(--purple);
-        background-color: transparent;
+    display: inline-block;
+    width: auto;
+    text-decoration: none;
+}
+button {
+    border: none;
+    background-color: transparent;
+}
+
+/* Link */
+a {
+    color: black;
+    display: inline-block;
+    width: auto;
+    :visited {
+        color: var(--purple)
     }
     &.high {
-        border: none;
+        text-decoration: none;
         background-color: var(--purple);
         color: var(--gray-10);
+        padding: var(--small-spacing) var(--small-medium-spacing);
+        border-radius: var(--small-spacing);
     }
 }
 
+/* Emphasises */
+.medium {
+    border: 2px solid var(--purple);
+    background-color: transparent;
+}
+.high {
+    border: 2px solid var(--purple);
+    background-color: var(--purple);
+    color: var(--gray-10);
+}
 
 /* Label */
 label {
@@ -133,8 +215,6 @@ label {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--small-spacing);
-    margin: var(--small-spacing);
-    padding: var(--small-spacing) var(--small-medium-spacing);
     font-size: var(--p);
     svg {
         width: var(--medium-large-spacing);
@@ -142,13 +222,13 @@ label {
         position: absolute;
         align-self: flex-end;
         pointer-events: none;
-        margin: var(--small-spacing);
+        margin: var(--small-medium-spacing);
     }
 }
 
 /* Text Field */
-input[type="text"] {
-    padding: var(--small-spacing) var(--small-medium-spacing);
+input[type="text"], input[type="password"] {
+    padding: var(--small-medium-spacing) var(--small-medium-spacing);
     border: 1.5px solid var(--gray-30);
     border-radius: var(--small-spacing);
     width: 100%;
@@ -269,23 +349,41 @@ select {
 
 /* Tag */ 
 .tag {
-    border: 1.5px solid var(--gray-70);
+    border: 1.5px solid var(--gray-40);
     border-radius: var(--large-spacing);
     padding: var(--small-spacing) var(--small-medium-spacing);
     font-size: var(--p);
+    background-color: white;
+    color: var(--gray-70);
+}
+.tag-button {
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.tag-button.is-active {
+    background-color: var(--purple);
+    color: var(--gray-10);
+    border-color: var(--purple);
+}
+.heart-icon {
+    cursor: pointer;
+    transition: transform 0.15s ease, filter 0.15s ease;
+}
+.heart-icon.is-active {
+    transform: scale(1.1);
 }
 
 /* Card */
 .card {
+    text-decoration: none;
     background-color: var(--gray-10);
     border-radius: var(--medium-spacing);
     overflow: hidden;
-    margin: var(--medium-spacing);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* Event Card */
-.event-card {
+/* Idea Card */
+.idea-card {
     .hero {
         display: block;
         width: 100%;
@@ -295,7 +393,7 @@ select {
         object-fit: cover;
     }
     .card-body {
-        padding: var(--medium-spacing) var(--medium-spacing) var(--medium-large-spacing)var(--medium-spacing);
+        padding: var(--medium-spacing) var(--medium-spacing) var(--medium-large-spacing) var(--medium-spacing);
         display: flex;
         flex-direction: column;
         gap: var(--large-spacing);
@@ -330,11 +428,42 @@ select {
     }
 }
 
+/* Event Card */
+.event-card {
+    padding: var(--medium-spacing);
+    display: flex;
+    flex-direction: column;
+    gap: var(--extra-large-spacing);
+    img {
+        width: 25px;
+    }
+    .card-header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .event-details {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-end;
+        div {
+            display: flex;
+            flex-direction: column;
+            gap: var(--small-spacing);
+            p:first-of-type {
+                color: var(--gray-60);
+            }
+        }
+    }
+}
+
 /* Icon Card */
 .icon-card {
     display: grid;
-    gap: var(--large-spacing);
-    grid-template-columns: repeat(3, 1fr);
+    gap: var(--medium-spacing);
+    grid-template-columns: repeat(4, 1fr);
     height: 200px;
     color: var(--purple);
     svg {
@@ -343,23 +472,185 @@ select {
         grid-column: 1/2;
     }
     div {
-        grid-column: 2/4;
+        grid-column: 2/5;
         align-self: center;
     }
 }
+.icon-card.purple {
+    color: var(--gray-10);
+    background-color: var(--purple);
+}
+.icon-card.gradient {
+    color: var(--gray-10);
+    background: linear-gradient(90deg, var(--purple),rgb(98, 34, 121));
+}
 
 /* Special Color Classes */
-.purple {
+.button.purple {
     color: var(--gray-10);
     background-color: var(--purple);
     border: none;
 }
-button.red {
+.button.red {
     color: var(--red);
     border: 2px solid var(--red);
 }
 
+/* Start Page --------------------------------------------------- */
 
-main section {
-    height: 20px;
+.title-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--small-spacing);
+}
+
+.nav-grid {
+    display: flex;
+    flex-direction: row;
+    color: var(--gray-40);
+    margin: var(--large-spacing);
+    gap: var(--large-spacing);
+    div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* Login & Register Page --------------------------------------------------- */
+
+.login-actions {
+    display: flex;
+    flex-direction: row;
+    gap: var(--large-spacing);
+    align-items: center;
+}
+
+.register-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--small-medium-spacing);
+    justify-content: center;
+    align-items: end;
+}
+
+.login-form, .register-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--medium-spacing)
+}
+
+/* Onboarding --------------------------------------------------- */
+
+.welcome {
+    color: var(--purple);
+    font-size: var(--p);
+}
+
+.onboarding {
+    display: flex;
+    flex-direction: column;
+    gap: var(--extra-large-spacing);
+    align-items: flex-start;
+}
+
+.onboarding-footer {
+    margin-top: var(--extra-large-spacing);
+    display: flex;
+    align-items: center;
+    gap: var(--small-medium-spacing);
+}
+
+/* Home ---------------------------------------------------------- */
+
+.favorites {
+    margin: var(--extra-large-spacing) 0;
+}
+
+/* Randomize ---------------------------------------------------------- */
+
+.cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--small-medium-spacing);
+}
+
+.center-content {
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* Explore ---------------------------------------------------------- */
+
+.tags {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    row-gap: var(--small-spacing);
+    column-gap: var(--small-spacing);
+    margin: var(--medium-spacing) 0;
+}
+
+.card-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--medium-spacing);
+    margin: var(--medium-spacing) 0;
+}
+
+/* Calendar ---------------------------------------------------------- */
+
+.calendar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--medium-spacing);
+    padding: var(--medium-spacing)
+}
+
+.calendar-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    h2 {
+        color: var(--purple);
+    }
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: var(--small-spacing);
+}
+
+.calendar-day {
+    padding: 2px;
+    border: solid 1px var(--gray-30);
+    height: 50px;
+}
+.empty {
+    border: none;
+}
+
+.circle-highlight {
+    background-color: var(--purple);
+    color: var(--gray-10);
+    border-radius: 100px;
+    padding: 2px;
+}
+
+.event-pill {
+    background-color: var(--purple);
+    color: var(--gray-10);
+    border-radius: 2px;
+    padding: 2px;
+}
+
+.event-title {
+    display: flex;
+    flex-direction: row;
+    gap: var(--small-spacing);
 }

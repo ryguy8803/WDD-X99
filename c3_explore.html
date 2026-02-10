@@ -9,81 +9,170 @@
 </head>
 <body>
     
-    <header class="app-header">
-        <div class="header-brand">
-            <h1 class="brand-text">PerfectDate</h1>
-            <img src="images/Logo.svg" alt="PerfectDate Logo" class="brand-icon">
+    <header>
+        <div>
+            <section>          
+                <a href="c1_home.html" class="logo-wrapper"><h1>PerfectDate</h1>
+                <img src="images/Logo.svg" alt="PerfectDate Logo"></a> 
+            </section>           
+            <img src="images/person.svg" alt="Person Icon">
         </div>
-        <img src="images/person.svg" alt="Profile" class="profile-icon">
     </header>
 
     <main class="scroll-container">
-        
-        <div class="search-bar-container">
-            <input type="text" placeholder="Search..." class="search-input">
-            <img src="images/Search.svg" alt="Search" class="search-icon-overlay">
-        </div>
+        <div>
+            <label for="search">
+                <input name="search" type="text">
+                <svg width="50" height="50" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M38.5 38.5L30.525 30.525M34.8333 20.1667C34.8333 28.2668 28.2668 34.8333 20.1667 34.8333C12.0665 34.8333 5.5 28.2668 5.5 20.1667C5.5 12.0665 12.0665 5.5 20.1667 5.5C28.2668 5.5 34.8333 12.0665 34.8333 20.1667Z" stroke="rgb(104, 104, 104)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </label>
 
-        <div class="filter-tags-row">
-            <button class="filter-tag">Food & Drink</button>
-            <button class="filter-tag">Fitness</button>
-            <button class="filter-tag">Creative</button>
-            <button class="filter-tag">Games</button>
-            <button class="filter-tag">Learning & Culture</button>
-            <button class="filter-tag active">Nature</button>
-        </div>
-
-        <div class="vertical-card-list">
-            
-            <div class="date-card full-width">
-                <div class="card-header">
-                    <h3>Walk in the Park</h3>
-                </div>
-                <p class="card-desc">Go for a walk in the park</p>
-                <div class="card-footer">
-                    <span class="tag">Nature</span>
-                    <img src="images/Heart.svg" alt="Heart Icon">
-                </div>
+            <div class="tags">
+                <Button class="tag tag-button" aria-pressed="false"><span>Food & Drink</span></Button>
+                <Button class="tag tag-button" aria-pressed="false"><span>Fitness</span></Button>
+                <Button class="tag tag-button" aria-pressed="false"><span>Creative</span></Button>
+                <Button class="tag tag-button" aria-pressed="false"><span>Games</span></Button>
+                <Button class="tag tag-button" aria-pressed="false"><span>Learning & Culture</span></Button>
+                <Button class="tag tag-button" aria-pressed="false"><span>Nature</span></Button>
             </div>
 
-            <div class="date-card full-width">
-                <div class="card-header">
-                    <h3>Go to the Beach</h3>
-                </div>
-                <p class="card-desc">Play in the sand. Make a sand castle!</p>
-                <div class="card-footer">
-                    <span class="tag">Nature</span>
-                    <img src="images/Heart.svg" alt="Heart Icon">
-                </div>
-            </div>
+            <div class="card-list">
 
-            <div class="date-card full-width">
-                <div class="card-header">
-                    <h3>Watch the Sunset</h3>
+                <div class="card idea-card"> 
+                    <img src="https://images.unsplash.com/photo-1585938389612-a552a28d6914?q=80&w=2060&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Park path with trees" class="hero">
+                    <div class="card-body">
+                        <div class="top-half">
+                            <section class="top3rd">
+                                <h3>Walk in the Park</h3>
+                            </section>
+                            <p>Go for a walk in the park</p>
+                        </div>
+                        <section class="bottom3rd">
+                            <span class="tag">Nature</span>
+                            <img src="images/Heart.svg" alt="Heart Icon" class="heart-icon" data-src="images/Heart.svg" data-active-src="images/HeartFilled.svg">
+                        </section>
+                    </div>
                 </div>
-                <p class="card-desc">Sit on the grass and watch the sunset.</p>
-                <div class="card-footer">
-                    <span class="tag">Nature</span>
-                    <img src="images/Heart.svg" alt="Heart Icon">
+
+                <div class="card idea-card"> 
+                    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" alt="Sunny beach shoreline" class="hero">
+                    <div class="card-body">
+                        <div class="top-half">
+                            <section class="top3rd">
+                                <h3>Go to the Beach</h3>
+                            </section>
+                            <p>Play in the sand. Make a sand castle!</p>
+                        </div>
+                        <section class="bottom3rd">
+                            <span class="tag">Nature</span>
+                            <img src="images/Heart.svg" alt="Heart Icon" class="heart-icon" data-src="images/Heart.svg" data-active-src="images/HeartFilled.svg">
+                        </section>
+                    </div>
+                </div>
+
+                <div class="card idea-card"> 
+                    <img src="https://images.unsplash.com/photo-1751235640841-d8d1035a80f0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Trampoline park activity" class="hero">
+                    <div class="card-body">
+                        <div class="top-half">
+                            <section class="top3rd">
+                                <h3>Trampoline Park</h3>
+                                <div>
+                                    <img src="images/Dollar.svg" alt="Dollar Icon">
+                                    <img src="images/Dollar.svg" alt="Dollar Icon">
+                                </div>
+                            </section>
+                            <p>Go Jumping</p>
+                        </div>
+                        <section class="bottom3rd">
+                            <span class="tag">Fitness</span>
+                            <img src="images/Heart.svg" alt="Heart Icon" class="heart-icon" data-src="images/Heart.svg" data-active-src="images/HeartFilled.svg">
+                        </section>
+                    </div>
+                </div>
+
+                <div class="card idea-card"> 
+                    <img src="https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Hot Chocolate" class="hero">
+                    <div class="card-body">
+                        <div class="top-half">
+                            <section class="top3rd">
+                                <h3>Cozy Hot Chocolate Date</h3>
+                                <div>
+                                    <img src="images/Dollar.svg" alt="Dollar Icon">
+                                </div>
+                            </section>
+                            <p>Find a new café and share a pastry.</p>
+                        </div>
+                        <section class="bottom3rd">
+                            <span class="tag">Food & Drink</span>
+                            <img src="images/Heart.svg" alt="Heart Icon" class="heart-icon" data-src="images/Heart.svg" data-active-src="images/HeartFilled.svg">
+                        </section>
+                    </div>
+                </div>
+
+                <div class="card idea-card"> 
+                    <img src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=800&q=80" alt="Art supplies on a desk" class="hero">
+                    <div class="card-body">
+                        <div class="top-half">
+                            <section class="top3rd">
+                                <h3>Paint & Sip Night</h3>
+                                <div>
+                                    <img src="images/Dollar.svg" alt="Dollar Icon">
+                                </div>
+                            </section>
+                            <p>Pick a theme and paint together at home.</p>
+                        </div>
+                        <section class="bottom3rd">
+                            <span class="tag">Creative</span>
+                            <img src="images/Heart.svg" alt="Heart Icon" class="heart-icon" data-src="images/Heart.svg" data-active-src="images/HeartFilled.svg">
+                        </section>
+                    </div>
+                </div>
+
+                <div class="card idea-card"> 
+                    <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=800&q=80" alt="City skyline at sunset" class="hero">
+                    <div class="card-body">
+                        <div class="top-half">
+                            <section class="top3rd">
+                                <h3>Sunset City Walk</h3>
+                            </section>
+                            <p>Stroll downtown and grab dessert on the way.</p>
+                        </div>
+                        <section class="bottom3rd">
+                            <span class="tag" >Nature</span>
+                            <img src="images/Heart.svg" alt="Heart Icon" class="heart-icon" data-src="images/Heart.svg" data-active-src="images/HeartFilled.svg">
+                        </section>
+                    </div>
+                </div>
+
+                <div class="card idea-card"> 
+                    <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80" alt="Board games on a table" class="hero">
+                    <div class="card-body">
+                        <div class="top-half">
+                            <section class="top3rd">
+                                <h3>Board Game Challenge</h3>
+                                <div>
+                                    <img src="images/Dollar.svg" alt="Dollar Icon">
+                                </div>
+                            </section>
+                            <p>Pick a new game and keep score for fun.</p>
+                        </div>
+                        <section class="bottom3rd">
+                            <span class="tag">Games</span>
+                            <img src="images/Heart.svg" alt="Heart Icon" class="heart-icon" data-src="images/Heart.svg" data-active-src="images/HeartFilled.svg">
+                        </section>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <footer class="app-nav">
-        <div class="nav-icon">
-            <img src="images/Home.svg" alt="Home">
-        </div>
-        <div class="nav-icon">
-            <img src="images/Shuffle.svg" alt="Randomize">
-        </div>
-        <div class="nav-icon active">
-            <img src="images/Search.svg" alt="Explore">
-        </div>
-        <div class="nav-icon">
-            <img src="images/Calendar.svg" alt="Calendar">
-        </div>
+    <footer>
+       <a href="c1_home.html"><img src="images/Home.svg" alt="Home"></a>
+       <a href="c2_randomize.html"><img src="images/Shuffle.svg" alt="Randomize"></a>
+       <a href="c3_explore.html"><img src="images/Search.svg" alt="Explore"><span></span></a>
+       <a href="c4_calendar.html"><img src="images/Calendar.svg" alt="Calendar"></a>
     </footer>
-
+    <script src="script/script.js"></script>
 </body>
 </html>

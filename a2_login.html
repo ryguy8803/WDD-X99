@@ -9,27 +9,21 @@
 </head>
 <body>
     
-    <main>
+    <main class="middle-page">
         <div class="app-container">
             
-            <h1 class="page-title">Login</h1>
+            <form class="login-form">
 
-            <form class="login-form" id="login-form" autocomplete="off">
-                
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" placeholder="Username" required>
-                </div>
+                <h1 class="page-title">Login</h1>
 
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="*********" required>
-                </div>
+                <label for="username">Username <input type="text" id="username" name="username" required></label>
 
-                <div class="form-actions">
-                    <a href="#" class="forgot-password">Forgot Password?</a>
+                <label for="password">Password <input type="password" name="password" required></label>
+
+                <div class="login-actions">
+                    <a href="#">Forgot Password?</a>
                     
-                    <button type="submit" class="btn btn-login">Login</button>
+                    <a href="c1_home.html"class="button high">Login</a>
                 </div>
             </form>
 

@@ -9,123 +9,156 @@
 </head>
 <body>
     
-    <header class="app-header">
-        <div class="header-brand">
-            <h1 class="brand-text">PerfectDate</h1>
-            <img src="images/Logo.svg" alt="PerfectDate Logo" class="brand-icon">
+    <header>
+        <div>
+            <section>          
+                <a href="c1_home.html" class="logo-wrapper"><h1>PerfectDate</h1>
+                <img src="images/Logo.svg" alt="PerfectDate Logo"></a> 
+            </section>           
+            <img src="images/person.svg" alt="Person Icon">
         </div>
-        <img src="images/person.svg" alt="Profile" class="profile-icon">
     </header>
 
     <main class="scroll-container">
-        
-        <div class="calendar-controls">
-            <button class="nav-arrow">&lt;</button>
-            <h2 class="month-title">January 2026</h2>
-            <button class="nav-arrow">&gt;</button>
+        <div class="calendar card">
+            <div class="calendar-controls">
+                <button class="nav-arrow"><img src="images/arrowleft.svg" alt="Left Arrow"></button>
+                <h2 class="month-title">January 2026</h2>
+                <button class="nav-arrow"><img src="images/arrowright.svg" alt="Right Arrow"></button>
+            </div>
+
+            <div class="calendar-grid">
+                <div class="day-name">Sun</div>
+                <div class="day-name">Mon</div>
+                <div class="day-name">Tue</div>
+                <div class="day-name">Wed</div>
+                <div class="day-name">Thu</div>
+                <div class="day-name">Fri</div>
+                <div class="day-name">Sat</div>
+
+                <div class="calendar-day empty"></div>
+                <div class="calendar-day empty"></div>
+                <div class="calendar-day empty"></div>
+                <div class="calendar-day empty"></div>
+
+                <div class="calendar-day">1</div>
+                <div class="calendar-day">2</div>
+                <div class="calendar-day">3</div>
+                <div class="calendar-day">4</div>
+                <div class="calendar-day">5</div>
+                <div class="calendar-day">6</div>
+                <div class="calendar-day">7</div>
+                <div class="calendar-day">8</div>
+                <div class="calendar-day">9</div>
+                <div class="calendar-day">10</div>
+                <div class="calendar-day">11</div>
+                <div class="calendar-day">12</div>
+                <div class="calendar-day">13</div>
+                <div class="calendar-day">14</div>
+                <div class="calendar-day">15</div>
+                <div class="calendar-day">16</div>
+                <div class="calendar-day">17</div>
+                <div class="calendar-day">18</div>
+                <div class="calendar-day">19</div>
+                <div class="calendar-day">20</div>
+                <div class="calendar-day">21</div>
+                
+                <div class="calendar-day">
+                    <span class="circle-highlight">22</span>
+                </div>
+                
+                <div class="calendar-day">23</div>
+                <div class="calendar-day">24</div>
+                <div class="calendar-day">25</div>
+                <div class="calendar-day">26</div>
+                
+                <div class="calendar-day">
+                    27
+                    <div class="event-pill">G...</div>
+                </div>
+                
+                <div class="calendar-day">28</div>
+                <div class="calendar-day">29</div>
+                
+                <div class="calendar-day"> 30
+                    <div class="event-pill">Tr...</div>
+                </div>
+                
+                <div class="calendar-day">31</div>
+            </div>
+
+            <div>
+                <button class="button high">Add New Event</button>
+            </div>
         </div>
 
-        <div class="calendar-grid">
-            <div class="day-name">Sun</div>
-            <div class="day-name">Mon</div>
-            <div class="day-name">Tue</div>
-            <div class="day-name">Wed</div>
-            <div class="day-name">Thu</div>
-            <div class="day-name">Fri</div>
-            <div class="day-name">Sat</div>
-
-            <div class="calendar-day empty"></div>
-            <div class="calendar-day empty"></div>
-            <div class="calendar-day empty"></div>
-            <div class="calendar-day empty"></div>
-
-            <div class="calendar-day">1</div>
-            <div class="calendar-day">2</div>
-            <div class="calendar-day">3</div>
-            <div class="calendar-day">4</div>
-            <div class="calendar-day">5</div>
-            <div class="calendar-day">6</div>
-            <div class="calendar-day">7</div>
-            <div class="calendar-day">8</div>
-            <div class="calendar-day">9</div>
-            <div class="calendar-day">10</div>
-            <div class="calendar-day">11</div>
-            <div class="calendar-day">12</div>
-            <div class="calendar-day">13</div>
-            <div class="calendar-day">14</div>
-            <div class="calendar-day">15</div>
-            <div class="calendar-day">16</div>
-            <div class="calendar-day">17</div>
-            <div class="calendar-day">18</div>
-            <div class="calendar-day">19</div>
-            <div class="calendar-day">20</div>
-            <div class="calendar-day">21</div>
+        <div class="card-list">
+            <h2>Upcoming Dates</h2>
             
-            <div class="calendar-day">
-                <span class="day-number circle-highlight">22</span>
-            </div>
-            
-            <div class="calendar-day">23</div>
-            <div class="calendar-day">24</div>
-            <div class="calendar-day">25</div>
-            <div class="calendar-day">26</div>
-            
-            <div class="calendar-day">
-                27
-                <div class="event-pill">G...</div>
-            </div>
-            
-            <div class="calendar-day">28</div>
-            <div class="calendar-day">29</div>
-            
-            <div class="calendar-day">
-                30
-                <div class="event-pill">Tr...</div>
-            </div>
-            
-            <div class="calendar-day">31</div>
-        </div>
-
-        <div class="add-event-container">
-            <button class="btn btn-primary btn-sm">Add New Event</button>
-        </div>
-
-        <div class="upcoming-section">
-            <h2 class="section-title">Upcoming Dates</h2>
-            
-            <div class="date-card upcoming-card">
+            <div class="card event-card">
                 <div class="card-header">
                     <h3>Go to the Beach</h3>
                     <img src="images/Edit.svg" alt="Edit" class="edit-icon" onerror="this.style.display='none'">
                 </div>
                 
                 <div class="event-details">
-                    <p class="event-time">Jan 25, 2026 at 2:00 PM</p>
-                    <p class="event-location">Long Beach, California</p>
-                </div>
+                    <div>
+                        <p class="event-time">Jan 27, 2026 at 2:00 PM</p>
+                        <p class="event-location">Long Beach, California</p>
+                    </div>
 
-                <div class="card-footer">
                     <span class="tag">Nature</span>
+                </div>
+            </div>
+
+            <div class="card event-card">
+                <div class="card-header">
+                    <div class="event-title">
+                        <h3>Trampoline Park</h3>
+                        <img src="images/Dollar.svg" alt="Dollar Icon">
+                        <img src="images/Dollar.svg" alt="Dollar Icon">
+                    </div>
+                    <img src="images/Edit.svg" alt="Edit" class="edit-icon">
+                </div>
+                
+                <div class="event-details">
+                    <div>
+                        <p class="event-time">Jan 30, 2026 at 6:00 PM</p>
+                        <p class="event-location">Anaheim, California</p>
+                    </div>
+
+                    <span class="tag">Fitness</span>
+                </div>
+            </div>
+
+            <div class="card event-card">
+                <div class="card-header">
+                     <div class="event-title">
+                        <h3>Ice Cream</h3>
+                        <img src="images/Dollar.svg" alt="Dollar Icon">
+                    </div>
+                    <img src="images/Edit.svg" alt="Edit" class="edit-icon">
+                </div>
+                
+                <div class="event-details">
+                    <div>
+                        <p class="event-time">Feb 14th, 2026 at 8:00 PM</p>
+                        <p class="event-location">Anaheim, California</p>
+                    </div>
+
+                    <span class="tag">Food & Drink</span>
                 </div>
             </div>
         </div>
 
     </main>
 
-    <footer class="app-nav">
-        <div class="nav-icon">
-            <img src="images/Home.svg" alt="Home">
-        </div>
-        <div class="nav-icon">
-            <img src="images/Shuffle.svg" alt="Randomize">
-        </div>
-        <div class="nav-icon">
-            <img src="images/Search.svg" alt="Explore">
-        </div>
-        <div class="nav-icon active">
-            <img src="images/Calendar.svg" alt="Calendar">
-        </div>
+    <footer>
+       <a href="c1_home.html"><img src="images/Home.svg" alt="Home"></a>
+       <a href="c2_randomize.html"><img src="images/Shuffle.svg" alt="Randomize"></a>
+       <a href="c3_explore.html"><img src="images/Search.svg" alt="Explore"></a>
+       <a href="c4_calendar.html"><img src="images/Calendar.svg" alt="Calendar"><span></span></a>
     </footer>
-
+    <script src="script/script.js"></script>
 </body>
 </html>
