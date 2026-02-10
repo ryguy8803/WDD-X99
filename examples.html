@@ -100,7 +100,7 @@
          </Label>
 
         <!-- Radio Button -->
-         <label class="radio">
+        <label class="radio">
             <input type="radio" name="food" value="pizza" checked>
             <span class="dot"></span>
             Pizza
@@ -121,7 +121,608 @@
         </select>
         </label>
 
+        <!-- Add Activity -->
+        <div class="modal-overlay">
+            
+            <div class="modal-card">
+                <div class="header">
+                    <h1>Add a Date Idea</h1>
+                    <button type="button" class="close-btn" aria-label="Close">
+                        <img src="images/x.svg" alt="Close" width="24" height="24">
+                    </button>
+                </div>
 
+                <hr>
+
+                <form>
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description"></textarea>
+                    </div>
+
+                    <div class="dropdown-row">
+                        <select name="category">
+                            <option value="" disabled selected>Category</option>
+                            <option value="dinner">Dinner</option>
+                            <option value="activity">Activity</option>
+                            <option value="other">Other</option>
+                        </select>
+
+                        <select name="price">
+                            <option value="" disabled selected>Price Range</option>
+                            <option value="low">$</option>
+                            <option value="medium">$$</option>
+                            <option value="high">$$$</option>
+                        </select>
+                    </div>
+
+                    <div class="footer">
+                        <button type="submit" class="submit-btn">Add Date Idea</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Your Favorites -->
+        <div class="favorites-modal">
+            
+            <header class="modal-header">
+                <h2>Your favorites</h2>
+                <button type="button" class="close-btn" aria-label="Close">
+                    <img src="images/x.svg" alt="Close" width="24" height="24">
+                </button>
+            </header>
+
+            <div class="favorites-list">
+
+                <article class="card">
+                    <div class="card-top">
+                        <h3>Trampoline Park</h3>
+                        <span class="price">$$</span>
+                    </div>
+                    <p class="description">Jump around and stuff</p>
+                    <div class="card-bottom">
+                        <span class="tag">Fitness</span>
+                        <button type="button" class="heart-btn" aria-label="Unfavorite">
+                            <img src="images/heart.svg" alt="Heart Icon" width="24" height="24">
+                        </button>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <div class="card-top">
+                        <h3>Ice Cream</h3>
+                        <span class="price">$</span>
+                    </div>
+                    <p class="description">Creamy Yummy Goodness</p>
+                    <div class="card-bottom">
+                        <span class="tag">Food & Drink</span>
+                        <button type="button" class="heart-btn" aria-label="Unfavorite">
+                            <img src="images/heart.svg" alt="Heart Icon" width="24" height="24">
+                        </button>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <div class="card-top">
+                        <h3>Play Board Games</h3>
+                    </div>
+                    <p class="description">Bust out Catan or Uno</p>
+                    <div class="card-bottom">
+                        <span class="tag">Games</span>
+                        <button type="button" class="heart-btn" aria-label="Unfavorite">
+                            <img src="images/heart.svg" alt="Heart Icon" width="24" height="24">
+                        </button>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <div class="card-top">
+                        <h3>Walk in the Park</h3>
+                    </div>
+                    <p class="description">Walk around your local park</p>
+                    <div class="card-bottom">
+                        <span class="tag">Fitness</span>
+                        <button type="button" class="heart-btn" aria-label="Unfavorite">
+                            <img src="images/heart.svg" alt="Heart Icon" width="24" height="24">
+                        </button>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+
+        <!-- Randomize With Filters -->
+        <div class="preferences-modal">
+            
+            <div class="modal-header">
+                <h2>Choose Preferences</h2>
+                <button type="button" class="close-btn" aria-label="Close">
+                    <img src="images/x.svg" alt="Close" width="24" height="24">
+                </button>>
+            </div>
+
+            <hr>
+
+            <div class="modal-body">
+                <p class="instruction-text">Select categories and pick your preferences to include in randomization</p>
+
+                <div class="categories-row">
+                    <button type="button" class="category-pill">Food & Drink</button>
+                    <button type="button" class="category-pill">Fitness</button>
+                    <button type="button" class="category-pill">Creative</button>
+                    <button type="button" class="category-pill">Games</button>
+                    <button type="button" class="category-pill">Learning & Culture</button>
+                    <button type="button" class="category-pill active">Nature</button>
+                </div>
+
+                <div class="preference-section">
+                    <h4>Where?</h4>
+                    <div class="radio-group">
+                        <label class="radio">
+                            <input type="radio" name="location" value="indoors">
+                            <span class="dot"></span>
+                            Indoors
+                        </label>
+                        <label class="radio">
+                            <input type="radio" name="location" value="outdoors">
+                            <span class="dot"></span>
+                            Outdoors
+                        </label>
+                    </div>
+                </div>
+
+                <div class="preference-section">
+                    <h4>Energy Level</h4>
+                    </div>
+
+                <div class="preference-section">
+                    <h4>How long?</h4>
+                    <div class="radio-group">
+                        <label class="radio">
+                            <input type="radio" name="duration" value="quick">
+                            <span class="dot"></span>
+                            Quick
+                        </label>
+                        <label class="radio">
+                            <input type="radio" name="duration" value="long">
+                            <span class="dot"></span>
+                            Long
+                        </label>
+                    </div>
+                </div>
+
+                <div class="preference-section">
+                    <h4>Cost</h4>
+                    </div>
+                
+            </div>
+        </div>
+
+        <!-- Randomize Result -->
+        <div class="result-modal">
+            
+            <div class="modal-header">
+                <h2>Your date idea is...</h2>
+                <button type="button" class="close-btn" aria-label="Close">
+                    <img src="images/x.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+
+            <hr>
+
+            <div class="idea-card">
+                <div class="card-title-row">
+                    <h3>Trampoline Park</h3>
+                    <div class="price-level">
+                        <img src="images/dollar.svg" alt="$" width="16" height="16">
+                        <img src="images/dollar.svg" alt="$" width="16" height="16">
+                    </div>
+                </div>
+                
+                <p class="description">Jump around and stuff</p>
+                
+                <div class="tag-container">
+                    <span class="tag">Fitness</span>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="icon-action-btn" aria-label="Reject">
+                    <img src="images/x.svg" alt="Reject" width="32" height="32">
+                </button>
+
+                <button type="button" class="calendar-btn">Add to Calendar</button>
+
+                <button type="button" class="icon-action-btn" aria-label="Favorite">
+                    <img src="images/heart.svg" alt="Favorite" width="32" height="32">
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Add Calender Event -->
+        <div class="add-event-modal">
+            
+            <div class="modal-header">
+                <h2>Add Event to Calendar</h2>
+                <button type="button" class="close-btn" aria-label="Close">
+                    <img src="images/x.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+
+            <hr>
+
+            <form class="event-form">
+                
+                <div class="form-group">
+                    <label for="event-title">Event Title</label>
+                    <input type="text" id="event-title" name="title" value="Trampoline Park">
+                </div>
+
+                <div class="form-group">
+                    <label for="event-date">Date</label>
+                    <div class="input-with-icon">
+                        <img src="images/calendar.svg" alt="" class="input-icon">
+                        <input type="text" id="event-date" name="date" value="1/30/2026">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-time">Time</label>
+                    <div class="input-with-icon">
+                        <img src="images/clock.svg" alt="" class="input-icon">
+                        <input type="text" id="event-time" name="time" value="5:00 PM">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-location">Location</label>
+                    <div class="input-with-icon">
+                        <img src="images/location.svg" alt="" class="input-icon">
+                        <input type="text" id="event-location" name="location" value="Anaheim, California">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-category">Category</label>
+                    <select id="event-category" name="category">
+                        <option value="fitness" selected>Fitness</option>
+                        <option value="food">Food & Drink</option>
+                        <option value="games">Games</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="your-date">Your Date</label>
+                    <div class="input-with-icon">
+                        <img src="images/user.svg" alt="" class="input-icon">
+                        <input type="text" id="your-date" name="partner" value="Matthew">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-notes">Notes</label>
+                    <textarea id="event-notes" name="notes"></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="cancel-btn">Cancel</button>
+                    <button type="submit" class="add-btn">Add Event</button>
+                </div>
+
+            </form>
+        </div>
+        
+        <!-- Edit Calender Event -->
+        <div class="edit-event-modal">
+            
+            <div class="modal-header">
+                <h2>Edit Calendar Event</h2>
+                <button type="button" class="close-btn" aria-label="Close">
+                    <img src="images/x.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+
+            <hr>
+
+            <form class="event-form">
+                
+                <div class="form-group">
+                    <label for="edit-title">Event Title</label>
+                    <input type="text" id="edit-title" name="title" value="Trampoline Park">
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-date">Date</label>
+                    <div class="input-with-icon">
+                        <img src="images/calendar.svg" alt="" class="input-icon">
+                        <input type="text" id="edit-date" name="date" value="1/30/2026">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-time">Time</label>
+                    <div class="input-with-icon">
+                        <img src="images/clock.svg" alt="" class="input-icon">
+                        <input type="text" id="edit-time" name="time" value="5:00 PM">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-location">Location</label>
+                    <div class="input-with-icon">
+                        <img src="images/location.svg" alt="" class="input-icon">
+                        <input type="text" id="edit-location" name="location" value="Anaheim, California">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-category">Category</label>
+                    <select id="edit-category" name="category">
+                        <option value="fitness" selected>Fitness</option>
+                        <option value="food">Food & Drink</option>
+                        <option value="games">Games</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-partner">Your Date</label>
+                    <div class="input-with-icon">
+                        <img src="images/user.svg" alt="" class="input-icon">
+                        <input type="text" id="edit-partner" name="partner" value="Matthew">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-notes">Notes</label>
+                    <textarea id="edit-notes" name="notes"></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="delete-btn">Delete</button>
+                    <button type="submit" class="save-btn">Edit Event</button>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- View Calender Event -->
+        <div class="view-event-modal">
+            
+            <div class="modal-header">
+                <h2 class="event-title">Trampoline Park</h2>
+                <button type="button" class="close-btn" aria-label="Close">
+                    <img src="images/x.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+
+            <div class="tag-row">
+                <span class="category-pill">Fitness</span>
+            </div>
+
+            <hr>
+
+            <div class="event-details">
+                
+                <div class="detail-row">
+                    <div class="icon-col">
+                        <img src="images/calendar.svg" alt="Date" width="24" height="24">
+                    </div>
+                    <div class="info-col">
+                        <span class="label">Date</span>
+                        <span class="value">Sunday, January 30, 2026</span>
+                    </div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="icon-col">
+                        <img src="images/clock.svg" alt="Time" width="24" height="24">
+                    </div>
+                    <div class="info-col">
+                        <span class="label">Time</span>
+                        <span class="value">5:00 PM</span>
+                    </div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="icon-col">
+                        <img src="images/location.svg" alt="Location" width="24" height="24">
+                    </div>
+                    <div class="info-col">
+                        <span class="label">Location</span>
+                        <span class="value">Anaheim, California</span>
+                    </div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="icon-col">
+                        <img src="images/paperclip.svg" alt="Notes" width="24" height="24">
+                    </div>
+                    <div class="info-col">
+                        <span class="label">Notes</span>
+                        <span class="value">Wear your jumping socks!</span>
+                    </div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="icon-col">
+                        <img src="images/person.svg" alt="Partner" width="24" height="24">
+                    </div>
+                    <div class="info-col">
+                        <span class="label">Your Date</span>
+                        <span class="value">Matthew</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer actions-spaced">
+                <button type="button" class="delete-btn-outline">Delete</button>
+                
+                <button type="button" class="edit-icon-btn" aria-label="Edit">
+                    <img src="images/edit.svg" alt="Edit" width="24" height="24">
+                </button>
+            </div>
+
+        </div>
+
+        <!-- User Settings -->
+        <div class="user-settings-modal">
+    
+            <div class="modal-header">
+                <div class="user-info">
+                    <img src="images/user-avatar.png" alt="User Avatar" class="avatar">
+                    <h3>username123</h3>
+                </div>
+                <button type="button" class="close-btn" aria-label="Close">
+                    <img src="images/x.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+
+            <hr>
+
+            <div class="settings-menu">
+                
+                <a href="#" class="menu-item">
+                    <div class="icon-wrapper">
+                        <img src="images/heart.svg" alt="Favorites" width="24" height="24">
+                    </div>
+                    <div class="text-wrapper">
+                        <h4>Your Favorites</h4>
+                        <p>View your liked ideas</p>
+                    </div>
+                </a>
+
+                <a href="#" class="menu-item">
+                    <div class="icon-wrapper">
+                        <img src="images/user.svg" alt="Edit Account" width="24" height="24">
+                    </div>
+                    <div class="text-wrapper">
+                        <h4>Edit Account</h4>
+                        <p>Update your info</p>
+                    </div>
+                </a>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="logout-btn">Log Out</button>
+            </div>
+
+        </div>
+
+        <!-- Edit Account View -->
+        <div class="edit-account-view-modal">
+            
+            <div class="modal-header">
+                <h2>Edit Account</h2>
+                <button type="button" class="close-btn" aria-label="Close">
+                    <img src="images/x.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <img src="images/user-avatar-large.png" alt="User Avatar" class="avatar-large">
+
+                <div class="user-detail">
+                    <label>Name</label>
+                    <div class="detail-value">Rebecca Black</div>
+                </div>
+                <div class="user-detail">
+                    <label>Username</label>
+                    <div class="detail-value">username123</div>
+                </div>
+                <div class="user-detail">
+                    <label>Password</label>
+                    <div class="detail-value">**********</div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="delete-btn-outline">Delete Account</button>
+                <button type="button" class="edit-btn">Edit Account Info</button>
+            </div>
+
+        </div>
+
+        <!-- Edit Account Acutual -->
+        <div class="edit-account-edit-modal">
+            
+            <div class="modal-header">
+                <h2>Edit Account</h2>
+                <button type="button" class="close-btn" aria-label="Close">
+                    <img src="images/x.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="avatar-wrapper">
+                    <img src="images/user-avatar-large.png" alt="User Avatar" class="avatar-large">
+                    <button type="button" class="edit-avatar-btn">
+                        <img src="images/edit.svg" alt="Edit" width="14" height="14">
+                    </button>
+                </div>
+
+                <form>
+                    <div class="form-group">
+                        <label for="edit-name">Name</label>
+                        <input type="text" id="edit-name" name="name" value="Rebecca Black">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-username">Username</label>
+                        <input type="text" id="edit-username" name="username" value="username123">
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn">Cancel</button>
+                        <button type="submit" class="save-btn">Save</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="delete-btn-outline">Delete Account</button>
+                <button type="button" class="change-password-btn">Change Password</button>
+            </div>
+
+        </div>
+
+        <!-- Change Password -->
+        <div class="change-password-modal">
+            
+            <div class="modal-header">
+                <h2>Change Password</h2>
+                <button type="button" class="close-btn" aria-label="Close">
+                    <img src="images/x.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="new-password">New Password</label>
+                        <input type="password" id="new-password" name="new_password">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm Password</label>
+                        <input type="password" id="confirm-password" name="confirm_password">
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn">Cancel</button>
+                        <button type="submit" class="change-btn">Change Password</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+        
     </main>
     <footer>
         <img src="images/Home.svg" alt="Home">
