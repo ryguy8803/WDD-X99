@@ -167,12 +167,14 @@ footer {
 
 /* Button */
 .button {
+    cursor: pointer;
     padding: var(--small-spacing) var(--small-medium-spacing);
     border-radius: var(--small-spacing);
     color: var(--purple);
     font-size: (var(--p));
     display: inline-block;
     width: auto;
+    text-decoration: none;
 }
 button {
     border: none;
@@ -202,7 +204,7 @@ a {
     background-color: transparent;
 }
 .high {
-    border: none;
+    border: 2px solid var(--purple);
     background-color: var(--purple);
     color: var(--gray-10);
 }
@@ -354,9 +356,26 @@ select {
     background-color: white;
     color: var(--gray-70);
 }
+.tag-button {
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.tag-button.is-active {
+    background-color: var(--purple);
+    color: var(--gray-10);
+    border-color: var(--purple);
+}
+.heart-icon {
+    cursor: pointer;
+    transition: transform 0.15s ease, filter 0.15s ease;
+}
+.heart-icon.is-active {
+    transform: scale(1.1);
+}
 
 /* Card */
 .card {
+    text-decoration: none;
     background-color: var(--gray-10);
     border-radius: var(--medium-spacing);
     overflow: hidden;
