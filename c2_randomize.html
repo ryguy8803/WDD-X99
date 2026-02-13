@@ -14,14 +14,16 @@
                 <a href="c1_home.html" class="logo-wrapper"><h1>PerfectDate</h1>
                 <img src="images/Logo.svg" alt="PerfectDate Logo"></a> 
             </section>           
-            <img src="images/person.svg" alt="Person Icon">
+            <button type="button" class="open-user-settings">
+                <img src="images/person.svg" alt="Person Icon">
+            </button>
         </div>
     </header>
 
     <main class="scroll-container center-content">
         <h2>Let's find your perfect date!</h2>
         <div class="cards">
-            <div class="card icon-card purple">
+            <button type="button" class="card icon-card purple" id="open-randomize">
                 <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M33.4375 37.25L39.1562 31.5312M39.1562 31.5312L33.4375 25.8125M39.1562 31.5312H31.5312C26.2673 31.5312 22 27.2639 22 22C22 16.736 17.7327 12.4688 12.4688 12.4688H4.84375M33.4375 6.75L39.1562 12.4688M39.1562 12.4688L33.4375 18.1875M39.1562 12.4688H31.5312C29.3856 12.4688 27.4056 13.1778 25.8125 14.3743M4.84375 31.5312H12.4688C14.6144 31.5312 16.5945 30.8216 18.1875 29.625" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -29,8 +31,8 @@
                     <h3>Random</h3>
                     <p>We’ll surprise you with a date idea from our collection. </p>
                 </div>
-            </div>
-            <div class="card icon-card">
+            </button>
+            <button type="button" class="card icon-card white" id="open-preferences">
                 <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M40.3337 5.5H3.66699L18.3337 22.8433V34.8333L25.667 38.5V22.8433L40.3337 5.5Z" stroke="rgb(62,0,84)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -38,7 +40,7 @@
                     <h3>Use Preferences</h3>
                     <p>We'll pick a date idea that matches your interests.</p>
                 </div>
-            </div>
+            </button>
         </div>
     </main>
 
@@ -48,6 +50,311 @@
        <a href="c3_explore.html"><img src="images/Search.svg" alt="Explore"></a>
        <a href="c4_calendar.html"><img src="images/Calendar.svg" alt="Calendar"></a>
     </footer>
+
+   <!-- User Settings -->
+    <div class="modal-overlay user-settings-overlay" id="user-settings-modal">
+        <div class="user-settings-panel">
+            <div class="header">                   
+                <h2 id="user-settings-title">username123</h2>
+                <button type="button" class="close-btn" id="close-user-settings">
+                    <img src="images/x.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+
+            <hr>
+
+            <div class="settings-menu">
+                <button type="button" class="menu-item open-favorites">
+                    <div>
+                        <img src="images/purplecircleheart.svg" alt="Heart with Purple Circle">
+                    </div>
+                    <div>
+                        <h3>Your Favorites</h3>
+                        <p>View your liked ideas</p>
+                    </div>
+                </button>
+
+                <button type="button" class="menu-item">
+                    <div class="icon-wrapper">
+                        <img src="images/purplecircleperson.svg" alt="Edit Account">
+                    </div>
+                    <div class="text-wrapper">
+                        <h3>Edit Account</h3>
+                        <p>Update your info</p>
+                    </div>
+                </button>
+            </div>
+
+            <div class="modal-footer">
+                <a href="a2_login.html" class="button high">Log Out</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Randomize Result -->
+        <div class="modal-overlay" id="randomize-modal">
+            <div class="card overlay-card">
+                <div class="header">
+                    <h2>Your date idea is...</h2>
+                    <button type="button" class="button" id="close-randomize">
+                        <img src="images/x.svg" alt="Close" width="24" height="24">
+                    </button>
+                </div>
+
+                <hr>
+
+                <p class="instruction-text randomize-empty-message" id="randomize-empty-message" hidden></p>
+
+                <div class="card idea-card" id="randomize-idea-card">
+                    <img src="" alt="" class="hero" id="randomize-idea-hero">
+                    <div class="card-body">
+                        <div class="top-half">
+                            <section class="top3rd">
+                                <h3 id="randomize-idea-title">Trampoline Park</h3>
+                                <div class="price-level" id="randomize-idea-price"></div>
+                            </section>
+                            <p id="randomize-idea-description">Jump around and stuff</p>
+                        </div>
+                        <section class="bottom3rd">
+                            <span class="tag" id="randomize-idea-tag">Fitness</span>
+                        </section>
+                    </div>
+                </div>
+
+                <div class="randomize-actions" id="randomize-actions">
+                    <button type="button" class="icon-action-btn" id="randomize-reject">
+                        <img src="images/x.svg" alt="X">
+                    </button>
+
+                    <button type="button" class="button medium" id="randomize-add-calendar">Add to Calendar</button>
+
+                    <button type="button" class="icon-action-btn" id="randomize-favorite">
+                        <img src="images/heart.svg" alt="Heart">
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Randomize With Filters -->
+        <div class="modal-overlay" id="preferences-modal">
+            <div class="card overlay-card">
+                <div class="header">
+                    <h2>Choose Preferences</h2>
+                    <button type="button" class="button" id="close-preferences">
+                        <img src="images/x.svg" alt="Close" width="24" height="24">
+                    </button>
+                </div>
+
+                <hr>
+
+                <div class="modal-body">
+                    <p class="instruction-text">Select categories and pick your preferences to include in randomization</p>
+
+                    <div class="tags">
+                        <button type="button" class="tag tag-button">Food & Drink</button>
+                        <button type="button" class="tag tag-button">Fitness</button>
+                        <button type="button" class="tag tag-button">Creative</button>
+                        <button type="button" class="tag tag-button">Games</button>
+                        <button type="button" class="tag tag-button">Learning & Culture</button>
+                        <button type="button" class="tag tag-button">Nature</button>
+                    </div>
+
+                    <div class="preference-section">
+                        <h4>Where?</h4>
+                        <div class="radio-group">
+                            <label class="radio">
+                                <input type="radio" name="location" value="indoors">
+                                <span class="dot"></span>
+                                Indoors
+                            </label>
+                            <label class="radio">
+                                <input type="radio" name="location" value="outdoors">
+                                <span class="dot"></span>
+                                Outdoors
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="preference-section">
+                        <h4>Energy Level</h4>
+                        <div class="radio-group">
+                            <label class="radio">
+                                <input type="radio" name="energy" value="lazy">
+                                <span class="dot"></span>
+                                Lazy
+                            </label>
+                            <label class="radio">
+                                <input type="radio" name="energy" value="high-energy">
+                                <span class="dot"></span>
+                                High Energy
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="preference-section">
+                        <h4>How long?</h4>
+                        <div class="radio-group">
+                            <label class="radio">
+                                <input type="radio" name="duration" value="quick">
+                                <span class="dot"></span>
+                                Quick
+                            </label>
+                            <label class="radio">
+                                <input type="radio" name="duration" value="long">
+                                <span class="dot"></span>
+                                Long
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="preference-section">
+                        <h4>Cost</h4>
+                        <div class="radio-group">
+                            <label class="radio">
+                                <input type="radio" name="cost" value="free">
+                                <span class="dot"></span>
+                                Free
+                            </label>
+                            <label class="radio">
+                                <input type="radio" name="cost" value="purchase">
+                                <span class="dot"></span>
+                                Purchase
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="footer">
+                        <button type="button" class="button high" id="apply-preferences">Submit Preferences</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Settings -->
+    <div class="modal-overlay user-settings-overlay" id="user-settings-modal">
+        <div class="user-settings-panel">
+            <div class="header">   
+                <div class="pic-username">
+                    <img src="images/profilepicture.svg" alt="Profile Picture">                
+                    <h2 id="user-settings-title">username123</h2>
+                </div>
+                <button type="button" class="close-btn" id="close-user-settings">
+                    <img src="images/x.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+
+            <hr>
+
+            <div class="settings-menu">
+                <button type="button" class="menu-item open-favorites">
+                    <div>
+                        <img src="images/purplecircleheart.svg" alt="Heart with Purple Circle">
+                    </div>
+                    <div>
+                        <h3>Your Favorites</h3>
+                        <p>View your liked ideas</p>
+                    </div>
+                </button>
+
+                <button type="button" class="menu-item open-edit-account">
+                    <div class="icon-wrapper">
+                        <img src="images/purplecircleperson.svg" alt="Edit Account">
+                    </div>
+                    <div class="text-wrapper">
+                        <h3>Edit Account</h3>
+                        <p>Update your info</p>
+                    </div>
+                </button>
+            </div>
+
+            <div class="modal-footer">
+                <a href="a2_login.html" class="button high">Log Out</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Account View -->
+        <div class="modal-overlay user-settings-overlay" id="edit-account-modal">
+            <div class="user-settings-panel">
+                <div class="header">
+                    <button type="button" class="close-btn" id="back-edit-account" aria-label="Back">
+                        <img src="images/arrowleft.svg" alt="Back" width="24" height="24">
+                    </button>
+                    <h2>Edit Account</h2>
+                    <button type="button" class="close-btn" id="close-edit-account" aria-label="Close">
+                        <img src="images/x.svg" alt="Close" width="24" height="24">
+                    </button>
+                </div>
+
+                <div class="settings-menu">
+                    <img src="images/profilepicture.svg" alt="User Avatar" class="avatar-large" width="80" height="80">
+
+                    <div class="user-detail">
+                        <label>Name</label>
+                        <div class="detail-value" id="edit-account-name">Rebecca Black</div>
+                    </div>
+                    <div class="user-detail">
+                        <label>Username</label>
+                        <div class="detail-value" id="edit-account-username">username123</div>
+                    </div>
+                    <div class="user-detail">
+                        <label>Password</label>
+                        <div class="detail-value">**********</div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="button high" id="open-edit-account-form">Edit Account Info</button>
+                </div>
+            </div>
+        </div>
+
+         <!-- Edit Account Acutual -->
+        <div class="modal-overlay user-settings-overlay" id="edit-account-form-modal">
+            <div class="user-settings-panel">
+                <div class="header">
+                    <button type="button" class="close-btn" id="back-edit-account-form" aria-label="Back">
+                        <img src="images/arrowleft.svg" alt="Back" width="24" height="24">
+                    </button>
+                    <h2>Edit Account</h2>
+                    <button type="button" class="close-btn" id="close-edit-account-form" aria-label="Close">
+                        <img src="images/x.svg" alt="Close" width="24" height="24">
+                    </button>
+                </div>
+
+                <div class="settings-menu">
+                    <div class="avatar-wrapper">
+                        <img src="images/profilepicture.svg" alt="User Avatar" class="avatar-large" width="80" height="80">
+                        <button type="button" class="edit-avatar-btn">
+                            <img src="images/edit.svg" alt="Edit" width="24" height="24">
+                        </button>
+                    </div>
+
+                    <form id="edit-account-form">
+                        <div class="form-group">
+                            <label for="edit-name">Name</label>
+                            <input type="text" id="edit-name" name="name" value="Rebecca Black">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-username">Username</label>
+                            <input type="text" id="edit-username" name="username" value="username123">
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="button medium" id="cancel-edit-account-form">Cancel</button>
+                            <button type="submit" class="button high" id="save-edit-account">Save</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="button red medium" id="delete-account">Delete Account</button>
+                    <button type="button" class="button high">Change Password</button>
+                </div>
+            </div>
+        </div>
+
+    <script type="module" src="script/script.js"></script>
 
 </body>
 </html>
