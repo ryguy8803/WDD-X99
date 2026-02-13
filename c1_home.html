@@ -14,7 +14,9 @@
                 <a href="c1_home.html" class="logo-wrapper"><h1>PerfectDate</h1>
                 <img src="images/Logo.svg" alt="PerfectDate Logo"></a> 
             </section>           
-            <img src="images/person.svg" alt="Person Icon">
+            <button type="button" class="open-user-settings">
+                <img src="images/person.svg" alt="Person Icon">
+            </button>
         </div>
     </header>
 
@@ -22,25 +24,27 @@
         
         <section class="layout-band">
             <h2>Explore date ideas</h2>
-            <div class="card idea-card"> 
-            <img src="images/trampoline park.jpg" alt="Trampoline Park Picture" class="hero">
-            <div class="card-body">
-                <div class="top-half">
-                    <section class="top3rd">
-                        <h3>Trampoline Park</h3>
-                        <div>
-                            <img src="images/Dollar.svg" alt="Dollar Icon">
-                            <img src="images/Dollar.svg" alt="Dollar Icon">
+            <div class="horizontal-card-list" id="home-idea-list"></div>
+
+            <template id="home-card-idea-template">
+                <div class="card idea-card">
+                    <img src="" alt="" class="hero">
+                    <div class="card-body">
+                        <div class="top-half">
+                            <section class="top3rd">
+                                <h3></h3>
+                                <div class="price-level"></div>
+                            </section>
+                            <p></p>
                         </div>
-                    </section>
-                    <p>Go Jumping</p>
+                        <section class="bottom3rd">
+                            <span class="tag tag-button" role="button" tabindex="0" aria-pressed="false"></span>
+                            <img src="images/Heart.svg" alt="Heart Icon" class="heart-icon" role="button" tabindex="0" aria-pressed="false" data-src="images/Heart.svg" data-active-src="images/HeartFilled.svg">
+                        </section>
+                    </div>
                 </div>
-                <section class="bottom3rd">
-                    <span class="tag" role="button" tabindex="0" aria-pressed="false">Fitness</span>
-                    <img src="images/Heart.svg" alt="Heart Icon" class="heart-icon" role="button" tabindex="0" aria-pressed="false" data-src="images/Heart.svg" data-active-src="images/HeartFilled.svg">
-                </section>
-                 </div>
-            </div>
+            </template>
+
             <div>
                 <a class="button high" href="c3_explore.html">Explore</a>
             </div>
@@ -64,10 +68,11 @@
         <section class="layout-band">
             <h2>Your favorites</h2>
             <p class="favorites">You don’t have any favorites yet. Explore ideas or add your own!</p>
+            <div class="horizontal-card-list" id="home-favorites-list"></div>
             
             <div>
-                <button class="button high">View Favorites</button>
-                <button class="button medium">Add an Idea</button>
+                <button class="button high" id="open-favorites" type="button">View Favorites</button>
+                <button class="button medium" id="open-add-idea" type="button">Add an Idea</button>
             </div>
         </section>
 
@@ -79,6 +84,216 @@
        <a href="c3_explore.html"><img src="images/Search.svg" alt="Explore"></a>
        <a href="c4_calendar.html"><img src="images/Calendar.svg" alt="Calendar"></a>
     </footer>
-    <script src="script/script.js"></script>
+
+    <!-- User Settings -->
+    <div class="modal-overlay user-settings-overlay" id="user-settings-modal">
+        <div class="user-settings-panel">
+            <div class="header">   
+                <div class="pic-username">
+                    <img src="images/profilepicture.svg" alt="Profile Picture">                
+                    <h2 id="user-settings-title">username123</h2>
+                </div>
+                <button type="button" class="close-btn" id="close-user-settings">
+                    <img src="images/x.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+
+            <hr>
+
+            <div class="settings-menu">
+                <button type="button" class="menu-item open-favorites">
+                    <div>
+                        <img src="images/purplecircleheart.svg" alt="Heart with Purple Circle">
+                    </div>
+                    <div>
+                        <h3>Your Favorites</h3>
+                        <p>View your liked ideas</p>
+                    </div>
+                </button>
+
+                <button type="button" class="menu-item open-edit-account">
+                    <div class="icon-wrapper">
+                        <img src="images/purplecircleperson.svg" alt="Edit Account">
+                    </div>
+                    <div class="text-wrapper">
+                        <h3>Edit Account</h3>
+                        <p>Update your info</p>
+                    </div>
+                </button>
+            </div>
+
+            <div class="modal-footer">
+                <a href="a2_login.html" class="button high">Log Out</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Account View -->
+        <div class="modal-overlay user-settings-overlay" id="edit-account-modal">
+            <div class="user-settings-panel">
+                <div class="header">
+                    <button type="button" class="close-btn" id="back-edit-account" aria-label="Back">
+                        <img src="images/arrowleft.svg" alt="Back" width="24" height="24">
+                    </button>
+                    <h2>Edit Account</h2>
+                    <button type="button" class="close-btn" id="close-edit-account" aria-label="Close">
+                        <img src="images/x.svg" alt="Close" width="24" height="24">
+                    </button>
+                </div>
+
+                <div class="settings-menu">
+                    <img src="images/profilepicture.svg" alt="User Avatar" class="avatar-large" width="80" height="80">
+
+                    <div class="user-detail">
+                        <label>Name</label>
+                        <div class="detail-value" id="edit-account-name">Rebecca Black</div>
+                    </div>
+                    <div class="user-detail">
+                        <label>Username</label>
+                        <div class="detail-value" id="edit-account-username">username123</div>
+                    </div>
+                    <div class="user-detail">
+                        <label>Password</label>
+                        <div class="detail-value">**********</div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="button high" id="open-edit-account-form">Edit Account Info</button>
+                </div>
+            </div>
+        </div>
+
+         <!-- Edit Account Actual -->
+        <div class="modal-overlay user-settings-overlay" id="edit-account-form-modal">
+            <div class="user-settings-panel">
+                <div class="header">
+                    <button type="button" class="close-btn" id="back-edit-account-form" aria-label="Back">
+                        <img src="images/arrowleft.svg" alt="Back" width="24" height="24">
+                    </button>
+                    <h2>Edit Account</h2>
+                    <button type="button" class="close-btn" id="close-edit-account-form" aria-label="Close">
+                        <img src="images/x.svg" alt="Close" width="24" height="24">
+                    </button>
+                </div>
+
+                <div class="settings-menu">
+                    <div class="avatar-wrapper">
+                        <img src="images/profilepicture.svg" alt="User Avatar" class="avatar-large" width="80" height="80">
+                        <button type="button" class="edit-avatar-btn">
+                            <img src="images/edit.svg" alt="Edit" width="24" height="24">
+                        </button>
+                    </div>
+
+                    <form id="edit-account-form">
+                        <div class="form-group">
+                            <label for="edit-name">Name</label>
+                            <input type="text" id="edit-name" name="name" value="Rebecca Black">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-username">Username</label>
+                            <input type="text" id="edit-username" name="username" value="username123">
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="button medium" id="cancel-edit-account-form">Cancel</button>
+                            <button type="submit" class="button high" id="save-edit-account">Save</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="button red medium" id="delete-account">Delete Account</button>
+                    <button type="button" class="button high">Change Password</button>
+                </div>
+            </div>
+        </div>
+    
+    <!-- Add an Idea -->
+    <div class="modal-overlay" id="add-idea-modal">
+            <div class="card overlay-card">
+                <div class="header">
+                    <h2 id="add-idea-title">Add a Date Idea</h2>
+                    <button type="button" class="close-btn" id="close-add-idea">
+                        <img src="images/x.svg" alt="Close" width="24" height="24">
+                    </button>
+                </div>
+
+                <hr>
+
+                <form id="add-idea-form">
+                    <label for="name">Name
+                        <input name="name" type="text">
+                    </label>
+                
+                    <label for="description">Description
+                        <textarea name="description" id="description" rows="4"></textarea>
+                    </label>
+
+                    <div class="dropdowns">
+                        <label for="category">Category
+                            <select id="category" name="category">
+                                <option value="">Select a Category</option>
+                                <option value="food&drink">Food & Drink</option>
+                                <option value="fitness">Fitness</option>
+                                <option value="creative">Creative</option>
+                                <option value="games">Games</option>
+                                <option value="learning&culture">Learning & Culture</option>
+                                <option value="Nature">Nature</option>
+                            </select>
+                        </label>
+
+                        <label for="price">Price
+                            <select id="price" name="price">
+                                <option value="">Select a Price</option>
+                                <option value="0">Free</option> 
+                                <option value="1">$</option>
+                                <option value="2">$$</option>
+                                <option value="3">$$</option>                       
+                            </select>
+                        </label>
+                    </div>
+
+                    <div class="footer">
+                        <button type="submit" class="button high">Add Date Idea</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Your Favorites -->
+        <div class="modal-overlay" id="favorites-modal">
+            <div class="card overlay-card favorites-overlay-card">
+                <div class="header">
+                    <h2 id="favorites-title">Your favorites</h2>
+                    <button type="button" class="close-btn" id="close-favorites">
+                        <img src="images/x.svg" alt="Close" width="24" height="24">
+                    </button>
+                </div>
+
+                <div class="favorites-list" id="favorites-list"></div>
+
+                <template id="favorites-card-template">
+                    <div class="card idea-card">
+                        <img src="" alt="" class="hero">
+                        <div class="card-body">
+                            <div class="top-half">
+                                <section class="top3rd">
+                                    <h3></h3>
+                                    <div class="price-level"></div>
+                                </section>
+                                <p></p>
+                            </div>
+                            <section class="bottom3rd">
+                                <span class="tag tag-button" role="button" tabindex="0" aria-pressed="false"></span>
+                                <img src="images/Heart.svg" alt="Heart Icon" class="heart-icon" role="button" tabindex="0" aria-pressed="false" data-src="images/Heart.svg" data-active-src="images/HeartFilled.svg">
+                            </section>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+    <script type="module" src="script/script.js"></script>
 </body>
 </html>

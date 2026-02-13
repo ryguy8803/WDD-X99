@@ -15,7 +15,9 @@
                 <a href="c1_home.html" class="logo-wrapper"><h1>PerfectDate</h1>
                 <img src="images/Logo.svg" alt="PerfectDate Logo"></a> 
             </section>           
-            <img src="images/person.svg" alt="Person Icon">
+            <button type="button" class="open-user-settings">
+                <img src="images/person.svg" alt="Person Icon">
+            </button>
         </div>
     </header>
 
@@ -29,141 +31,34 @@
             </label>
 
             <div class="tags">
-                <Button class="tag tag-button" aria-pressed="false"><span>Food & Drink</span></Button>
-                <Button class="tag tag-button" aria-pressed="false"><span>Fitness</span></Button>
-                <Button class="tag tag-button" aria-pressed="false"><span>Creative</span></Button>
-                <Button class="tag tag-button" aria-pressed="false"><span>Games</span></Button>
-                <Button class="tag tag-button" aria-pressed="false"><span>Learning & Culture</span></Button>
-                <Button class="tag tag-button" aria-pressed="false"><span>Nature</span></Button>
+                <button type="button" class="tag tag-button">Food & Drink</button>
+                <button type="button" class="tag tag-button" >Fitness</button>
+                <button type="button" class="tag tag-button" >Creative</button>
+                <button type="button" class="tag tag-button" >Games</button>
+                <button type="button" class="tag tag-button" >Learning & Culture</button>
+                <button type="button" class="tag tag-button" >Nature</button>
             </div>
 
-            <div class="card-list">
+            <div class="card-list" id="idea-list"></div>
 
-                <div class="card idea-card"> 
-                    <img src="https://images.unsplash.com/photo-1585938389612-a552a28d6914?q=80&w=2060&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Park path with trees" class="hero">
+            <template id="card-idea-template">
+                <div class="card idea-card">
+                    <img src="" alt="" class="hero">
                     <div class="card-body">
                         <div class="top-half">
                             <section class="top3rd">
-                                <h3>Walk in the Park</h3>
+                                <h3></h3>
+                                <div class="price-level"></div>
                             </section>
-                            <p>Go for a walk in the park</p>
+                            <p></p>
                         </div>
                         <section class="bottom3rd">
-                            <span class="tag">Nature</span>
-                            <img src="images/Heart.svg" alt="Heart Icon" class="heart-icon" data-src="images/Heart.svg" data-active-src="images/HeartFilled.svg">
+                            <span class="tag tag-button" role="button" tabindex="0" aria-pressed="false"></span>
+                            <img src="images/Heart.svg" alt="Heart Icon" class="heart-icon" role="button" tabindex="0" aria-pressed="false" data-src="images/Heart.svg" data-active-src="images/HeartFilled.svg">
                         </section>
                     </div>
                 </div>
-
-                <div class="card idea-card"> 
-                    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" alt="Sunny beach shoreline" class="hero">
-                    <div class="card-body">
-                        <div class="top-half">
-                            <section class="top3rd">
-                                <h3>Go to the Beach</h3>
-                            </section>
-                            <p>Play in the sand. Make a sand castle!</p>
-                        </div>
-                        <section class="bottom3rd">
-                            <span class="tag">Nature</span>
-                            <img src="images/Heart.svg" alt="Heart Icon" class="heart-icon" data-src="images/Heart.svg" data-active-src="images/HeartFilled.svg">
-                        </section>
-                    </div>
-                </div>
-
-                <div class="card idea-card"> 
-                    <img src="https://images.unsplash.com/photo-1751235640841-d8d1035a80f0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Trampoline park activity" class="hero">
-                    <div class="card-body">
-                        <div class="top-half">
-                            <section class="top3rd">
-                                <h3>Trampoline Park</h3>
-                                <div>
-                                    <img src="images/Dollar.svg" alt="Dollar Icon">
-                                    <img src="images/Dollar.svg" alt="Dollar Icon">
-                                </div>
-                            </section>
-                            <p>Go Jumping</p>
-                        </div>
-                        <section class="bottom3rd">
-                            <span class="tag">Fitness</span>
-                            <img src="images/Heart.svg" alt="Heart Icon" class="heart-icon" data-src="images/Heart.svg" data-active-src="images/HeartFilled.svg">
-                        </section>
-                    </div>
-                </div>
-
-                <div class="card idea-card"> 
-                    <img src="https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Hot Chocolate" class="hero">
-                    <div class="card-body">
-                        <div class="top-half">
-                            <section class="top3rd">
-                                <h3>Cozy Hot Chocolate Date</h3>
-                                <div>
-                                    <img src="images/Dollar.svg" alt="Dollar Icon">
-                                </div>
-                            </section>
-                            <p>Find a new café and share a pastry.</p>
-                        </div>
-                        <section class="bottom3rd">
-                            <span class="tag">Food & Drink</span>
-                            <img src="images/Heart.svg" alt="Heart Icon" class="heart-icon" data-src="images/Heart.svg" data-active-src="images/HeartFilled.svg">
-                        </section>
-                    </div>
-                </div>
-
-                <div class="card idea-card"> 
-                    <img src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=800&q=80" alt="Art supplies on a desk" class="hero">
-                    <div class="card-body">
-                        <div class="top-half">
-                            <section class="top3rd">
-                                <h3>Paint & Sip Night</h3>
-                                <div>
-                                    <img src="images/Dollar.svg" alt="Dollar Icon">
-                                </div>
-                            </section>
-                            <p>Pick a theme and paint together at home.</p>
-                        </div>
-                        <section class="bottom3rd">
-                            <span class="tag">Creative</span>
-                            <img src="images/Heart.svg" alt="Heart Icon" class="heart-icon" data-src="images/Heart.svg" data-active-src="images/HeartFilled.svg">
-                        </section>
-                    </div>
-                </div>
-
-                <div class="card idea-card"> 
-                    <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=800&q=80" alt="City skyline at sunset" class="hero">
-                    <div class="card-body">
-                        <div class="top-half">
-                            <section class="top3rd">
-                                <h3>Sunset City Walk</h3>
-                            </section>
-                            <p>Stroll downtown and grab dessert on the way.</p>
-                        </div>
-                        <section class="bottom3rd">
-                            <span class="tag" >Nature</span>
-                            <img src="images/Heart.svg" alt="Heart Icon" class="heart-icon" data-src="images/Heart.svg" data-active-src="images/HeartFilled.svg">
-                        </section>
-                    </div>
-                </div>
-
-                <div class="card idea-card"> 
-                    <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80" alt="Board games on a table" class="hero">
-                    <div class="card-body">
-                        <div class="top-half">
-                            <section class="top3rd">
-                                <h3>Board Game Challenge</h3>
-                                <div>
-                                    <img src="images/Dollar.svg" alt="Dollar Icon">
-                                </div>
-                            </section>
-                            <p>Pick a new game and keep score for fun.</p>
-                        </div>
-                        <section class="bottom3rd">
-                            <span class="tag">Games</span>
-                            <img src="images/Heart.svg" alt="Heart Icon" class="heart-icon" data-src="images/Heart.svg" data-active-src="images/HeartFilled.svg">
-                        </section>
-                    </div>
-                </div>
-            </div>
+            </template>
         </div>
     </main>
 
@@ -173,6 +68,128 @@
        <a href="c3_explore.html"><img src="images/Search.svg" alt="Explore"><span></span></a>
        <a href="c4_calendar.html"><img src="images/Calendar.svg" alt="Calendar"></a>
     </footer>
-    <script src="script/script.js"></script>
+
+    <!-- User Settings -->
+    <div class="modal-overlay user-settings-overlay" id="user-settings-modal">
+        <div class="user-settings-panel">
+            <div class="header">                   
+                <h2 id="user-settings-title">username123</h2>
+                <button type="button" class="close-btn" id="close-user-settings">
+                    <img src="images/x.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+
+            <hr>
+
+            <div class="settings-menu">
+                <button type="button" class="menu-item open-favorites">
+                    <div>
+                        <img src="images/purplecircleheart.svg" alt="Heart with Purple Circle">
+                    </div>
+                    <div>
+                        <h3>Your Favorites</h3>
+                        <p>View your liked ideas</p>
+                    </div>
+                </button>
+
+                <button type="button" class="menu-item">
+                    <div class="icon-wrapper">
+                        <img src="images/purplecircleperson.svg" alt="Edit Account">
+                    </div>
+                    <div class="text-wrapper">
+                        <h3>Edit Account</h3>
+                        <p>Update your info</p>
+                    </div>
+                </button>
+            </div>
+
+            <div class="modal-footer">
+                <a href="a2_login.html" class="button high">Log Out</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Account View -->
+        <div class="modal-overlay user-settings-overlay" id="edit-account-modal">
+            <div class="user-settings-panel">
+                <div class="header">
+                    <button type="button" class="close-btn" id="back-edit-account" aria-label="Back">
+                        <img src="images/arrowleft.svg" alt="Back" width="24" height="24">
+                    </button>
+                    <h2>Edit Account</h2>
+                    <button type="button" class="close-btn" id="close-edit-account" aria-label="Close">
+                        <img src="images/x.svg" alt="Close" width="24" height="24">
+                    </button>
+                </div>
+
+                <div class="settings-menu">
+                    <img src="images/profilepicture.svg" alt="User Avatar" class="avatar-large" width="80" height="80">
+
+                    <div class="user-detail">
+                        <label>Name</label>
+                        <div class="detail-value" id="edit-account-name">Rebecca Black</div>
+                    </div>
+                    <div class="user-detail">
+                        <label>Username</label>
+                        <div class="detail-value" id="edit-account-username">username123</div>
+                    </div>
+                    <div class="user-detail">
+                        <label>Password</label>
+                        <div class="detail-value">**********</div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="button high" id="open-edit-account-form">Edit Account Info</button>
+                </div>
+            </div>
+        </div>
+
+         <!-- Edit Account Acutual -->
+        <div class="modal-overlay user-settings-overlay" id="edit-account-form-modal">
+            <div class="user-settings-panel">
+                <div class="header">
+                    <button type="button" class="close-btn" id="back-edit-account-form" aria-label="Back">
+                        <img src="images/arrowleft.svg" alt="Back" width="24" height="24">
+                    </button>
+                    <h2>Edit Account</h2>
+                    <button type="button" class="close-btn" id="close-edit-account-form" aria-label="Close">
+                        <img src="images/x.svg" alt="Close" width="24" height="24">
+                    </button>
+                </div>
+
+                <div class="settings-menu">
+                    <div class="avatar-wrapper">
+                        <img src="images/profilepicture.svg" alt="User Avatar" class="avatar-large" width="80" height="80">
+                        <button type="button" class="edit-avatar-btn">
+                            <img src="images/edit.svg" alt="Edit" width="24" height="24">
+                        </button>
+                    </div>
+
+                    <form id="edit-account-form">
+                        <div class="form-group">
+                            <label for="edit-name">Name</label>
+                            <input type="text" id="edit-name" name="name" value="Rebecca Black">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-username">Username</label>
+                            <input type="text" id="edit-username" name="username" value="username123">
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="button medium" id="cancel-edit-account-form">Cancel</button>
+                            <button type="submit" class="button high" id="save-edit-account">Save</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="button red medium" id="delete-account">Delete Account</button>
+                    <button type="button" class="button high">Change Password</button>
+                </div>
+            </div>
+        </div>
+
+    <script type="module" src="script/script.js"></script>
 </body>
 </html>

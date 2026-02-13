@@ -15,19 +15,21 @@
                 <a href="c1_home.html" class="logo-wrapper"><h1>PerfectDate</h1>
                 <img src="images/Logo.svg" alt="PerfectDate Logo"></a> 
             </section>           
-            <img src="images/person.svg" alt="Person Icon">
+            <button type="button" class="open-user-settings">
+                <img src="images/person.svg" alt="Person Icon">
+            </button>
         </div>
     </header>
 
     <main class="scroll-container">
         <div class="calendar card">
             <div class="calendar-controls">
-                <button class="nav-arrow"><img src="images/arrowleft.svg" alt="Left Arrow"></button>
-                <h2 class="month-title">January 2026</h2>
-                <button class="nav-arrow"><img src="images/arrowright.svg" alt="Right Arrow"></button>
+                <button class="nav-arrow" id="calendar-prev"><img src="images/arrowleft.svg" alt="Left Arrow"></button>
+                <h2 class="month-title" id="calendar-month-title">January 2026</h2>
+                <button class="nav-arrow" id="calendar-next"><img src="images/arrowright.svg" alt="Right Arrow"></button>
             </div>
 
-            <div class="calendar-grid">
+            <div class="calendar-grid" id="calendar-grid">
                 <div class="day-name">Sun</div>
                 <div class="day-name">Mon</div>
                 <div class="day-name">Tue</div>
@@ -35,120 +37,15 @@
                 <div class="day-name">Thu</div>
                 <div class="day-name">Fri</div>
                 <div class="day-name">Sat</div>
-
-                <div class="calendar-day empty"></div>
-                <div class="calendar-day empty"></div>
-                <div class="calendar-day empty"></div>
-                <div class="calendar-day empty"></div>
-
-                <div class="calendar-day">1</div>
-                <div class="calendar-day">2</div>
-                <div class="calendar-day">3</div>
-                <div class="calendar-day">4</div>
-                <div class="calendar-day">5</div>
-                <div class="calendar-day">6</div>
-                <div class="calendar-day">7</div>
-                <div class="calendar-day">8</div>
-                <div class="calendar-day">9</div>
-                <div class="calendar-day">10</div>
-                <div class="calendar-day">11</div>
-                <div class="calendar-day">12</div>
-                <div class="calendar-day">13</div>
-                <div class="calendar-day">14</div>
-                <div class="calendar-day">15</div>
-                <div class="calendar-day">16</div>
-                <div class="calendar-day">17</div>
-                <div class="calendar-day">18</div>
-                <div class="calendar-day">19</div>
-                <div class="calendar-day">20</div>
-                <div class="calendar-day">21</div>
-                
-                <div class="calendar-day">
-                    <span class="circle-highlight">22</span>
-                </div>
-                
-                <div class="calendar-day">23</div>
-                <div class="calendar-day">24</div>
-                <div class="calendar-day">25</div>
-                <div class="calendar-day">26</div>
-                
-                <div class="calendar-day">
-                    27
-                    <div class="event-pill">G...</div>
-                </div>
-                
-                <div class="calendar-day">28</div>
-                <div class="calendar-day">29</div>
-                
-                <div class="calendar-day"> 30
-                    <div class="event-pill">Tr...</div>
-                </div>
-                
-                <div class="calendar-day">31</div>
             </div>
 
             <div>
-                <button class="button high">Add New Event</button>
+                <button class="button high" id="open-add-event">Add New Event</button>
             </div>
         </div>
 
-        <div class="card-list">
+        <div class="card-list" id="upcoming-dates-list">
             <h2>Upcoming Dates</h2>
-            
-            <div class="card event-card">
-                <div class="card-header">
-                    <h3>Go to the Beach</h3>
-                    <img src="images/Edit.svg" alt="Edit" class="edit-icon" onerror="this.style.display='none'">
-                </div>
-                
-                <div class="event-details">
-                    <div>
-                        <p class="event-time">Jan 27, 2026 at 2:00 PM</p>
-                        <p class="event-location">Long Beach, California</p>
-                    </div>
-
-                    <span class="tag">Nature</span>
-                </div>
-            </div>
-
-            <div class="card event-card">
-                <div class="card-header">
-                    <div class="event-title">
-                        <h3>Trampoline Park</h3>
-                        <img src="images/Dollar.svg" alt="Dollar Icon">
-                        <img src="images/Dollar.svg" alt="Dollar Icon">
-                    </div>
-                    <img src="images/Edit.svg" alt="Edit" class="edit-icon">
-                </div>
-                
-                <div class="event-details">
-                    <div>
-                        <p class="event-time">Jan 30, 2026 at 6:00 PM</p>
-                        <p class="event-location">Anaheim, California</p>
-                    </div>
-
-                    <span class="tag">Fitness</span>
-                </div>
-            </div>
-
-            <div class="card event-card">
-                <div class="card-header">
-                     <div class="event-title">
-                        <h3>Ice Cream</h3>
-                        <img src="images/Dollar.svg" alt="Dollar Icon">
-                    </div>
-                    <img src="images/Edit.svg" alt="Edit" class="edit-icon">
-                </div>
-                
-                <div class="event-details">
-                    <div>
-                        <p class="event-time">Feb 14th, 2026 at 8:00 PM</p>
-                        <p class="event-location">Anaheim, California</p>
-                    </div>
-
-                    <span class="tag">Food & Drink</span>
-                </div>
-            </div>
         </div>
 
     </main>
@@ -159,6 +56,352 @@
        <a href="c3_explore.html"><img src="images/Search.svg" alt="Explore"></a>
        <a href="c4_calendar.html"><img src="images/Calendar.svg" alt="Calendar"><span></span></a>
     </footer>
-    <script src="script/script.js"></script>
+
+    <!-- User Settings -->
+    <div class="modal-overlay user-settings-overlay" id="user-settings-modal">
+        <div class="user-settings-panel">
+            <div class="header">                   
+                <h2 id="user-settings-title">username123</h2>
+                <button type="button" class="close-btn" id="close-user-settings">
+                    <img src="images/x.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+
+            <hr>
+
+            <div class="settings-menu">
+                <button type="button" class="menu-item open-favorites">
+                    <div>
+                        <img src="images/purplecircleheart.svg" alt="Heart with Purple Circle">
+                    </div>
+                    <div>
+                        <h3>Your Favorites</h3>
+                        <p>View your liked ideas</p>
+                    </div>
+                </button>
+
+                <button type="button" class="menu-item">
+                    <div class="icon-wrapper">
+                        <img src="images/purplecircleperson.svg" alt="Edit Account">
+                    </div>
+                    <div class="text-wrapper">
+                        <h3>Edit Account</h3>
+                        <p>Update your info</p>
+                    </div>
+                </button>
+            </div>
+
+            <div class="modal-footer">
+                <a href="a2_login.html" class="button high">Log Out</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Account View -->
+        <div class="modal-overlay user-settings-overlay" id="edit-account-modal">
+            <div class="user-settings-panel">
+                <div class="header">
+                    <button type="button" class="close-btn" id="back-edit-account" aria-label="Back">
+                        <img src="images/arrowleft.svg" alt="Back" width="24" height="24">
+                    </button>
+                    <h2>Edit Account</h2>
+                    <button type="button" class="close-btn" id="close-edit-account" aria-label="Close">
+                        <img src="images/x.svg" alt="Close" width="24" height="24">
+                    </button>
+                </div>
+
+                <div class="settings-menu">
+                    <img src="images/profilepicture.svg" alt="User Avatar" class="avatar-large" width="80" height="80">
+
+                    <div class="user-detail">
+                        <label>Name</label>
+                        <div class="detail-value" id="edit-account-name">Rebecca Black</div>
+                    </div>
+                    <div class="user-detail">
+                        <label>Username</label>
+                        <div class="detail-value" id="edit-account-username">username123</div>
+                    </div>
+                    <div class="user-detail">
+                        <label>Password</label>
+                        <div class="detail-value">**********</div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="button high" id="open-edit-account-form">Edit Account Info</button>
+                </div>
+            </div>
+        </div>
+
+         <!-- Edit Account Actual -->
+        <div class="modal-overlay user-settings-overlay" id="edit-account-form-modal">
+            <div class="user-settings-panel">
+                <div class="header">
+                    <button type="button" class="close-btn" id="back-edit-account-form" aria-label="Back">
+                        <img src="images/arrowleft.svg" alt="Back" width="24" height="24">
+                    </button>
+                    <h2>Edit Account</h2>
+                    <button type="button" class="close-btn" id="close-edit-account-form" aria-label="Close">
+                        <img src="images/x.svg" alt="Close" width="24" height="24">
+                    </button>
+                </div>
+
+                <div class="settings-menu">
+                    <div class="avatar-wrapper">
+                        <img src="images/profilepicture.svg" alt="User Avatar" class="avatar-large" width="80" height="80">
+                        <button type="button" class="edit-avatar-btn">
+                            <img src="images/edit.svg" alt="Edit" width="24" height="24">
+                        </button>
+                    </div>
+
+                    <form id="edit-account-form">
+                        <div class="form-group">
+                            <label for="edit-name">Name</label>
+                            <input type="text" id="edit-name" name="name" value="Rebecca Black">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-username">Username</label>
+                            <input type="text" id="edit-username" name="username" value="username123">
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="button medium" id="cancel-edit-account-form">Cancel</button>
+                            <button type="submit" class="button high" id="save-edit-account">Save</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="button red medium" id="delete-account">Delete Account</button>
+                    <button type="button" class="button high">Change Password</button>
+                </div>
+            </div>
+        </div>
+
+         <!-- Add Calendar Event -->
+        <div class="modal-overlay" id="add-event-modal">
+            <div class="card overlay-card">
+                <div class="header">
+                    <h2>Add Event to Calendar</h2>
+                    <button type="button" class="close-btn" id="close-add-event">
+                        <img src="images/x.svg" alt="Close" width="24" height="24">
+                    </button>
+                </div>
+
+                <hr>
+
+                <form class="event-form" id="add-event-form">
+                    
+                    <div class="form-group">
+                        <label for="event-title">Event Title</label>
+                        <input type="text" id="event-title" name="title">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="event-date">Date
+                            <input id="event-date" name="date" type="text">
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="event-time">Time
+                            <input id="event-time" name="time" type="text">
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="event-location">Location
+                            <input id="event-location" name="location" type="text">
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="event-category">Category
+                            <select id="event-category" name="category">
+                            <option value="">Select one</option>
+                            <option value="fitness">Fitness</option>
+                            <option value="food-and-drink">Food & Drink</option>
+                            <option value="games">Games</option>
+                            <option value="creative">Creative</option>
+                            <option value="nature">Nature</option>
+                            <option value="learning-and-culture">Learning and Culture</option>
+                        </select>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="your-date">Your Date
+                            <input id="your-date" name="partner" type="text">
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="event-notes">Notes</label>
+                        <textarea id="event-notes" name="notes"></textarea>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="button medium" id="cancel-add-event">Cancel</button>
+                        <button type="submit" class="button high" id="save-add-event">Add Event</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Edit Calendar Event -->
+        <div class="modal-overlay" id="edit-event-modal">
+            <div class="card overlay-card">
+                <div class="header">
+                    <h2>Edit Calendar Event</h2>
+                    <button type="button" class="close-btn" id="close-edit-event">
+                        <img src="images/x.svg" alt="Close" width="24" height="24">
+                    </button>
+                </div>
+
+                <hr>
+
+                <form class="event-form" id="edit-event-form">
+                
+                <div class="form-group">
+                    <label for="edit-title">Event Title</label>
+                    <input type="text" id="edit-title" name="title" value="Trampoline Park">
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-date">Date</label>
+                    <div class="input-with-icon">
+                        <img src="images/calendar.svg" alt="" class="input-icon">
+                        <input type="text" id="edit-date" name="date" value="1/30/2026">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-time">Time</label>
+                    <div class="input-with-icon">
+                        <img src="images/clock.svg" alt="" class="input-icon">
+                        <input type="text" id="edit-time" name="time" value="5:00 PM">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-location">Location</label>
+                    <div class="input-with-icon">
+                        <img src="images/location.svg" alt="" class="input-icon">
+                        <input type="text" id="edit-location" name="location" value="Anaheim, California">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-category">Category</label>
+                    <select id="edit-category" name="category">
+                        <option value="fitness" selected>Fitness</option>
+                        <option value="food">Food & Drink</option>
+                        <option value="games">Games</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-partner">Your Date</label>
+                    <div class="input-with-icon">
+                        <img src="images/user.svg" alt="" class="input-icon">
+                        <input type="text" id="edit-partner" name="partner" value="Matthew">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-notes">Notes</label>
+                    <textarea id="edit-notes" name="notes"></textarea>
+                </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="button red medium" id="delete-edit-event">Delete</button>
+                        <button type="submit" class="button high" id="save-edit-event">Save</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <!-- View Calendar Event -->
+        <div class="modal-overlay" id="view-event-modal" aria-hidden="true">
+            <div class="card overlay-card">
+                <div class="header">
+                    <h2 class="event-title" id="view-event-title">Trampoline Park</h2>
+                    <button type="button" class="close-btn" id="close-view-event" aria-label="Close">
+                        <img src="images/x.svg" alt="Close" width="24" height="24">
+                    </button>
+                </div>
+
+                <div class="tag-row">
+                    <span class="category-pill" id="view-event-category">Fitness</span>
+                </div>
+
+                <hr>
+
+                <div class="event-details">
+                
+                <div class="detail-row">
+                    <div class="icon-col">
+                        <img src="images/calendar.svg" alt="Date" width="24" height="24">
+                    </div>
+                    <div class="info-col">
+                        <span class="label">Date</span>
+                        <span class="value" id="view-event-date">Sunday, January 30, 2026</span>
+                    </div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="icon-col">
+                        <img src="images/clock.svg" alt="Time" width="24" height="24">
+                    </div>
+                    <div class="info-col">
+                        <span class="label">Time</span>
+                        <span class="value" id="view-event-time">5:00 PM</span>
+                    </div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="icon-col">
+                        <img src="images/location.svg" alt="Location" width="24" height="24">
+                    </div>
+                    <div class="info-col">
+                        <span class="label">Location</span>
+                        <span class="value" id="view-event-location">Anaheim, California</span>
+                    </div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="icon-col">
+                        <img src="images/paperclip.svg" alt="Notes" width="24" height="24">
+                    </div>
+                    <div class="info-col">
+                        <span class="label">Notes</span>
+                        <span class="value" id="view-event-notes">Wear your jumping socks!</span>
+                    </div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="icon-col">
+                        <img src="images/person.svg" alt="Partner" width="24" height="24">
+                    </div>
+                    <div class="info-col">
+                        <span class="label">Your Date</span>
+                        <span class="value" id="view-event-partner">Matthew</span>
+                    </div>
+                </div>
+
+            </div>
+
+                <div class="modal-footer actions-spaced">
+                    <button type="button" class="button medium red" id="delete-view-event">Delete</button>
+                    
+                    <button type="button" id="view-edit-event" aria-label="Edit">
+                        <img src="images/edit.svg" alt="Edit" width="24" height="24">
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    <script type="module" src="script/script.js"></script>
 </body>
 </html>
