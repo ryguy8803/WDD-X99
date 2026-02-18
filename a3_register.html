@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,22 +7,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
    <link rel="stylesheet" href="styles/styles.css">
+   <script type="module" src="firebase.js"></script>
 </head>
 
 <body>
     <main class="middle-page">
         <div class="app-container">
 
-            <form class="register-form">
+            <form class="register-form" id="register-form">
                 
                 <h1 class="page-title">Register</h1>
 
                 <label for="username">Username <input type="text" id="username" name="username" required></label>
-
-                <label for="password">Password <input type="password" name="password" required></label>
+                <label for="email">Email <input type="email" id="email" name="email" required></label>
+                <label for="password">Password <input type="password" id="password" name="password" required></label>
+                <label for="confirm-password">Confirm Password <input type="password" id="confirm-password" name="confirm-password" required></label>
 
                 <div class="register-actions">
-                    <a href="b1_tutorial_1.html" class="button high">Create Account</a>
+                    <button type="submit" class="button high">Create Account</button>
                     
                     <p class="auth-switch">
                         Already have account? <a href="a2_login.html">Login</a>
@@ -32,6 +35,49 @@
 
         </div>
     </main>
+
+    <script type="module">
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+        import { app } from './firebase.js';
+
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const registerForm = document.getElementById('register-form');
+
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const username = registerForm.username.value;
+            const email = registerForm.email.value;
+            const password = registerForm.password.value;
+            const confirmPassword = registerForm['confirm-password'].value;
+
+            if (password !== confirmPassword) {
+                alert("Passwords do not match.");
+                return;
+            }
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Add user to the 'users' collection in Firestore
+                await setDoc(doc(db, "users", user.uid), {
+                    username: username,
+                    email: email
+                });
+
+                window.location.href = 'b1_tutorial_1.html';
+            } catch (error) {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.error(errorCode, errorMessage);
+                alert(errorMessage);
+            }
+        });
+    </script>
 
 </body>
 </html>

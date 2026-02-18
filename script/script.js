@@ -1,46 +1,48 @@
-import dateIdeas from "../ideas.js";
+
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { app } from '../firebase.js';
+
+const db = getFirestore(app);
+const auth = getAuth(app);
+let allIdeas = [];
+let currentUser = null;
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    currentUser = user;
+    initializeApp(); // Initialize app data once user is authenticated
+  } else {
+    currentUser = null;
+    // Handle user not being logged in
+    const protectedPaths = ['/c1_home.html', '/c2_randomize.html', '/c3_explore.html', '/c4_calendar.html'];
+    if (protectedPaths.includes(window.location.pathname)) {
+        window.location.href = 'a2_login.html';
+    }
+  }
+});
 
 // ============================== Utilities ==============================
 const createIdeaId = (title) =>
     title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
-const readLikedIdeasRaw = () => {
-    const stored = localStorage.getItem("likedIdeas");
-    return stored ? JSON.parse(stored) : [];
-};
-
-const readUserIdeas = () => {
-    const stored = localStorage.getItem("userIdeas");
-    return stored ? JSON.parse(stored) : [];
-};
-
-const normalizeLikedIdeas = (items) =>
-    items
-        .map((item) =>
-            typeof item === "string"
-                ? { id: item }
-                : item && typeof item === "object"
-                  ? item
-                  : null
-        )
-        .filter(Boolean);
-
-const saveLikedIdeas = (items) => {
-    localStorage.setItem("likedIdeas", JSON.stringify(items));
-    document.dispatchEvent(new CustomEvent("favorites:updated"));
-};
-
-const saveUserIdeas = (items) => {
-    localStorage.setItem("userIdeas", JSON.stringify(items));
-    document.dispatchEvent(new CustomEvent("ideas:updated"));
-};
-
-const getLikedIdeaIds = () =>
-    new Set(normalizeLikedIdeas(readLikedIdeasRaw()).map((item) => item.id));
-
-const getAllIdeas = () => [...dateIdeas, ...readUserIdeas()];
+const getAllIdeas = () => allIdeas;
 
 const getIdeaId = (idea) => idea.id || createIdeaId(idea.title);
+
+async function getLikedIdeas() {
+    if (!currentUser) return [];
+    const userRef = doc(db, "users", currentUser.uid);
+    const userSnap = await getDoc(userRef);
+    if (userSnap.exists() && userSnap.data().favorites) {
+        const favoriteIds = userSnap.data().favorites;
+        if (favoriteIds.length === 0) return [];
+
+        const likedIdeas = getAllIdeas().filter(idea => favoriteIds.includes(idea.id));
+        return likedIdeas;
+    }
+    return [];
+}
 
 const buildDollarIcons = (count) => {
     const fragment = document.createDocumentFragment();
@@ -297,43 +299,69 @@ if (closeModalButton) {
 
 closeOnOverlayClick(modalOverlay);
 
+const mapFirestoreDocToIdea = (doc) => {
+    const data = doc.data();
+    const id = doc.id;
+    let dollars = 0;
+    if (data.average_cost > 75) {
+        dollars = 3;
+    } else if (data.average_cost > 25) {
+        dollars = 2;
+    } else if (data.average_cost > 0) {
+        dollars = 1;
+    }
+
+    return {
+        id: id,
+        title: data.activity_name,
+        description: data.description,
+        dollars: dollars,
+        images: data.images || [],
+        category: data.category || '',
+        tags: data.tags || []
+    }
+}
+
 if (addIdeaForm) {
-    addIdeaForm.addEventListener("submit", (event) => {
+    addIdeaForm.addEventListener("submit", async (event) => {
         event.preventDefault();
         const formData = new FormData(addIdeaForm);
         const name = String(formData.get("name") || "").trim();
         const description = String(formData.get("description") || "").trim();
-        const categoryValue = String(formData.get("category") || "");
+        const category = String(formData.get("category") || "");
         const priceValue = Number(formData.get("price") || 0);
 
         if (!name) {
             return;
         }
 
-        const categorySelect = addIdeaForm.querySelector("select[name='category']");
-        const categoryText = categorySelect
-            ? categorySelect.selectedOptions[0]?.textContent?.trim()
-            : "";
+        const priceMap = { 0: 0, 1: 20, 2: 50, 3: 100 };
+        const average_cost = priceMap[priceValue];
 
-        const userIdeas = readUserIdeas();
-        const baseId = createIdeaId(name);
-        const uniqueId = userIdeas.some((idea) => idea.id === baseId)
-            ? `${baseId}-${Date.now()}`
-            : baseId;
-
-        userIdeas.unshift({
-            id: uniqueId,
-            title: name,
-            description,
-            dollars: Number.isNaN(priceValue) ? 0 : priceValue,
+        const newActivity = {
+            activity_name: name,
+            description: description,
+            average_cost: average_cost,
+            category: category,
             images: [],
-            category: categoryText || categoryValue || "",
             tags: []
-        });
+        };
 
-        saveUserIdeas(userIdeas);
-        addIdeaForm.reset();
-        closeModal(modalOverlay);
+        try {
+            const docRef = await addDoc(collection(db, "activities"), newActivity);
+
+            const newIdea = mapFirestoreDocToIdea({ id: docRef.id, data: () => newActivity });
+            allIdeas.unshift(newIdea);
+
+            document.dispatchEvent(new CustomEvent("ideas:updated"));
+
+            addIdeaForm.reset();
+            closeModal(modalOverlay);
+
+        } catch (e) {
+            console.error("Error adding document: ", e);
+            alert("There was an error adding your date idea. Please try again.");
+        }
     });
 }
 
@@ -466,21 +494,14 @@ const renderRandomizeIdea = (idea) => {
 };
 
 const addIdeaToFavorites = (idea) => {
-    if (!idea) return;
+    if (!idea || !currentUser) return;
     const ideaId = getIdeaId(idea);
-    const likedIdeas = normalizeLikedIdeas(readLikedIdeasRaw());
-    const exists = likedIdeas.some((item) => item.id === ideaId);
-    if (exists) return;
-
-    likedIdeas.push({
-        id: ideaId,
-        title: idea.title,
-        description: idea.description,
-        image: idea.images?.[0] || "",
-        category: idea.category,
-        dollars: Number(idea.dollars || 0)
+    const userRef = doc(db, "users", currentUser.uid);
+    updateDoc(userRef, {
+        favorites: arrayUnion(ideaId)
+    }).then(() => {
+        document.dispatchEvent(new CustomEvent("favorites:updated"));
     });
-    saveLikedIdeas(likedIdeas);
 };
 
 const getSelectedPreferences = () => {
@@ -523,8 +544,7 @@ const getSelectedPreferences = () => {
 };
 
 const getPoolIdeas = (preferences) => {
-    const allIdeas = getAllIdeas();
-    let filtered = allIdeas;
+    let filtered = getAllIdeas();
 
     if (preferences?.categories?.length) {
         filtered = filtered.filter((idea) =>
@@ -693,7 +713,7 @@ closeOnOverlayClick(randomizeModal);
 closeOnOverlayClick(preferencesModal);
 
 // ======================= Toggleable Buttons ===========================
-const toggleActive = (element) => {
+const toggleActive = async (element) => {
     const isActive = element.classList.toggle("is-active");
     element.setAttribute("aria-pressed", String(isActive));
 
@@ -701,29 +721,37 @@ const toggleActive = (element) => {
 
     const defaultSrc = element.getAttribute("data-src");
     const activeSrc = element.getAttribute("data-active-src");
-    const ideaId = element.getAttribute("data-idea-id");
-
     if (defaultSrc && activeSrc) {
         element.src = isActive ? activeSrc : defaultSrc;
     }
 
+    const ideaId = element.getAttribute("data-idea-id");
     if (!ideaId) return;
 
-    const likedIdeas = normalizeLikedIdeas(readLikedIdeasRaw());
-    const withoutCurrent = likedIdeas.filter((item) => item.id !== ideaId);
-
-    if (isActive) {
-        withoutCurrent.push({
-            id: ideaId,
-            title: element.getAttribute("data-title") || "",
-            description: element.getAttribute("data-description") || "",
-            image: element.getAttribute("data-image") || "",
-            category: element.getAttribute("data-category") || "",
-            dollars: Number(element.getAttribute("data-dollars") || 0)
-        });
+    if (!currentUser) {
+        alert("Please log in to save your favorites.");
+        element.classList.remove("is-active");
+        element.setAttribute("aria-pressed", "false");
+        if (defaultSrc) element.src = defaultSrc;
+        return;
     }
 
-    saveLikedIdeas(withoutCurrent);
+    const userRef = doc(db, "users", currentUser.uid);
+
+    try {
+        if (isActive) {
+            await updateDoc(userRef, {
+                favorites: arrayUnion(ideaId)
+            });
+        } else {
+            await updateDoc(userRef, {
+                favorites: arrayRemove(ideaId)
+            });
+        }
+        document.dispatchEvent(new CustomEvent("favorites:updated"));
+    } catch (e) {
+        console.error("Error updating favorites: ", e);
+    }
 };
 
 document.addEventListener("click", (event) => {
@@ -746,11 +774,11 @@ document.addEventListener("keydown", (event) => {
 });
 
 // ========================== Favorites List ============================
-const renderFavorites = () => {
+const renderFavorites = async () => {
     if (!favoritesList || !favoritesTemplate) return;
 
     favoritesList.innerHTML = "";
-    const likedIdeas = readLikedIdeasRaw();
+    const likedIdeas = await getLikedIdeas();
 
     if (likedIdeas.length === 0) {
         const emptyState = document.createElement("p");
@@ -760,8 +788,7 @@ const renderFavorites = () => {
         return;
     }
 
-    likedIdeas.forEach((storedItem) => {
-        const idea = resolveIdeaFromStored(storedItem);
+    likedIdeas.forEach((idea) => {
         if (!idea) return;
 
         const card = favoritesTemplate.content.cloneNode(true);
@@ -801,20 +828,17 @@ const renderFavorites = () => {
     });
 };
 
-renderFavorites();
-
-document.addEventListener("favorites:updated", renderFavorites);
 
 // =========================== Idea Cards ===============================
 const renderIdeaCards = (listElement, templateElement) => {
     renderIdeaCardsFromIdeas(listElement, templateElement, getAllIdeas());
 };
 
-const renderIdeaCardsFromIdeas = (listElement, templateElement, ideas) => {
+const renderIdeaCardsFromIdeas = async (listElement, templateElement, ideas) => {
     if (!listElement || !templateElement) return;
 
     listElement.innerHTML = "";
-    const likedIdeaIds = getLikedIdeaIds();
+    const likedIdeaIds = new Set((await getLikedIdeas()).map(idea => idea.id));
 
     ideas.forEach((idea) => {
         const ideaId = getIdeaId(idea);
@@ -892,10 +916,6 @@ const filterExploreIdeas = () => {
     renderIdeaCardsFromIdeas(exploreIdeaList, exploreIdeaTemplate, filtered);
 };
 
-renderIdeaCards(homeIdeaList, homeIdeaTemplate);
-renderIdeaCards(exploreIdeaList, exploreIdeaTemplate);
-filterExploreIdeas();
-
 document.addEventListener("ideas:updated", () => {
     renderIdeaCards(homeIdeaList, homeIdeaTemplate);
     renderIdeaCards(exploreIdeaList, exploreIdeaTemplate);
@@ -903,32 +923,7 @@ document.addEventListener("ideas:updated", () => {
     renderHomeFavoritesPreview();
 });
 
-const defaultUpcomingDates = [
-    {
-        title: "Go to the Beach",
-        date: "2026-01-27",
-        time: "2:00 PM",
-        location: "Long Beach, California",
-        category: "Nature",
-        dollars: 0
-    },
-    {
-        title: "Trampoline Park",
-        date: "2026-01-30",
-        time: "6:00 PM",
-        location: "Anaheim, California",
-        category: "Fitness",
-        dollars: 2
-    },
-    {
-        title: "Ice Cream",
-        date: "2026-02-14",
-        time: "8:00 PM",
-        location: "Anaheim, California",
-        category: "Food & Drink",
-        dollars: 1
-    }
-];
+const defaultUpcomingDates = [];
 
 const getEventId = (event) => `${event.date}-${event.title}`;
 
@@ -1358,11 +1353,11 @@ document.addEventListener("click", (event) => {
 });
 
 // ====================== Home Favorites Preview ========================
-const renderHomeFavoritesPreview = () => {
+const renderHomeFavoritesPreview = async () => {
     if (!homeFavoritesList || !homeIdeaTemplate) return;
 
     homeFavoritesList.innerHTML = "";
-    const likedIdeas = readLikedIdeasRaw();
+    const likedIdeas = await getLikedIdeas();
 
     if (likedIdeas.length === 0) {
         homeFavoritesList.hidden = true;
@@ -1377,8 +1372,7 @@ const renderHomeFavoritesPreview = () => {
         homeFavoritesEmptyMessage.hidden = true;
     }
 
-    likedIdeas.forEach((storedItem) => {
-        const idea = resolveIdeaFromStored(storedItem);
+    likedIdeas.forEach((idea) => {
         if (!idea) return;
 
         const card = homeIdeaTemplate.content.cloneNode(true);
@@ -1418,6 +1412,23 @@ const renderHomeFavoritesPreview = () => {
     });
 };
 
-renderHomeFavoritesPreview();
+document.addEventListener("favorites:updated", async () => { 
+    await renderFavorites();
+    await renderHomeFavoritesPreview();
+});
 
-document.addEventListener("favorites:updated", renderHomeFavoritesPreview);
+async function initializeApp() {
+    try {
+        const activitiesCol = collection(db, 'activities');
+        const activitySnapshot = await getDocs(activitiesCol);
+        allIdeas = activitySnapshot.docs.map(mapFirestoreDocToIdea);
+    } catch(e) {
+        console.error("Error fetching ideas from Firestore: ", e);
+    }
+
+    await renderFavorites();
+    await renderHomeFavoritesPreview();
+    await renderIdeaCards(homeIdeaList, homeIdeaTemplate);
+    await renderIdeaCards(exploreIdeaList, exploreIdeaTemplate);
+    filterExploreIdeas();
+}

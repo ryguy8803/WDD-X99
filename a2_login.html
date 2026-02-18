@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,29 +7,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="styles/styles.css">
+    <script type="module" src="firebase.js"></script>
 </head>
 <body>
     
     <main class="middle-page">
         <div class="app-container">
             
-            <form class="login-form">
+            <form class="login-form" id="login-form">
 
                 <h1 class="page-title">Login</h1>
 
-                <label for="username">Username <input type="text" id="username" name="username" required></label>
+                <label for="email">Email <input type="email" id="email" name="email" required></label>
 
-                <label for="password">Password <input type="password" name="password" required></label>
+                <label for="password">Password <input type="password" id="password" name="password" required></label>
 
                 <div class="login-actions">
                     <a href="#">Forgot Password?</a>
                     
-                    <a href="c1_home.html"class="button high">Login</a>
+                    <button type="submit" class="button high">Login</button>
                 </div>
             </form>
 
         </div>
     </main>
+
+    <script type="module">
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+        import { app } from './firebase.js';
+
+        const auth = getAuth(app);
+        const loginForm = document.getElementById('login-form');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = loginForm.email.value;
+            const password = loginForm.password.value;
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                window.location.href = 'c1_home.html';
+            } catch (error) {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.error(errorCode, errorMessage);
+                alert(errorMessage);
+            }
+        });
+    </script>
 
 </body>
 </html>
