@@ -32,30 +32,7 @@
         </div>
     </main>
 
-    <script type="module">
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-        import { app } from './firebase.js';
-
-        const auth = getAuth(app);
-        const loginForm = document.getElementById('login-form');
-
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const email = loginForm.email.value;
-            const password = loginForm.password.value;
-
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-                window.location.href = 'c1_home.html';
-            } catch (error) {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.error(errorCode, errorMessage);
-                alert(errorMessage);
-            }
-        });
-    </script>
+    <script type="module" src="script/script.js"></script>
 
 </body>
 </html>

@@ -1,6 +1,6 @@
 
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, arrayUnion, arrayRemove, setDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { app } from '../firebase.js';
 
 const db = getFirestore(app);
@@ -39,6 +39,54 @@ onAuthStateChanged(auth, async (user) => {
     window.location.href = 'c1_home.html';
   }
 });
+
+const loginForm = document.getElementById('login-form');
+if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = loginForm.email.value;
+        const password = loginForm.password.value;
+
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            window.location.href = 'c1_home.html';
+        } catch (error) {
+            console.error(error.code, error.message);
+            alert(error.message);
+        }
+    });
+}
+
+const registerForm = document.getElementById('register-form');
+if (registerForm) {
+    registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = registerForm.username.value;
+        const email = registerForm.email.value;
+        const password = registerForm.password.value;
+        const confirmPassword = registerForm['confirm-password'].value;
+
+        if (password !== confirmPassword) {
+            alert("Passwords do not match.");
+            return;
+        }
+
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            await setDoc(doc(db, "users", user.uid), {
+                username: username,
+                email: email,
+                favorites: []
+            });
+            window.location.href = 'b1_tutorial_1.html';
+        } catch (error) {
+            console.error(error.code, error.message);
+            alert(error.message);
+        }
+    });
+}
+
 
 // ============================== Utilities ==============================
 const createIdeaId = (title) =>

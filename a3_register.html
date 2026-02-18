@@ -36,49 +36,7 @@
         </div>
     </main>
 
-    <script type="module">
-        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-        import { app } from './firebase.js';
-
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        const registerForm = document.getElementById('register-form');
-
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const username = registerForm.username.value;
-            const email = registerForm.email.value;
-            const password = registerForm.password.value;
-            const confirmPassword = registerForm['confirm-password'].value;
-
-            if (password !== confirmPassword) {
-                alert("Passwords do not match.");
-                return;
-            }
-
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-
-                // Add user to the 'users' collection in Firestore
-                await setDoc(doc(db, "users", user.uid), {
-                    username: username,
-                    email: email,
-                    favorites: []
-                });
-
-                window.location.href = 'b1_tutorial_1.html';
-            } catch (error) {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.error(errorCode, errorMessage);
-                alert(errorMessage);
-            }
-        });
-    </script>
+    <script type="module" src="script/script.js"></script>
 
 </body>
 </html>
