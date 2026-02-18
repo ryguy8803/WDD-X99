@@ -7,18 +7,36 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 let allIdeas = [];
 let currentUser = null;
+let authReady = false;
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
+  currentUser = user;
   if (user) {
-    currentUser = user;
-    initializeApp(); // Initialize app data once user is authenticated
-  } else {
-    currentUser = null;
-    // Handle user not being logged in
-    const protectedPaths = ['/c1_home.html', '/c2_randomize.html', '/c3_explore.html', '/c4_calendar.html'];
-    if (protectedPaths.includes(window.location.pathname)) {
-        window.location.href = 'a2_login.html';
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+    if (userSnap.exists()) {
+        const userData = userSnap.data();
+        saveProfile(userData);
     }
+  }
+
+  const currentPath = window.location.pathname;
+  const protectedPaths = ['/c1_home.html', '/c2_randomize.html', '/c3_explore.html', '/c4_calendar.html'];
+  const authPaths = ['/a2_login.html', '/a3_register.html'];
+
+  if (!authReady) {
+    authReady = true;
+    initializeApp();
+    if (!user && protectedPaths.includes(currentPath)) {
+      window.location.href = 'a2_login.html';
+    }
+  } else {
+    await renderFavorites();
+    await renderHomeFavoritesPreview();
+  }
+
+  if (user && (authPaths.includes(currentPath) || currentPath === '/')) {
+    window.location.href = 'c1_home.html';
   }
 });
 
@@ -273,13 +291,15 @@ const readProfile = () => {
 
 const applyProfile = (profile) => {
     if (!profile) return;
-    if (editAccountNameValue) editAccountNameValue.textContent = profile.name;
+    const name = profile.name || '';
+    const username = profile.username || '';
+    if (editAccountNameValue) editAccountNameValue.textContent = name;
     if (editAccountUsernameValue) {
-        editAccountUsernameValue.textContent = profile.username;
+        editAccountUsernameValue.textContent = username;
     }
-    if (userSettingsTitle) userSettingsTitle.textContent = profile.username;
-    if (editNameInput) editNameInput.value = profile.name;
-    if (editUsernameInput) editUsernameInput.value = profile.username;
+    if (userSettingsTitle) userSettingsTitle.textContent = username;
+    if (editNameInput) editNameInput.value = name;
+    if (editUsernameInput) editUsernameInput.value = username;
 };
 
 const saveProfile = (profile) => {
@@ -451,7 +471,7 @@ if (backEditAccountFormButton) {
 
 if (deleteAccountButton) {
     deleteAccountButton.addEventListener("click", () => {
-        window.location.href = "a1_perfectdate_start.html";
+        window.location.href = "index.html";
     });
 }
 
@@ -800,7 +820,7 @@ const renderFavorites = async () => {
         const heartIcon = card.querySelector(".heart-icon");
 
         setHeroImage(heroImage, idea.image, idea.title);
-        if (title) title.textContent = idea.title;
+        if (_title) _title.textContent = idea.title;
         if (description) description.textContent = idea.description;
         if (tag) tag.textContent = idea.category;
 
