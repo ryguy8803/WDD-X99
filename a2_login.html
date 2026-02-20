@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="styles/styles.css">
+    <script type="module" src="firebase.js"></script>
 </head>
 <body>
     <header class="logged-out">
@@ -24,7 +26,7 @@
     <main class="middle-page">
         <div class="app-container">
             
-            <form class="login-form">
+            <form class="login-form" id="login-form">
 
                 <h1 class="page-title">Login</h1>
 
@@ -35,14 +37,16 @@
                 </div>
                 
                 <div class="login-actions">
-                    <a href="c1_home.html"class="button high">Login</a>
-
                     <a href="#">Forgot Password?</a>
+                    
+                    <button type="submit" class="button high">Login</button>
                 </div>
             </form>
 
         </div>
     </main>
+
+    <script type="module" src="script/script.js"></script>
 
 </body>
 </html>

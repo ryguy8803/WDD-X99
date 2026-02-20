@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
     <link rel="stylesheet" href="styles/styles.css">
+    <script type="module" src="firebase.js"></script>
 </head>
 <body>
     <header>
@@ -126,7 +128,7 @@
             </div>
 
             <div class="modal-footer">
-                <a href="a2_login.html" class="button high">Log Out</a>
+                <button type="button" class="button high" id="logout-button">Log Out</button>
             </div>
         </div>
     </div>
@@ -298,5 +300,22 @@
         </div>
 
     <script type="module" src="script/home.js"></script>
+    <script type="module">
+        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+        import { app } from './firebase.js';
+
+        const auth = getAuth(app);
+        const logoutButton = document.getElementById('logout-button');
+
+        logoutButton.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'a2_login.html';
+            } catch (error) {
+                console.error("Logout failed: ", error);
+                alert("Logout failed. Please try again.");
+            }
+        });
+    </script>
 </body>
 </html>
