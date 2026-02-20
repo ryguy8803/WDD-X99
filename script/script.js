@@ -1,6 +1,6 @@
 
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, arrayUnion, arrayRemove, setDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, arrayUnion, arrayRemove, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 import { app } from '../firebase.js';
 
 const db = getFirestore(app);
@@ -27,16 +27,17 @@ onAuthStateChanged(auth, async (user) => {
   if (!authReady) {
     authReady = true;
     initializeApp();
-    if (!user && protectedPaths.includes(currentPath)) {
+    if (!user && protectedPaths.some(p => currentPath.endsWith(p))) {
       window.location.href = 'a2_login.html';
     }
-  } else {
-    await renderFavorites();
-    await renderHomeFavoritesPreview();
   }
 
-  if (user && (authPaths.includes(currentPath) || currentPath === '/')) {
-    window.location.href = 'c1_home.html';
+  if (user && authPaths.some(p => currentPath.endsWith(p))) {
+    if (currentPath.endsWith('/a3_register.html')) {
+        window.location.href = 'b1_tutorial_1.html';
+    } else {
+        window.location.href = 'c1_home.html';
+    }
   }
 });
 
@@ -49,7 +50,6 @@ if (loginForm) {
 
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            window.location.href = 'c1_home.html';
         } catch (error) {
             console.error(error.code, error.message);
             alert(error.message);
@@ -79,7 +79,6 @@ if (registerForm) {
                 email: email,
                 favorites: []
             });
-            window.location.href = 'b1_tutorial_1.html';
         } catch (error) {
             console.error(error.code, error.message);
             alert(error.message);
@@ -1494,9 +1493,9 @@ async function initializeApp() {
         console.error("Error fetching ideas from Firestore: ", e);
     }
 
-    await renderFavorites();
-    await renderHomeFavoritesPreview();
-    await renderIdeaCards(homeIdeaList, homeIdeaTemplate);
-    await renderIdeaCards(exploreIdeaList, exploreIdeaTemplate);
+    renderFavorites();
+    renderHomeFavoritesPreview();
+    renderIdeaCards(homeIdeaList, homeIdeaTemplate);
+    renderIdeaCards(exploreIdeaList, exploreIdeaTemplate);
     filterExploreIdeas();
 }
