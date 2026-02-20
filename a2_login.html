@@ -8,6 +8,18 @@
     <link rel="stylesheet" href="styles/styles.css">
 </head>
 <body>
+    <header class="logged-out">
+        <div>
+            <section>          
+                <a href="a1_perfectdate_start.html" class="logo-wrapper"><h1>PerfectDate</h1>
+                <img src="images/Logo.svg" alt="PerfectDate Logo"></a> 
+            </section>
+            <div class="auth-buttons">
+                 <a href="a2_login.html" class="button high">Login</a>
+                <a href="a3_register.html" class="button medium">Register</a>
+            </div>
+        </div>
+    </header>
     
     <main class="middle-page">
         <div class="app-container">
@@ -16,14 +28,16 @@
 
                 <h1 class="page-title">Login</h1>
 
-                <label for="username">Username <input type="text" id="username" name="username" required></label>
+                <div>
+                    <label for="username">Username <input type="text" id="username" name="username" required></label>
 
-                <label for="password">Password <input type="password" name="password" required></label>
-
+                    <label for="password">Password <input type="password" name="password" required></label>
+                </div>
+                
                 <div class="login-actions">
-                    <a href="#">Forgot Password?</a>
-                    
                     <a href="c1_home.html"class="button high">Login</a>
+
+                    <a href="#">Forgot Password?</a>
                 </div>
             </form>
 
