@@ -11,6 +11,19 @@
 </head>
 
 <body>
+    <header class="logged-out">
+        <div>
+            <section>          
+                <a href="a1_perfectdate_start.html" class="logo-wrapper"><h1>PerfectDate</h1>
+                <img src="images/Logo.svg" alt="PerfectDate Logo"></a> 
+            </section>
+            <div class="auth-buttons">
+                <a href="a2_login.html" class="button high">Login</a>
+                <a href="a3_register.html" class="button medium">Register</a>
+            </div>
+        </div>
+    </header>
+    
     <main class="middle-page">
         <div class="app-container">
 
@@ -18,13 +31,15 @@
                 
                 <h1 class="page-title">Register</h1>
 
-                <label for="username">Username <input type="text" id="username" name="username" required></label>
-                <label for="email">Email <input type="email" id="email" name="email" required></label>
-                <label for="password">Password <input type="password" id="password" name="password" required></label>
-                <label for="confirm-password">Confirm Password <input type="password" id="confirm-password" name="confirm-password" required></label>
+                <div>
+                    <label for="username">Username <input type="text" id="username" name="username" required></label>
+
+                    <label for="password">Password <input type="password" name="password" required></label>
+                </div>
 
                 <div class="register-actions">
-                    <button type="submit" class="button high">Create Account</button>
+                    <a href="b1_tutorial_1.html" class="button high mobile">Create Account</a>
+                    <a href="b_tutorial.html" class="button high desktop">Create Account</a>
                     
                     <p class="auth-switch">
                         Already have account? <a href="a2_login.html">Login</a>

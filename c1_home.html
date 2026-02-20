@@ -15,43 +15,38 @@
             <section>          
                 <a href="c1_home.html" class="logo-wrapper"><h1>PerfectDate</h1>
                 <img src="images/Logo.svg" alt="PerfectDate Logo"></a> 
-            </section>           
+            </section>   
+            <div class="nav-and-profile">
+                <div class="nav">
+                    <a href="c1_home.html"><img src="images/Home.svg" alt="Home"><span></span></a>
+                    <a href="c2_randomize.html"><img src="images/Shuffle.svg" alt="Randomize"></a>
+                    <a href="c3_explore.html"><img src="images/Search.svg" alt="Explore"></a>
+                    <a href="c4_calendar.html"><img src="images/Calendar.svg" alt="Calendar"></a>        
+                    <button type="button" class="open-user-settings">
+                </div>
+
             <button type="button" class="open-user-settings">
                 <img src="images/person.svg" alt="Person Icon">
             </button>
+            </div>
         </div>
     </header>
 
     <main class="scroll-container">
         
         <section class="layout-band">
-            <h2>Explore date ideas</h2>
-            <div class="horizontal-card-list" id="home-idea-list"></div>
-
-            <template id="home-card-idea-template">
-                <div class="card idea-card">
-                    <img src="" alt="" class="hero">
-                    <div class="card-body">
-                        <div class="top-half">
-                            <section class="top3rd">
-                                <h3></h3>
-                                <div class="price-level"></div>
-                            </section>
-                            <p></p>
-                        </div>
-                        <section class="bottom3rd">
-                            <span class="tag tag-button" role="button" tabindex="0" aria-pressed="false"></span>
-                            <img src="images/Heart.svg" alt="Heart Icon" class="heart-icon" role="button" tabindex="0" aria-pressed="false" data-src="images/Heart.svg" data-active-src="images/HeartFilled.svg">
-                        </section>
-                    </div>
-                </div>
-            </template>
-
-            <div>
+            <div class="explore-header">
+                <h2>Explore date ideas</h2>
                 <a class="button high" href="c3_explore.html">Explore</a>
             </div>
+
+            <div class="horizontal-card-list" id="home-idea-list">
+                <!-- Idea cards are rendered here -->
+            </div>
+
         </section>
 
+        <div class="clown">
         <section class="layout-band">
             <h2 class="section-title">Surprise me!</h2>
             
@@ -66,17 +61,25 @@
             </a>
             
         </section>
-
         <section class="layout-band">
-            <h2>Your favorites</h2>
+            <div class="favorites-header">
+                <h2>Your favorites</h2>
+                <div class="desktop">
+                    <button class="button high" id="open-favorites" type="button">View Favorites</button>
+                    <button class="button medium" id="open-add-idea" type="button">Add an Idea</button>
+                </div>
+            </div>
             <p class="favorites">You don’t have any favorites yet. Explore ideas or add your own!</p>
-            <div class="horizontal-card-list" id="home-favorites-list"></div>
-            
-            <div>
+            <div class="horizontal-card-list" id="home-favorites-list">
+                <!-- Idea cards are rendered here -->
+            </div>
+            <div class="mobile">
                 <button class="button high" id="open-favorites" type="button">View Favorites</button>
                 <button class="button medium" id="open-add-idea" type="button">Add an Idea</button>
             </div>
+            
         </section>
+        </div>
 
     </main>
 
@@ -134,11 +137,11 @@
         <div class="modal-overlay user-settings-overlay" id="edit-account-modal">
             <div class="user-settings-panel">
                 <div class="header">
-                    <button type="button" class="close-btn" id="back-edit-account" aria-label="Back">
+                    <button type="button" class="close-btn" id="back-edit-account">
                         <img src="images/arrowleft.svg" alt="Back" width="24" height="24">
                     </button>
                     <h2>Edit Account</h2>
-                    <button type="button" class="close-btn" id="close-edit-account" aria-label="Close">
+                    <button type="button" class="close-btn" id="close-edit-account">
                         <img src="images/x.svg" alt="Close" width="24" height="24">
                     </button>
                 </div>
@@ -170,11 +173,11 @@
         <div class="modal-overlay user-settings-overlay" id="edit-account-form-modal">
             <div class="user-settings-panel">
                 <div class="header">
-                    <button type="button" class="close-btn" id="back-edit-account-form" aria-label="Back">
+                    <button type="button" class="close-btn" id="back-edit-account-form">
                         <img src="images/arrowleft.svg" alt="Back" width="24" height="24">
                     </button>
                     <h2>Edit Account</h2>
-                    <button type="button" class="close-btn" id="close-edit-account-form" aria-label="Close">
+                    <button type="button" class="close-btn" id="close-edit-account-form">
                         <img src="images/x.svg" alt="Close" width="24" height="24">
                     </button>
                 </div>
@@ -287,8 +290,8 @@
                                 <p></p>
                             </div>
                             <section class="bottom3rd">
-                                <span class="tag tag-button" role="button" tabindex="0" aria-pressed="false"></span>
-                                <img src="images/Heart.svg" alt="Heart Icon" class="heart-icon" role="button" tabindex="0" aria-pressed="false" data-src="images/Heart.svg" data-active-src="images/HeartFilled.svg">
+                                <span class="tag tag-button"></span>
+                                <img src="images/Heart.svg" alt="Heart Icon" class="heart-icon" data-src="images/Heart.svg" data-active-src="images/HeartFilled.svg">
                             </section>
                         </div>
                     </div>
@@ -296,7 +299,7 @@
             </div>
         </div>
 
-    <script type="module" src="script/script.js"></script>
+    <script type="module" src="script/home.js"></script>
     <script type="module">
         import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
         import { app } from './firebase.js';

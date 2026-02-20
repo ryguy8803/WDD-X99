@@ -15,10 +15,20 @@
             <section>          
                 <a href="c1_home.html" class="logo-wrapper"><h1>PerfectDate</h1>
                 <img src="images/Logo.svg" alt="PerfectDate Logo"></a> 
-            </section>           
+            </section>   
+            <div class="nav-and-profile">
+                <div class="nav">
+                    <a href="c1_home.html"><img src="images/Home.svg" alt="Home"></a>
+                    <a href="c2_randomize.html"><img src="images/Shuffle.svg" alt="Randomize"><span></span></a>
+                    <a href="c3_explore.html"><img src="images/Search.svg" alt="Explore"></a>
+                    <a href="c4_calendar.html"><img src="images/Calendar.svg" alt="Calendar"></a>        
+                    <button type="button" class="open-user-settings">
+                </div>
+
             <button type="button" class="open-user-settings">
                 <img src="images/person.svg" alt="Person Icon">
             </button>
+            </div>
         </div>
     </header>
 
@@ -107,32 +117,26 @@
 
                 <p class="instruction-text randomize-empty-message" id="randomize-empty-message" hidden></p>
 
-                <div class="card idea-card" id="randomize-idea-card">
-                    <img src="" alt="" class="hero" id="randomize-idea-hero">
-                    <div class="card-body">
-                        <div class="top-half">
-                            <section class="top3rd">
-                                <h3 id="randomize-idea-title">Trampoline Park</h3>
-                                <div class="price-level" id="randomize-idea-price"></div>
-                            </section>
-                            <p id="randomize-idea-description">Jump around and stuff</p>
-                        </div>
-                        <section class="bottom3rd">
-                            <span class="tag" id="randomize-idea-tag">Fitness</span>
-                        </section>
-                    </div>
-                </div>
+                <div class="card idea-card" id="randomize-idea-card"></div>
 
                 <div class="randomize-actions" id="randomize-actions">
                     <button type="button" class="icon-action-btn" id="randomize-reject">
-                        <img src="images/x.svg" alt="X">
+                        <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M33 11L11 33M11 11L33 33" stroke="rgb(62,0,84)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
                     </button>
 
                     <button type="button" class="button medium" id="randomize-add-calendar">Add to Calendar</button>
 
                     <button type="button" class="icon-action-btn" id="randomize-favorite">
-                        <img src="images/heart.svg" alt="Heart">
+                        <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M38.2062 8.4516C37.2698 7.51477 36.1581 6.77161 34.9344 6.26458C33.7107 5.75755 32.3991 5.49658 31.0746 5.49658C29.75 5.49658 28.4384 5.75755 27.2147 6.26458C25.9911 6.77161 24.8793 7.51477 23.9429 8.4516L21.9996 10.3949L20.0562 8.4516C18.1648 6.56016 15.5995 5.49756 12.9246 5.49756C10.2497 5.49756 7.68434 6.56016 5.7929 8.4516C3.90146 10.343 2.83887 12.9084 2.83887 15.5833C2.83887 18.2582 3.90146 20.8235 5.7929 22.7149L21.9996 38.9216L38.2062 22.7149C39.1431 21.7785 39.8862 20.6668 40.3932 19.4431C40.9003 18.2194 41.1612 16.9078 41.1612 15.5833C41.1612 14.2587 40.9003 12.9471 40.3932 11.7234C39.8862 10.4998 39.1431 9.38798 38.2062 8.4516Z" stroke="rgb(62,0,84)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
                     </button>
+                </div>
+
+                <div class="modal-footer" id="randomize-adjust-preferences" hidden>
+                    <button type="button" class="button high" id="adjust-preferences-button">Adjust Preferences</button>
                 </div>
             </div>
         </div>
@@ -164,14 +168,14 @@
                     <div class="preference-section">
                         <h4>Where?</h4>
                         <div class="radio-group">
-                            <label class="radio">
-                                <input type="radio" name="location" value="indoors">
-                                <span class="dot"></span>
+                            <label class="checkbox">
+                                <input type="checkbox" name="location" value="indoors">
+                                <span class="box"></span>
                                 Indoors
                             </label>
-                            <label class="radio">
-                                <input type="radio" name="location" value="outdoors">
-                                <span class="dot"></span>
+                            <label class="checkbox">
+                                <input type="checkbox" name="location" value="outdoors">
+                                <span class="box"></span>
                                 Outdoors
                             </label>
                         </div>
@@ -180,14 +184,14 @@
                     <div class="preference-section">
                         <h4>Energy Level</h4>
                         <div class="radio-group">
-                            <label class="radio">
-                                <input type="radio" name="energy" value="lazy">
-                                <span class="dot"></span>
+                            <label class="checkbox">
+                                <input type="checkbox" name="energy" value="lazy">
+                                <span class="box"></span>
                                 Lazy
                             </label>
-                            <label class="radio">
-                                <input type="radio" name="energy" value="high-energy">
-                                <span class="dot"></span>
+                            <label class="checkbox">
+                                <input type="checkbox" name="energy" value="high-energy">
+                                <span class="box"></span>
                                 High Energy
                             </label>
                         </div>
@@ -196,14 +200,14 @@
                     <div class="preference-section">
                         <h4>How long?</h4>
                         <div class="radio-group">
-                            <label class="radio">
-                                <input type="radio" name="duration" value="quick">
-                                <span class="dot"></span>
+                            <label class="checkbox">
+                                <input type="checkbox" name="duration" value="quick">
+                                <span class="box"></span>
                                 Quick
                             </label>
-                            <label class="radio">
-                                <input type="radio" name="duration" value="long">
-                                <span class="dot"></span>
+                            <label class="checkbox">
+                                <input type="checkbox" name="duration" value="long">
+                                <span class="box"></span>
                                 Long
                             </label>
                         </div>
@@ -279,11 +283,11 @@
         <div class="modal-overlay user-settings-overlay" id="edit-account-modal">
             <div class="user-settings-panel">
                 <div class="header">
-                    <button type="button" class="close-btn" id="back-edit-account" aria-label="Back">
+                    <button type="button" class="close-btn" id="back-edit-account">
                         <img src="images/arrowleft.svg" alt="Back" width="24" height="24">
                     </button>
                     <h2>Edit Account</h2>
-                    <button type="button" class="close-btn" id="close-edit-account" aria-label="Close">
+                    <button type="button" class="close-btn" id="close-edit-account">
                         <img src="images/x.svg" alt="Close" width="24" height="24">
                     </button>
                 </div>
@@ -315,11 +319,11 @@
         <div class="modal-overlay user-settings-overlay" id="edit-account-form-modal">
             <div class="user-settings-panel">
                 <div class="header">
-                    <button type="button" class="close-btn" id="back-edit-account-form" aria-label="Back">
+                    <button type="button" class="close-btn" id="back-edit-account-form">
                         <img src="images/arrowleft.svg" alt="Back" width="24" height="24">
                     </button>
                     <h2>Edit Account</h2>
-                    <button type="button" class="close-btn" id="close-edit-account-form" aria-label="Close">
+                    <button type="button" class="close-btn" id="close-edit-account-form">
                         <img src="images/x.svg" alt="Close" width="24" height="24">
                     </button>
                 </div>
@@ -356,7 +360,7 @@
             </div>
         </div>
 
-    <script type="module" src="script/script.js"></script>
+    <script type="module" src="script/randomize.js"></script>
 
 </body>
 </html>
