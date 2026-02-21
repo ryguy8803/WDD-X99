@@ -1,5 +1,4 @@
-import dateIdeas from "./dateIdeas.js";
-import { createIdeaCardHTML, toggleLike } from "./script.js";
+import { createIdeaCardHTML, toggleLike, getAllIdeas } from "./script.js";
 
 // Elements
 const exploreSearchInput = document.querySelector("input[name='search']");
@@ -14,25 +13,28 @@ const getSelectedTags = () => {
 };
 
 // Render all idea cards
-const renderExploreIdeas = (ideas) => {
+const renderExploreIdeas = async (ideas) => {
     if (!exploreIdeaList) return;
     
     // Clear the container
     exploreIdeaList.innerHTML = "";
     
     // Render each idea card
-    ideas.forEach(idea => {
-        const cardHTML = createIdeaCardHTML(idea);
+    for (const idea of ideas) {
+        const cardHTML = await createIdeaCardHTML(idea);
         exploreIdeaList.innerHTML += cardHTML;
-    });
+    }
 };
 
 // Filter and display ideas based on search and tags
-const filterExploreIdeas = () => {
+const filterExploreIdeas = async () => {
     const query = (exploreSearchInput?.value || "").trim().toLowerCase();
     const selectedTags = getSelectedTags();
 
-    const filtered = dateIdeas.filter((idea) => {
+    // Fetch ideas from Firestore
+    const allIdeas = await getAllIdeas();
+    
+    const filtered = allIdeas.filter((idea) => {
         const category = (idea.category || "").toLowerCase();
         const title = (idea.title || "").toLowerCase();
         const description = (idea.description || "").toLowerCase();
@@ -52,7 +54,7 @@ const filterExploreIdeas = () => {
         return matchesQuery && matchesTags;
     });
 
-    renderExploreIdeas(filtered);
+    await renderExploreIdeas(filtered);
 };
 
 // Init and Event Listeners ------------------------------------------------------------------------------
@@ -68,18 +70,18 @@ if (exploreSearchInput) {
 }
 
 // Tag button click listener
-document.addEventListener("click", (event) => {
+document.addEventListener("click", async (event) => {
     const tagButton = event.target.closest(".tags .tag-button");
     if (tagButton) {
         tagButton.classList.toggle("is-active");
-        filterExploreIdeas();
+        await filterExploreIdeas();
     }
     
     // Heart icon click listener
     const heart = event.target.closest(".heart-icon");
     if (heart) {
-        const ideaId = parseInt(heart.getAttribute("data-idea-id"));
-        const isNowLiked = toggleLike(ideaId);
+        const ideaId = heart.getAttribute("data-idea-id");
+        const isNowLiked = await toggleLike(ideaId);
         
         // Update ALL heart icons for this idea ID
         const allHeartsForIdea = document.querySelectorAll(`[data-idea-id="${ideaId}"]`);

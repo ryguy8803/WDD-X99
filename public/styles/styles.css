@@ -82,7 +82,7 @@ main {
     display: flex;
     flex-direction: column;
     gap: var(--extra-large-spacing);
-    padding: var(--medium-large-spacing) var(--large-spacing);
+    padding: var(--medium-large-spacing) var(--medium-spacing);
 }
 
 .layout-band {
@@ -94,7 +94,7 @@ main {
 .horizontal-card-list {
     display: grid;
     grid-auto-flow: column;
-    grid-auto-columns: 280px;
+    /* grid-auto-columns: 280px; */
     gap: var(--medium-spacing);
     overflow-x: auto;
     padding-bottom: var(--small-spacing);
@@ -476,6 +476,7 @@ select {
     display: flex;
     flex-direction: column;
     gap: var(--extra-large-spacing);
+    width: clamp(280px, 100%, 400px);
     img {
         width: 25px;
     }
@@ -605,7 +606,7 @@ select {
     justify-content: flex-end;
 }
 .user-settings-panel {
-    width: 90%;
+    width: clamp(325px, 30%, 500px);
     height: 100%;
     background-color: var(--gray-10);
     display: flex;
@@ -857,8 +858,9 @@ select {
 .calendar {
     display: flex;
     flex-direction: column;
-    gap: var(--medium-spacing);
-    padding: var(--medium-spacing)
+    gap: var(--large-spacing);
+    padding: var(--medium-large-spacing);
+    justify-content: space-between;
 }
 
 .calendar-controls {
@@ -866,6 +868,7 @@ select {
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    gap: var(--medium-spacing);
     h2 {
         color: var(--purple);
     }
@@ -875,12 +878,27 @@ select {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: var(--small-spacing);
+    flex: 1;
+    align-content: start;
+}
+
+.day-name {
+    text-align: center;
+    font-weight: 500;
+    padding: var(--small-spacing);
+    color: var(--gray-60);
 }
 
 .calendar-day {
     padding: 2px;
     border: solid 1px var(--gray-30);
-    height: 50px;
+    aspect-ratio: 1;
+    min-height: 44px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    font-size: var(--p);
 }
 .empty {
     border: none;
@@ -991,6 +1009,12 @@ select {
         background-color: var(--gray-10);
     }
 
+    /* Favorites Modal */
+    .favorites-overlay-card .favorites-list {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
     /* Header and Footer */
     footer {
         display: none;
@@ -1049,6 +1073,24 @@ select {
         .idea-card {
             width: 280px;
         }
+    }
+
+    /* Calendar */ 
+    .calendar-page {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: var(--extra-large-spacing);
+        align-items: flex-start;
+    }
+    
+    .calendar {
+        max-width: 100%;
+        gap: var(--extra-large-spacing);
+    }
+    
+    #upcoming-dates-list { 
+        display: flex;
+        flex-direction: column;
     }
 }
 

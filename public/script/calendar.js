@@ -1,31 +1,74 @@
-import { openModal, closeModal, closeOnOverlayClick, renderDollarSigns } from "./script.js";
+import { openModal, closeModal, closeOnOverlayClick, renderDollarSigns, db, getCurrentUser, auth } from "./script.js";
+import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
 // ============================== DATA MANAGEMENT ==============================
 
-const getEventId = (event) => `${event.date}-${event.title}`;
 let activeEvent = null;
 
-const getUpcomingDates = () => {
-    const stored = localStorage.getItem("upcomingDates");
-    if (!stored) return [];
+// Get upcoming dates from Firebase only
+const getUpcomingDates = async () => {
+    const user = getCurrentUser();
+    console.log("Current user in getUpcomingDates:", user);
+    if (!user) return [];
+    
     try {
-        return JSON.parse(stored);
-    } catch {
+        const eventsRef = collection(db, "users", user.uid, "events");
+        const eventsSnap = await getDocs(eventsRef);
+        console.log("Events snapshot size:", eventsSnap.size);
+        return eventsSnap.docs.map(doc => ({
+            ...doc.data(),
+            firestoreId: doc.id
+        }));
+    } catch (error) {
+        console.error("Error fetching events from Firebase:", error);
         return [];
     }
 };
 
-const saveUpcomingDates = (dates) => {
-    localStorage.setItem("upcomingDates", JSON.stringify(dates));
+// Add a new event to Firebase
+const addEvent = async (event) => {
+    const user = getCurrentUser();
+    if (!user) return;
+    
+    try {
+        const eventsRef = collection(db, "users", user.uid, "events");
+        await addDoc(eventsRef, event);
+        await renderUpcomingDates();
+        if (calendarCurrentMonth) await renderCalendar(calendarCurrentMonth);
+    } catch (error) {
+        console.error("Error adding event to Firebase:", error);
+    }
 };
 
-const removeEventById = (eventId) => {
-    const filtered = getUpcomingDates().filter(
-        (item) => getEventId(item) !== eventId
-    );
-    saveUpcomingDates(filtered);
-    renderUpcomingDates();
-    if (calendarCurrentMonth) renderCalendar(calendarCurrentMonth);
+// Update an existing event in Firebase
+const updateEvent = async (eventToUpdate, updatedData) => {
+    const user = getCurrentUser();
+    if (!user || !eventToUpdate.firestoreId) return;
+    
+    try {
+        const eventRef = doc(db, "users", user.uid, "events", eventToUpdate.firestoreId);
+        await updateDoc(eventRef, updatedData);
+        await renderUpcomingDates();
+        if (calendarCurrentMonth) await renderCalendar(calendarCurrentMonth);
+    } catch (error) {
+        console.error("Error updating event in Firebase:", error);
+    }
+};
+
+// Remove event by firestoreId from Firebase
+const removeEventById = async (eventToRemove) => {
+    const user = getCurrentUser();
+    if (!user || !eventToRemove.firestoreId) return;
+    
+    try {
+        const eventRef = doc(db, "users", user.uid, "events", eventToRemove.firestoreId);
+        await deleteDoc(eventRef);
+        await renderUpcomingDates();
+        if (calendarCurrentMonth) await renderCalendar(calendarCurrentMonth);
+    } catch (error) {
+        console.error("Error deleting event from Firebase:", error);
+    }
 };
 
 // ============================== UTILITY FUNCTIONS ==============================
@@ -72,17 +115,16 @@ const createDollarHTML = (count) => {
 
 // Create event card HTML template
 const createEventCardHTML = (event) => {
-    const eventId = getEventId(event);
     const dollarsHTML = event.dollars > 0 ? createDollarHTML(event.dollars) : "";
     
     return `
-        <div class="card event-card">
+        <div class="card event-card" data-firestore-id="${event.firestoreId}">
             <div class="card-header">
                 <div class="event-title">
                     <h3>${event.title}</h3>
                     ${dollarsHTML}
                 </div>
-                <button type="button" class="edit-icon" data-event-id="${eventId}">
+                <button type="button" class="edit-icon" data-firestore-id="${event.firestoreId}">
                     <img src="images/Edit.svg" alt="Edit">
                 </button>
             </div>
@@ -101,10 +143,11 @@ const createEventCardHTML = (event) => {
 
 const upcomingDatesList = document.getElementById("upcoming-dates-list");
 
-const renderUpcomingDates = () => {
+const renderUpcomingDates = async () => {
     if (!upcomingDatesList) return;
     
-    const dates = getUpcomingDates();
+    const dates = await getUpcomingDates();
+    console.log("Upcoming dates:", dates);
 
     if (dates.length === 0) {
         upcomingDatesList.innerHTML = `
@@ -115,6 +158,7 @@ const renderUpcomingDates = () => {
     }
 
     const cardsHTML = dates.map(event => createEventCardHTML(event)).join("");
+    console.log("Cards HTML:", cardsHTML);
     upcomingDatesList.innerHTML = `
         <h2>Upcoming Dates</h2>
         ${cardsHTML}
@@ -128,7 +172,7 @@ const calendarMonthTitle = document.getElementById("calendar-month-title");
 const calendarPrevButton = document.getElementById("calendar-prev");
 const calendarNextButton = document.getElementById("calendar-next");
 
-const renderCalendar = (date) => {
+const renderCalendar = async (date) => {
     if (!calendarGrid || !calendarMonthTitle) return;
     
     const year = date.getFullYear();
@@ -152,7 +196,7 @@ const renderCalendar = (date) => {
     }
 
     // Create event map for quick lookup
-    const events = getUpcomingDates();
+    const events = await getUpcomingDates();
     const eventMap = new Map();
     events.forEach((event) => eventMap.set(event.date, event));
 
@@ -182,7 +226,7 @@ const renderCalendar = (date) => {
             pill.type = "button";
             pill.className = "event-pill";
             pill.textContent = `${eventMap.get(dateKey).title.slice(0, 2)}...`;
-            pill.dataset.eventId = getEventId(eventMap.get(dateKey));
+            pill.dataset.firestoreId = eventMap.get(dateKey).firestoreId;
             cell.appendChild(pill);
         }
 
@@ -193,33 +237,41 @@ const renderCalendar = (date) => {
 // Calendar navigation
 let calendarCurrentMonth = null;
 
+// Wait for authentication before rendering calendar
+onAuthStateChanged(auth, async (user) => {
+    if (user && calendarGrid && calendarMonthTitle) {
+        let currentMonth = new Date();
+        calendarCurrentMonth = currentMonth;
+        await renderCalendar(currentMonth);
+        await renderUpcomingDates();
+    }
+});
+
 if (calendarGrid && calendarMonthTitle) {
     let currentMonth = new Date();
     calendarCurrentMonth = currentMonth;
-    renderCalendar(currentMonth);
-    renderUpcomingDates();
 
     if (calendarPrevButton) {
-        calendarPrevButton.addEventListener("click", () => {
+        calendarPrevButton.addEventListener("click", async () => {
             currentMonth = new Date(
                 currentMonth.getFullYear(),
                 currentMonth.getMonth() - 1,
                 1
             );
             calendarCurrentMonth = currentMonth;
-            renderCalendar(currentMonth);
+            await renderCalendar(currentMonth);
         });
     }
 
     if (calendarNextButton) {
-        calendarNextButton.addEventListener("click", () => {
+        calendarNextButton.addEventListener("click", async () => {
             currentMonth = new Date(
                 currentMonth.getFullYear(),
                 currentMonth.getMonth() + 1,
                 1
             );
             calendarCurrentMonth = currentMonth;
-            renderCalendar(currentMonth);
+            await renderCalendar(currentMonth);
         });
     }
 }
@@ -252,7 +304,7 @@ if (cancelAddEventButton) {
 }
 
 if (addEventForm) {
-    addEventForm.addEventListener("submit", (event) => {
+    addEventForm.addEventListener("submit", async (event) => {
         event.preventDefault();
 
         const title = (addEventTitle?.value || "").trim();
@@ -271,10 +323,9 @@ if (addEventForm) {
             dollars: 0
         };
 
-        const updated = [...getUpcomingDates(), newEvent];
-        saveUpcomingDates(updated);
-        renderUpcomingDates();
-        if (calendarCurrentMonth) renderCalendar(calendarCurrentMonth);
+        await addEvent(newEvent);
+        await renderUpcomingDates();
+        if (calendarCurrentMonth) await renderCalendar(calendarCurrentMonth);
         
         closeModal(addEventModal);
         addEventForm.reset();
@@ -282,24 +333,25 @@ if (addEventForm) {
 }
 
 // Handle pending events from randomize feature
-if (addEventModal) {
-    const pending = localStorage.getItem("pendingCalendarEvent");
-    if (pending) {
-        try {
-            const parsed = JSON.parse(pending);
-            openModal(addEventModal);
-            if (addEventTitle) addEventTitle.value = parsed.title || "";
-            if (addEventCategory) {
-                addEventCategory.value = (parsed.category || "")
-                    .toLowerCase()
-                    .replace(/\s+/g, "-");
-            }
-        } catch {
-            // Ignore parse errors
-        }
-        localStorage.removeItem("pendingCalendarEvent");
-    }
-}
+// NOTE: Disabled localStorage - need to implement Firebase-based solution
+// if (addEventModal) {
+//     const pending = localStorage.getItem("pendingCalendarEvent");
+//     if (pending) {
+//         try {
+//             const parsed = JSON.parse(pending);
+//             openModal(addEventModal);
+//             if (addEventTitle) addEventTitle.value = parsed.title || "";
+//             if (addEventCategory) {
+//                 addEventCategory.value = (parsed.category || "")
+//                     .toLowerCase()
+//                     .replace(/\s+/g, "-");
+//             }
+//         } catch {
+//             // Ignore parse errors
+//         }
+//         localStorage.removeItem("pendingCalendarEvent");
+//     }
+// }
 
 closeOnOverlayClick(addEventModal);
 
@@ -333,7 +385,7 @@ const openEditEvent = (event) => {
 };
 
 if (editEventForm) {
-    editEventForm.addEventListener("submit", (event) => {
+    editEventForm.addEventListener("submit", async (event) => {
         event.preventDefault();
         if (!activeEvent) return;
 
@@ -342,8 +394,7 @@ if (editEventForm) {
         const date = normalizeDateInput(rawDate);
         if (!title || !date) return;
 
-        const updatedEvent = {
-            ...activeEvent,
+        const updatedData = {
             title,
             date,
             time: (editEventTime?.value || "").trim(),
@@ -353,15 +404,11 @@ if (editEventForm) {
             notes: (editEventNotes?.value || "").trim()
         };
 
-        const eventId = getEventId(activeEvent);
-        const updated = getUpcomingDates().map((item) =>
-            getEventId(item) === eventId ? updatedEvent : item
-        );
-        saveUpcomingDates(updated);
-        renderUpcomingDates();
-        if (calendarCurrentMonth) renderCalendar(calendarCurrentMonth);
+        await updateEvent(activeEvent, updatedData);
+        await renderUpcomingDates();
+        if (calendarCurrentMonth) await renderCalendar(calendarCurrentMonth);
         
-        activeEvent = updatedEvent;
+        activeEvent = { ...activeEvent, ...updatedData };
         closeModal(editEventModal);
     });
 }
@@ -371,9 +418,9 @@ if (closeEditEventButton) {
 }
 
 if (deleteEditEventButton) {
-    deleteEditEventButton.addEventListener("click", () => {
+    deleteEditEventButton.addEventListener("click", async () => {
         if (!activeEvent) return;
-        removeEventById(getEventId(activeEvent));
+        await removeEventById(activeEvent);
         activeEvent = null;
         closeModal(editEventModal);
     });
@@ -413,9 +460,9 @@ if (closeViewEventButton) {
 }
 
 if (deleteViewEventButton) {
-    deleteViewEventButton.addEventListener("click", () => {
+    deleteViewEventButton.addEventListener("click", async () => {
         if (!activeEvent) return;
-        removeEventById(getEventId(activeEvent));
+        await removeEventById(activeEvent);
         activeEvent = null;
         closeModal(viewEventModal);
     });
@@ -434,26 +481,36 @@ closeOnOverlayClick(viewEventModal);
 
 // Edit button clicks from upcoming dates list
 if (upcomingDatesList) {
-    upcomingDatesList.addEventListener("click", (event) => {
-        const button = event.target.closest(".edit-icon");
-        if (!button) return;
-        const eventId = button.dataset.eventId;
-        const match = getUpcomingDates().find(
-            (item) => getEventId(item) === eventId
-        );
-        if (match) openEditEvent(match);
+    upcomingDatesList.addEventListener("click", async (event) => {
+        // Check if edit icon was clicked
+        const editButton = event.target.closest(".edit-icon");
+        if (editButton) {
+            const firestoreId = editButton.dataset.firestoreId;
+            const events = await getUpcomingDates();
+            const match = events.find((item) => item.firestoreId === firestoreId);
+            if (match) openEditEvent(match);
+            return;
+        }
+        
+        // Otherwise, check if event card was clicked
+        const eventCard = event.target.closest(".event-card");
+        if (eventCard) {
+            const firestoreId = eventCard.dataset.firestoreId;
+            const events = await getUpcomingDates();
+            const match = events.find((item) => item.firestoreId === firestoreId);
+            if (match) openViewEvent(match);
+        }
     });
 }
 
 // Event pill clicks from calendar grid
 if (calendarGrid) {
-    calendarGrid.addEventListener("click", (event) => {
+    calendarGrid.addEventListener("click", async (event) => {
         const pill = event.target.closest(".event-pill");
         if (!pill) return;
-        const eventId = pill.dataset.eventId;
-        const match = getUpcomingDates().find(
-            (item) => getEventId(item) === eventId
-        );
+        const firestoreId = pill.dataset.firestoreId;
+        const events = await getUpcomingDates();
+        const match = events.find((item) => item.firestoreId === firestoreId);
         if (match) openViewEvent(match);
     });
 }

@@ -34,12 +34,17 @@
                 <div>
                     <label for="username">Username <input type="text" id="username" name="username" required></label>
 
-                    <label for="password">Password <input type="password" name="password" required></label>
+                    <label for="email">Email <input type="email" id="email" name="email" required></label>
+
+                    <label for="password">Password <input type="password" id="password" name="password" required></label>
+
+                    <label for="confirm-password">Confirm Password <input type="password" id="confirm-password" name="confirm-password" required></label>
                 </div>
 
                 <div class="register-actions">
-                    <a href="b1_tutorial_1.html" class="button high mobile">Create Account</a>
-                    <a href="b_tutorial.html" class="button high desktop">Create Account</a>
+                    <!-- <a href="b1_tutorial_1.html" class="button high mobile">Create Account</a>
+                    <a href="b_tutorial.html" class="button high desktop">Create Account</a> -->
+                    <button type="submit" class="button high">Create Account</button>
                     
                     <p class="auth-switch">
                         Already have account? <a href="a2_login.html">Login</a>
@@ -51,7 +56,7 @@
         </div>
     </main>
 
-    <script type="module" src="script/script.js"></script>
+    <script type="module" src="script/auth.js"></script>
 
 </body>
 </html>

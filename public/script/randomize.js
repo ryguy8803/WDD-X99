@@ -1,5 +1,4 @@
-import dateIdeas from "./dateIdeas.js";
-import { renderDollarSigns, saveLikedIdeas, getLikedIdeas } from "./script.js";
+import { renderDollarSigns, saveLikedIdeas, getLikedIdeas, getAllIdeas } from "./script.js";
 import { openModal, closeModal, closeOnOverlayClick } from "./script.js";
 
 // ============================== RANDOMIZE FEATURE ==============================
@@ -25,6 +24,7 @@ const adjustPreferencesSection = document.getElementById("randomize-adjust-prefe
 let currentRandomIdea = null;
 let currentPreferences = null;
 let remainingIdeaIds = [];
+let allIdeas = []; // Cache for Firestore ideas
 
 // Template for cards
 const createRandomizeCardHTML = (idea) => {
@@ -56,13 +56,13 @@ const renderRandomizeIdea = (idea) => {
 };
 
 // Add Idea to favorites
-const addIdeaToFavorites = (idea) => {
+const addIdeaToFavorites = async (idea) => {
     if (!idea) return;
-    const likedIds = getLikedIdeas();
+    const likedIds = await getLikedIdeas();
     if (likedIds.includes(idea.id)) return;
     
     likedIds.push(idea.id);
-    saveLikedIdeas(likedIds);
+    await saveLikedIdeas(likedIds);
 };
 
 // Process preferences entered into modal
@@ -106,7 +106,7 @@ const getSelectedPreferences = () => {
 
 // Filters ideas from preferences
 const getFilteredIdeas = (preferences) => {
-    let filtered = dateIdeas;
+    let filtered = allIdeas;
 
     // Filter categories
     if (preferences?.categories?.length) {
@@ -189,12 +189,16 @@ const showNextIdea = () => {
 };
 
 // Randomize Modal Event Listeners
-openRandomizeButton.addEventListener("click", () => {
+openRandomizeButton.addEventListener("click", async () => {
     currentPreferences = null;
     remainingIdeaIds = [];
     if (adjustPreferencesSection) {
         adjustPreferencesSection.style.display = "none";
     }
+    
+    // Load ideas from Firestore
+    allIdeas = await getAllIdeas();
+    
     openModal(randomizeModal);
     showNextIdea();
 });
@@ -213,9 +217,9 @@ randomizeRejectButton.addEventListener("click", () => {
         showNextIdea();
     }, 300);
 });
-randomizeFavoriteButton.addEventListener("click", () => {
-    // Add to favorites
-    addIdeaToFavorites(currentRandomIdea);
+randomizeFavoriteButton.addEventListener("click", async () => {
+    // Add to favorites (now async)
+    await addIdeaToFavorites(currentRandomIdea);
     
     // Get the heart SVG path element
     const heartPath = randomizeFavoriteButton.querySelector("svg path");
@@ -245,10 +249,11 @@ randomizeAddCalendarButton.addEventListener("click", () => {
         dollars: currentRandomIdea.dollars || 0
     };
 
-    localStorage.setItem(
-        "pendingCalendarEvent",
-        JSON.stringify(pendingEvent)
-    );
+    // NOTE: Disabled localStorage - need to implement Firebase-based solution
+    // localStorage.setItem(
+    //     "pendingCalendarEvent",
+    //     JSON.stringify(pendingEvent)
+    // );
 
     if (addEventModal) {
         openModal(addEventModal);
@@ -266,9 +271,13 @@ randomizeAddCalendarButton.addEventListener("click", () => {
 // Preferences Modal Event Listeners
 openPreferencesButton.addEventListener("click", () => openModal(preferencesModal));
 closePreferencesButton.addEventListener("click", () => closeModal(preferencesModal));
-applyPreferencesButton.addEventListener("click", () => {
+applyPreferencesButton.addEventListener("click", async () => {
     currentPreferences = getSelectedPreferences();
     remainingIdeaIds = []; // Reset the seen ideas when applying preferences
+    
+    // Load ideas from Firestore
+    allIdeas = await getAllIdeas();
+    
     closeModal(preferencesModal);
     openModal(randomizeModal);
     showNextIdea();
