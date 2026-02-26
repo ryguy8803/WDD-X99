@@ -15,7 +15,7 @@ if (loginForm) {
         try {
             await signInWithEmailAndPassword(auth, email, password);
             // Redirect to home page after successful login
-            window.location.href = 'c1_home.html';
+            window.location.href = 'home.html';
         } catch (error) {
             console.error('Login error:', error);
             alert('Login failed: ' + error.message);
@@ -52,9 +52,9 @@ if (registerForm) {
             // Redirect based on screen size - mobile vs desktop
             const isMobile = window.innerWidth < 768;
             if (isMobile) {
-                window.location.href = 'b1_tutorial_1.html';
+                window.location.href = 'tutorial_1.html';
             } else {
-                window.location.href = 'b_tutorial.html';
+                window.location.href = 'tutorial_desktop.html';
             }
         } catch (error) {
             console.error('Registration error:', error);

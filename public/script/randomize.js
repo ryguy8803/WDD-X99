@@ -264,7 +264,7 @@ randomizeAddCalendarButton.addEventListener("click", () => {
                 .replace(/\s+/g, "-");
         }
     } else {
-        window.location.href = "c4_calendar.html";
+        window.location.href = "calendar.html";
     }
 });
 

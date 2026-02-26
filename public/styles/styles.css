@@ -265,7 +265,7 @@ label {
 
 
 /* Text Field and Text Area*/
-input[type="text"], input[type="password"], input[type="time"],  input[type="date"], textarea {
+input[type="text"], input[type="password"], input[type="time"],  input[type="date"], input[type="email"], textarea {
     padding: var(--small-medium-spacing) var(--small-medium-spacing);
     border: 1.5px solid var(--gray-30);
     border-radius: var(--small-spacing);
@@ -760,7 +760,12 @@ select {
 .login-form, .register-form {
     display: flex;
     flex-direction: column;
-    gap: var(--medium-spacing)
+    gap: var(--medium-spacing);
+    .register-div {
+        display: flex;
+        flex-direction: column;
+        gap: var(--medium-spacing);
+    }
 }
 
 /* Onboarding --------------------------------------------------- */

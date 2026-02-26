@@ -15,9 +15,9 @@ onAuthStateChanged(auth, (user) => {
     currentUser = user;
     if (!user) {
         // Redirect to login if on protected pages
-        const protectedPaths = ['/c1_home.html', '/c2_randomize.html', '/c3_explore.html', '/c4_calendar.html'];
+        const protectedPaths = ['/home.html', '/randomize.html', '/explore.html', '/calendar.html'];
         if (protectedPaths.includes(window.location.pathname)) {
-            window.location.href = 'a2_login.html';
+            window.location.href = 'login.html';
         }
     }
 });
@@ -381,7 +381,7 @@ if (backEditAccountFormButton) {
 
 if (deleteAccountButton) {
     deleteAccountButton.addEventListener("click", () => {
-        window.location.href = "a1_perfectdate_start.html";
+        window.location.href = "index.html";
     });
 }
 
