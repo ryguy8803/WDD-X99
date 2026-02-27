@@ -426,7 +426,11 @@ const applyProfile = (profile) => {
     if (editAccountUsernameValue) {
         editAccountUsernameValue.textContent = profile.username;
     }
-    if (userSettingsTitle) userSettingsTitle.textContent = profile.username;
+    if (userSettingsTitle) {
+    userSettingsTitle.textContent = profile.name?.trim() 
+        ? profile.name 
+        : profile.username;
+    }
     if (editNameInput) editNameInput.value = profile.name;
     if (editUsernameInput) editUsernameInput.value = profile.username;
 };
