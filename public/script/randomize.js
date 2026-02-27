@@ -24,7 +24,7 @@ const adjustPreferencesSection = document.getElementById("randomize-adjust-prefe
 let currentRandomIdea = null;
 let currentPreferences = null;
 let remainingIdeaIds = [];
-let allIdeas = []; // Cache for Firestore ideas
+let allIdeas = []; 
 
 // Template for cards
 const createRandomizeCardHTML = (idea) => {
@@ -82,7 +82,7 @@ const getSelectedPreferences = () => {
     const locations = getCheckedValues("location");
     const energies = getCheckedValues("energy");
     const durations = getCheckedValues("duration");
-    const cost = getCheckedValues("cost")[0]; // Cost stays single
+    const cost = getCheckedValues("cost")[0];
 
     // Add all selected location tags
     locations.forEach(loc => { requiredTags.push(loc === "indoors" ? "indoor" : "outdoor"); });
@@ -249,12 +249,6 @@ randomizeAddCalendarButton.addEventListener("click", () => {
         dollars: currentRandomIdea.dollars || 0
     };
 
-    // NOTE: Disabled localStorage - need to implement Firebase-based solution
-    // localStorage.setItem(
-    //     "pendingCalendarEvent",
-    //     JSON.stringify(pendingEvent)
-    // );
-
     if (addEventModal) {
         openModal(addEventModal);
         if (addEventTitle) addEventTitle.value = pendingEvent.title;
@@ -273,7 +267,7 @@ openPreferencesButton.addEventListener("click", () => openModal(preferencesModal
 closePreferencesButton.addEventListener("click", () => closeModal(preferencesModal));
 applyPreferencesButton.addEventListener("click", async () => {
     currentPreferences = getSelectedPreferences();
-    remainingIdeaIds = []; // Reset the seen ideas when applying preferences
+    remainingIdeaIds = [];
     
     // Load ideas from Firestore
     allIdeas = await getAllIdeas();

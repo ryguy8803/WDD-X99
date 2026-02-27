@@ -332,27 +332,6 @@ if (addEventForm) {
     });
 }
 
-// Handle pending events from randomize feature
-// NOTE: Disabled localStorage - need to implement Firebase-based solution
-// if (addEventModal) {
-//     const pending = localStorage.getItem("pendingCalendarEvent");
-//     if (pending) {
-//         try {
-//             const parsed = JSON.parse(pending);
-//             openModal(addEventModal);
-//             if (addEventTitle) addEventTitle.value = parsed.title || "";
-//             if (addEventCategory) {
-//                 addEventCategory.value = (parsed.category || "")
-//                     .toLowerCase()
-//                     .replace(/\s+/g, "-");
-//             }
-//         } catch {
-//             // Ignore parse errors
-//         }
-//         localStorage.removeItem("pendingCalendarEvent");
-//     }
-// }
-
 closeOnOverlayClick(addEventModal);
 
 // ============================== EDIT EVENT MODAL ==============================
