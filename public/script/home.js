@@ -1,4 +1,4 @@
-import { createIdeaCardHTML, getLikedIdeas, toggleLike, openModal, closeModal, closeOnOverlayClick, getAllIdeas, db } from "./script.js";
+import { createIdeaCardHTML, getLikedIdeas, toggleLike, openModal, closeModal, initializeModal, getAllIdeas, db } from "./script.js";
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 
@@ -58,10 +58,12 @@ async function renderHomeFavoritesPreview() {
 
 // Init and Event Listeners ------------------------------------------------------------------------------
 
-// Modal elements
-const modalOverlay = document.getElementById("add-idea-modal");
-const openModalButton = document.getElementById("open-add-idea");
-const closeModalButton = document.getElementById("close-add-idea");
+// Add Idea Modal - allows users to create custom date ideas
+const addIdeaModal = initializeModal("add-idea-modal", {
+    openButtonSelector: "#open-add-idea",
+    closeButtonSelector: "#close-add-idea"
+});
+
 const addIdeaForm = document.getElementById("add-idea-form");
 
 // Run when the page loads
@@ -129,20 +131,8 @@ addIdeaForm.addEventListener("submit", async (event) => {
         await renderHomeIdeas();
         
         addIdeaForm.reset();
-        closeModal(modalOverlay);
+        closeModal(addIdeaModal.element);
     } catch (e) {
-        console.error("Error adding document: ", e);
         alert("There was an error adding your date idea. Please try again.");
     }
 });
-
-// Add Idea Modal event listeners
-if (openModalButton) {
-    openModalButton.addEventListener("click", () => openModal(modalOverlay));
-}
-
-if (closeModalButton) {
-    closeModalButton.addEventListener("click", () => closeModal(modalOverlay));
-}
-
-closeOnOverlayClick(modalOverlay);

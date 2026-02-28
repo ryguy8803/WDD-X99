@@ -1,4 +1,4 @@
-import { openModal, closeModal, closeOnOverlayClick, renderDollarSigns, db, getCurrentUser, auth } from "./script.js";
+import { openModal, closeModal, initializeModal, renderDollarSigns, db, getCurrentUser, auth } from "./script.js";
 import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
@@ -9,19 +9,16 @@ let activeEvent = null;
 // Get upcoming dates from Firebase only
 const getUpcomingDates = async () => {
     const user = getCurrentUser();
-    console.log("Current user in getUpcomingDates:", user);
     if (!user) return [];
     
     try {
         const eventsRef = collection(db, "users", user.uid, "events");
         const eventsSnap = await getDocs(eventsRef);
-        console.log("Events snapshot size:", eventsSnap.size);
         return eventsSnap.docs.map(doc => ({
             ...doc.data(),
             firestoreId: doc.id
         }));
     } catch (error) {
-        console.error("Error fetching events from Firebase:", error);
         return [];
     }
 };
@@ -37,7 +34,7 @@ const addEvent = async (event) => {
         await renderUpcomingDates();
         if (calendarCurrentMonth) await renderCalendar(calendarCurrentMonth);
     } catch (error) {
-        console.error("Error adding event to Firebase:", error);
+        // Silent error handling
     }
 };
 
@@ -52,7 +49,7 @@ const updateEvent = async (eventToUpdate, updatedData) => {
         await renderUpcomingDates();
         if (calendarCurrentMonth) await renderCalendar(calendarCurrentMonth);
     } catch (error) {
-        console.error("Error updating event in Firebase:", error);
+        // Silent error handling
     }
 };
 
@@ -67,7 +64,7 @@ const removeEventById = async (eventToRemove) => {
         await renderUpcomingDates();
         if (calendarCurrentMonth) await renderCalendar(calendarCurrentMonth);
     } catch (error) {
-        console.error("Error deleting event from Firebase:", error);
+        // Silent error handling
     }
 };
 
@@ -147,7 +144,6 @@ const renderUpcomingDates = async () => {
     if (!upcomingDatesList) return;
     
     const dates = await getUpcomingDates();
-    console.log("Upcoming dates:", dates);
 
     if (dates.length === 0) {
         upcomingDatesList.innerHTML = `
@@ -158,7 +154,6 @@ const renderUpcomingDates = async () => {
     }
 
     const cardsHTML = dates.map(event => createEventCardHTML(event)).join("");
-    console.log("Cards HTML:", cardsHTML);
     upcomingDatesList.innerHTML = `
         <h2>Upcoming Dates</h2>
         ${cardsHTML}
@@ -278,10 +273,6 @@ if (calendarGrid && calendarMonthTitle) {
 
 // ============================== ADD EVENT MODAL ==============================
 
-const openAddEventButton = document.getElementById("open-add-event");
-const addEventModal = document.getElementById("add-event-modal");
-const closeAddEventButton = document.getElementById("close-add-event");
-const cancelAddEventButton = document.getElementById("cancel-add-event");
 const addEventForm = document.getElementById("add-event-form");
 const addEventTitle = document.getElementById("event-title");
 const addEventDate = document.getElementById("event-date");
@@ -291,18 +282,18 @@ const addEventCategory = document.getElementById("event-category");
 const addEventPartner = document.getElementById("your-date");
 const addEventNotes = document.getElementById("event-notes");
 
-if (openAddEventButton) {
-    openAddEventButton.addEventListener("click", () => openModal(addEventModal));
-}
+// Initialize Add Event Modal
+const addEventModal = initializeModal("add-event-modal", {
+    openButtonSelector: "#open-add-event",
+    closeButtonSelector: "#close-add-event"
+});
 
-if (closeAddEventButton) {
-    closeAddEventButton.addEventListener("click", () => closeModal(addEventModal));
-}
-
+const cancelAddEventButton = document.getElementById("cancel-add-event");
 if (cancelAddEventButton) {
     cancelAddEventButton.addEventListener("click", () => closeModal(addEventModal));
 }
 
+// Setup form submission - creates new event
 if (addEventForm) {
     addEventForm.addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -332,13 +323,8 @@ if (addEventForm) {
     });
 }
 
-closeOnOverlayClick(addEventModal);
-
 // ============================== EDIT EVENT MODAL ==============================
 
-const editEventModal = document.getElementById("edit-event-modal");
-const closeEditEventButton = document.getElementById("close-edit-event");
-const deleteEditEventButton = document.getElementById("delete-edit-event");
 const editEventForm = document.getElementById("edit-event-form");
 const editEventTitle = document.getElementById("edit-event-title");
 const editEventDate = document.getElementById("edit-event-date");
@@ -348,9 +334,16 @@ const editEventCategory = document.getElementById("edit-event-category");
 const editEventPartner = document.getElementById("edit-your-date");
 const editEventNotes = document.getElementById("edit-event-notes");
 
+// Initialize Edit Event Modal
+const editEventModal = initializeModal("edit-event-modal", {
+    closeButtonSelector: "#close-edit-event"
+});
+
+// Function to open edit modal with event data pre-filled
 const openEditEvent = (event) => {
     if (!event) return;
     activeEvent = event;
+    // Pre-fill form fields with event data
     if (editEventTitle) editEventTitle.value = event.title;
     if (editEventDate) editEventDate.value = event.date;
     if (editEventTime) editEventTime.value = event.time || "";
@@ -363,6 +356,7 @@ const openEditEvent = (event) => {
     openModal(editEventModal);
 };
 
+// Setup form submission - updates event
 if (editEventForm) {
     editEventForm.addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -392,10 +386,8 @@ if (editEventForm) {
     });
 }
 
-if (closeEditEventButton) {
-    closeEditEventButton.addEventListener("click", () => closeModal(editEventModal));
-}
-
+// Setup delete button - removes event
+const deleteEditEventButton = document.getElementById("delete-edit-event");
 if (deleteEditEventButton) {
     deleteEditEventButton.addEventListener("click", async () => {
         if (!activeEvent) return;
@@ -405,14 +397,8 @@ if (deleteEditEventButton) {
     });
 }
 
-closeOnOverlayClick(editEventModal);
-
 // ============================== VIEW EVENT MODAL ==============================
 
-const viewEventModal = document.getElementById("view-event-modal");
-const closeViewEventButton = document.getElementById("close-view-event");
-const deleteViewEventButton = document.getElementById("delete-view-event");
-const viewEditEventButton = document.getElementById("view-edit-event");
 const viewEventTitle = document.getElementById("view-event-title");
 const viewEventCategory = document.getElementById("view-event-category");
 const viewEventDate = document.getElementById("view-event-date");
@@ -421,9 +407,16 @@ const viewEventLocation = document.getElementById("view-event-location");
 const viewEventNotes = document.getElementById("view-event-notes");
 const viewEventPartner = document.getElementById("view-event-partner");
 
+// Initialize View Event Modal
+const viewEventModal = initializeModal("view-event-modal", {
+    closeButtonSelector: "#close-view-event"
+});
+
+// Function to open view modal with event data
 const openViewEvent = (event) => {
     if (!event) return;
     activeEvent = event;
+    // Display event data 
     if (viewEventTitle) viewEventTitle.textContent = event.title;
     if (viewEventCategory) viewEventCategory.textContent = event.category || "";
     if (viewEventDate) viewEventDate.textContent = formatEventDate(event.date);
@@ -434,10 +427,8 @@ const openViewEvent = (event) => {
     openModal(viewEventModal);
 };
 
-if (closeViewEventButton) {
-    closeViewEventButton.addEventListener("click", () => closeModal(viewEventModal));
-}
-
+// Setup delete button - removes event from view modal
+const deleteViewEventButton = document.getElementById("delete-view-event");
 if (deleteViewEventButton) {
     deleteViewEventButton.addEventListener("click", async () => {
         if (!activeEvent) return;
@@ -447,14 +438,14 @@ if (deleteViewEventButton) {
     });
 }
 
+// Setup edit button - switches from view to edit modal
+const viewEditEventButton = document.getElementById("view-edit-event");
 if (viewEditEventButton) {
     viewEditEventButton.addEventListener("click", () => {
         closeModal(viewEventModal);
         openEditEvent(activeEvent);
     });
 }
-
-closeOnOverlayClick(viewEventModal);
 
 // ============================== EVENT INTERACTIONS ==============================
 

@@ -15,9 +15,9 @@ onAuthStateChanged(auth, (user) => {
     currentUser = user;
     if (!user) {
         // Redirect to login if on protected pages
-        const protectedPaths = ['/home.html', '/randomize.html', '/explore.html', '/calendar.html'];
+        const protectedPaths = ['/c1_home.html', '/c2_randomize.html', '/c3_explore.html', '/c4_calendar.html'];
         if (protectedPaths.includes(window.location.pathname)) {
-            window.location.href = 'login.html';
+            window.location.href = 'a2_login.html';
         }
     }
 });
@@ -37,7 +37,6 @@ export async function getAllIdeas() {
             tags: doc.data().tags || []
         }));
     } catch (error) {
-        console.error("Error fetching ideas from Firestore:", error);
         return [];
     }
 }
@@ -47,20 +46,58 @@ export async function getAllIdeas() {
 export const openModal = (modal) => {
     if (!modal) return;
     modal.classList.add("is-open");
+    document.body.style.overflow = "hidden";
 };
 
 export const closeModal = (modal) => {
     if (!modal) return;
     modal.classList.remove("is-open");
+    document.body.style.overflow = "";
 };
 
 export const closeOnOverlayClick = (modal) => {
-    if (!modal) return;
-    modal.addEventListener("click", (event) => {
-        if (event.target === modal) {
-            closeModal(modal);
+    // Disabled - modals only close via X button now
+    // Keeping function so existing calls don't break
+};
+
+// MODULAR MODAL SETUP
+// This function sets up all modal functionality in one place
+export const initializeModal = (modalId, options = {}) => {
+    const modal = document.getElementById(modalId);
+    if (!modal) return null;
+
+    const {
+        openButtonSelector,      // CSS selector for button(s) that open modal
+        closeButtonSelector,     // CSS selector for X close button
+        onOpen = null,          // Function to run when modal opens
+        onClose = null          // Function to run when modal closes
+    } = options;
+
+    // Setup open button(s) - can have multiple buttons opening same modal
+    if (openButtonSelector) {
+        const openButtons = document.querySelectorAll(openButtonSelector);
+        openButtons.forEach(button => {
+            button.addEventListener("click", async () => {
+                openModal(modal);
+                if (onOpen) await onOpen(modal);
+            });
+        });
+    }
+
+    // Setup close button (the X icon)
+    if (closeButtonSelector) {
+        const closeButton = document.querySelector(closeButtonSelector);
+        if (closeButton) {
+            closeButton.addEventListener("click", () => {
+                closeModal(modal);
+                if (onClose) onClose(modal);
+            });
         }
-    });
+    }
+
+    // Overlay clicks do NOT close modals - removed that functionality entirely
+
+    return modal;
 };
 
 // Utilities ----------------------------------------------------------------------------------------------
@@ -88,7 +125,7 @@ export async function getLikedIdeas() {
             return userSnap.data().favorites;
         }
     } catch (error) {
-        console.error("Error loading favorites from Firebase:", error);
+        // Silent error handling
     }
     return [];
 }
@@ -115,7 +152,7 @@ export async function saveLikedIdeas(likedIds) {
             });
         }
     } catch (error) {
-        console.error("Error saving favorites to Firebase:", error);
+        // Silent error handling
     }
 }
 
@@ -212,28 +249,12 @@ async function renderFavoritesList() {
     favoritesList.innerHTML = cardsHTML.join('');
 }
 
-const favoritesModal = document.getElementById("favorites-modal");
-const openFavoritesButtons = document.querySelectorAll(
-    "#open-favorites, .open-favorites"
-);
-const closeFavoritesButton = document.getElementById("close-favorites");
-
-if (openFavoritesButtons.length) {
-    openFavoritesButtons.forEach((button) => {
-        button.addEventListener("click", async () => {
-            openModal(favoritesModal);
-            await renderFavoritesList();
-        });
-    });
-}
-
-if (closeFavoritesButton) {
-    closeFavoritesButton.addEventListener("click", () =>
-        closeModal(favoritesModal)
-    );
-}
-
-closeOnOverlayClick(favoritesModal);
+initializeModal("favorites-modal", {
+    openButtonSelector: "#open-favorites, .open-favorites",  
+    closeButtonSelector: "#close-favorites",                  
+    closeOnOverlay: false,                                    
+    onOpen: async () => await renderFavoritesList()          
+});
 
 
 // Interactive Buttons (Tags & Hearts) --------------------------------------------------------------
@@ -280,27 +301,78 @@ document.addEventListener("keydown", (event) => {
 });
 
 // Account Management  ---------------------------------------------------------------------------------
-const userSettingsModal = document.getElementById("user-settings-modal");
-const openUserSettingsButtons = document.querySelectorAll(".open-user-settings");
-const closeUserSettingsButton = document.getElementById("close-user-settings");
+// Initialize User Settings Modal - main settings panel
+const userSettingsModal = initializeModal("user-settings-modal", {
+    openButtonSelector: ".open-user-settings", 
+    closeButtonSelector: "#close-user-settings"
+});
+
+// Initialize Edit Account Modal - shows current account info
+const editAccountModal = initializeModal("edit-account-modal", {
+    closeButtonSelector: "#close-edit-account",
+    onOpen: () => applyProfile(readProfile()) 
+});
+
+// Setup Edit Account open button - needs to close settings first
 const openEditAccountButtons = document.querySelectorAll(".open-edit-account");
-const editAccountModal = document.getElementById("edit-account-modal");
-const closeEditAccountButton = document.getElementById("close-edit-account");
+openEditAccountButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+        closeModal(userSettingsModal.element);
+        openModal(editAccountModal.element);
+    });
+});
+
+// Setup back button - return to settings from edit account
 const backEditAccountButton = document.getElementById("back-edit-account");
-const openEditAccountFormButton = document.getElementById(
-    "open-edit-account-form"
-);
-const editAccountFormModal = document.getElementById("edit-account-form-modal");
-const closeEditAccountFormButton = document.getElementById(
-    "close-edit-account-form"
-);
-const cancelEditAccountFormButton = document.getElementById(
-    "cancel-edit-account-form"
-);
-const backEditAccountFormButton = document.getElementById(
-    "back-edit-account-form"
-);
+if (backEditAccountButton) {
+    backEditAccountButton.addEventListener("click", () => {
+        closeModal(editAccountModal.element);
+        openModal(userSettingsModal.element);
+    });
+}
+
+// Initialize Edit Account Form Modal - actual form to edit
+const editAccountFormModal = initializeModal("edit-account-form-modal", {
+    closeButtonSelector: "#close-edit-account-form",
+    onOpen: () => applyProfile(readProfile())
+});
+
+// Setup form open button - goes from view to edit
+const openEditAccountFormButton = document.getElementById("open-edit-account-form");
+if (openEditAccountFormButton) {
+    openEditAccountFormButton.addEventListener("click", () => {
+        closeModal(editAccountModal.element);
+        openModal(editAccountFormModal.element);
+    });
+}
+
+// Setup cancel/back buttons on form - return to view mode
+const cancelEditAccountFormButton = document.getElementById("cancel-edit-account-form");
+const backEditAccountFormButton = document.getElementById("back-edit-account-form");
+
+if (cancelEditAccountFormButton) {
+    cancelEditAccountFormButton.addEventListener("click", () => {
+        closeModal(editAccountFormModal.element);
+        openModal(editAccountModal.element);
+    });
+}
+
+if (backEditAccountFormButton) {
+    backEditAccountFormButton.addEventListener("click", () => {
+        closeModal(editAccountFormModal.element);
+        openModal(editAccountModal.element);
+    });
+}
+
+// Setup delete account button
 const deleteAccountButton = document.getElementById("delete-account");
+if (deleteAccountButton) {
+    deleteAccountButton.addEventListener("click", () => {
+        window.location.href = "index.html";
+    });
+}
+
+// Get form and input references
 const userSettingsTitle = document.getElementById("user-settings-title");
 const editAccountNameValue = document.getElementById("edit-account-name");
 const editAccountUsernameValue = document.getElementById(
@@ -310,81 +382,7 @@ const editAccountForm = document.getElementById("edit-account-form");
 const editNameInput = document.getElementById("edit-name");
 const editUsernameInput = document.getElementById("edit-username");
 
-if (openUserSettingsButtons.length) {
-    openUserSettingsButtons.forEach((button) => {
-        button.addEventListener("click", () => openModal(userSettingsModal));
-    });
-}
-
-if (closeUserSettingsButton) {
-    closeUserSettingsButton.addEventListener("click", () =>
-        closeModal(userSettingsModal)
-    );
-}
-
-closeOnOverlayClick(userSettingsModal);
-
-// Edit Account Modal
-if (openEditAccountButtons.length) {
-    openEditAccountButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-            applyProfile(readProfile());
-            closeModal(userSettingsModal);
-            openModal(editAccountModal);
-        });
-    });
-}
-
-if (closeEditAccountButton) {
-    closeEditAccountButton.addEventListener("click", () =>
-        closeModal(editAccountModal)
-    );
-}
-
-if (backEditAccountButton) {
-    backEditAccountButton.addEventListener("click", () => {
-        closeModal(editAccountModal);
-        openModal(userSettingsModal);
-    });
-}
-
-closeOnOverlayClick(editAccountModal);
-
-// Edit Account Form Modal
-if (openEditAccountFormButton) {
-    openEditAccountFormButton.addEventListener("click", () => {
-        applyProfile(readProfile());
-        closeModal(editAccountModal);
-        openModal(editAccountFormModal);
-    });
-}
-
-if (closeEditAccountFormButton) {
-    closeEditAccountFormButton.addEventListener("click", () =>
-        closeModal(editAccountFormModal)
-    );
-}
-
-if (cancelEditAccountFormButton) {
-    cancelEditAccountFormButton.addEventListener("click", () => {
-        closeModal(editAccountFormModal);
-        openModal(editAccountModal);
-    });
-}
-
-if (backEditAccountFormButton) {
-    backEditAccountFormButton.addEventListener("click", () => {
-        closeModal(editAccountFormModal);
-        openModal(editAccountModal);
-    });
-}
-
-if (deleteAccountButton) {
-    deleteAccountButton.addEventListener("click", () => {
-        window.location.href = "index.html";
-    });
-}
-
+// Setup form submission - save changes and return to view mode
 if (editAccountForm) {
     editAccountForm.addEventListener("submit", (event) => {
         event.preventDefault();
@@ -394,13 +392,12 @@ if (editAccountForm) {
             (editUsernameInput?.value || "").trim() || current.username;
 
         saveProfile({ name, username });
-        closeModal(editAccountFormModal);
-        openModal(editAccountModal);
+        closeModal(editAccountFormModal.element);
+        openModal(editAccountModal.element);
     });
 }
 
-closeOnOverlayClick(editAccountFormModal);
-
+// Profile helper functions - manage user profile data
 const readProfile = () => {
     const stored = localStorage.getItem("userProfile");
     if (stored) {

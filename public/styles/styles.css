@@ -568,6 +568,7 @@ select {
     align-items: center;
     justify-content: center;
     z-index: 2;
+    height: 100vh;
 }
 .modal-overlay.is-open {
     display: flex;
@@ -575,12 +576,14 @@ select {
 .overlay-card {
     width: 100%;
     max-width: 480px;
+    max-height: calc(100vh - 40px);
     background-color: var(--gray-10);
     border-radius: var(--medium-spacing);
     padding: var(--medium-spacing);
     display: flex;
     flex-direction: column;
     gap: var(--medium-spacing);
+    overflow-y: auto;
 }
 
 /* Favorites Overlay */

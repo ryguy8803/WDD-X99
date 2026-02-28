@@ -17,7 +17,6 @@ if (loginForm) {
             // Redirect to home page after successful login
             window.location.href = 'home.html';
         } catch (error) {
-            console.error('Login error:', error);
             alert('Login failed: ' + error.message);
         }
     });
@@ -57,7 +56,6 @@ if (registerForm) {
                 window.location.href = 'tutorial_desktop.html';
             }
         } catch (error) {
-            console.error('Registration error:', error);
             alert('Registration failed: ' + error.message);
         }
     });
