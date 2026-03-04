@@ -1,5 +1,6 @@
 import { renderDollarSigns, saveLikedIdeas, getLikedIdeas, getAllIdeas } from "./script.js";
 import { openModal, closeModal, initializeModal } from "./script.js";
+import "./auth.js";
 
 // ============================== RANDOMIZE FEATURE ==============================
 const randomizeModal = initializeModal("randomize-modal", {

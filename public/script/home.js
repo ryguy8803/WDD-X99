@@ -1,5 +1,6 @@
 import { createIdeaCardHTML, getLikedIdeas, toggleLike, openModal, closeModal, initializeModal, getAllIdeas, db } from "./script.js";
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import "./auth.js";
 
 
 // Main function that renders all idea cards to the home page

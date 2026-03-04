@@ -1,6 +1,7 @@
 import { openModal, closeModal, initializeModal, renderDollarSigns, db, getCurrentUser, auth } from "./script.js";
 import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+import "./auth.js";
 
 // ============================== DATA MANAGEMENT ==============================
 
