@@ -29,6 +29,7 @@ if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
+        const username = document.getElementById('username').value;
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const confirmPassword = document.getElementById('confirm-password')?.value;
@@ -39,9 +40,10 @@ if (registerForm) {
         }
         
         try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const userCredential = await createUserWithEmailAndPassword(auth, username, email, password);
             
             await setDoc(doc(db, "users", userCredential.user.uid), {
+                username: username,
                 email: email,
                 favorites: [],
                 createdAt: new Date().toISOString()
