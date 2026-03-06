@@ -477,6 +477,7 @@ select {
     flex-direction: column;
     gap: var(--extra-large-spacing);
     width: clamp(280px, 100%, 400px);
+    cursor: pointer;
     img {
         width: 25px;
     }
@@ -509,6 +510,7 @@ select {
     grid-template-columns: repeat(4, 1fr);
     height: 160px;
     width: clamp(320px, 90%, 400px);
+    cursor: pointer;
     svg {
         align-self: center;
         justify-self: end;
@@ -568,6 +570,7 @@ select {
     align-items: center;
     justify-content: center;
     z-index: 2;
+    height: 100vh;
 }
 .modal-overlay.is-open {
     display: flex;
@@ -575,12 +578,14 @@ select {
 .overlay-card {
     width: 100%;
     max-width: 480px;
+    max-height: calc(100vh - 40px);
     background-color: var(--gray-10);
     border-radius: var(--medium-spacing);
     padding: var(--medium-spacing);
     display: flex;
     flex-direction: column;
     gap: var(--medium-spacing);
+    overflow-y: auto;
 }
 
 /* Favorites Overlay */
@@ -775,18 +780,29 @@ select {
     font-size: var(--p);
 }
 
-.onboarding {
+.onboarding, .onboarding-welcome {
     display: flex;
     flex-direction: column;
     gap: var(--extra-large-spacing);
     align-items: flex-start;
+    justify-content: center;
+    height: 50vh;
+    h2 {
+        color: var(--purple);
+    }
 }
 
-.onboarding-footer {
-    margin-top: var(--extra-large-spacing);
+.onboarding-main {
+    background-color: white;
     display: flex;
     align-items: center;
-    gap: var(--small-medium-spacing);
+    margin: var(--medium-large-spacing);
+}
+
+.tutorial-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--extra-large-spacing);
 }
 
 /* Home ---------------------------------------------------------- */
@@ -950,6 +966,11 @@ select {
     gap: var(--large-spacing);
 }
 
+.nav-arrow, .edit-icon, .close-overlay, .menu-item {
+    cursor: pointer;
+}
+
+
 
 /* Media Queries ---------------------------------------------------------- */
 @media screen and (min-width: 725px) {
@@ -967,49 +988,14 @@ select {
     .logged-out {
         display: block;
     }
-    .login-form, .register-form, .onboarding {
+    .login-form, .register-form {
         gap: var(--extra-large-spacing);
         min-width: 500px;
     }
     .left-page {
         justify-content: center;
     }
-    .register-actions {
-       
-    }
 
-    /* Onboarding */
-    .onboarding-desktop {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: var(--extra-large-spacing);
-        justify-content: center;
-    }
-    .onboarding-desktop-main {
-        display: flex;
-        flex-direction: column;
-        gap: var(--extra-large-spacing);
-        justify-content: center;
-    }
-    .onboarding-desktop-button {
-        display: flex;
-        justify-content: flex-end;
-    }
-    .onboarding-div {
-        display: flex;
-        flex-direction: column;
-        gap: var(--extra-large-spacing);
-        h1 {
-            text-align: center;
-        }
-    }
-    .onboarding-subdiv {
-        display: flex;
-        flex-direction: row;
-        gap: var(--large-spacing);
-        justify-content: center;
-    }
     .white {
         background-color: var(--gray-10);
     }
@@ -1118,5 +1104,43 @@ select {
     .clown > .layout-band:last-child {
         flex: 1.5 1 0;
         min-width: 0;
+    }
+
+    /* Onboarding */
+    .onboarding-main {
+        justify-content: center;
+        padding: var(--extra-large-spacing);
+        min-height: calc(100vh - 120px);
+    }
+
+    .tutorial-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--extra-large-spacing);
+        max-width: 1200px;
+        align-items: start;
+    }
+
+    .tutorial-container hr {
+        display: none;
+    }
+
+    .onboarding, .onboarding-welcome {
+        margin: 0;
+        gap: var(--large-spacing); 
+        text-align: center;
+    }
+
+    .onboarding {
+        align-items: center;
+    }
+
+    .onboarding-welcome {
+        text-align: left;
+    }
+
+    .tutorial-footer {
+        margin-top: var(--large-spacing);
+        padding: var(--large-spacing);
     }
 }

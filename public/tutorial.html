@@ -1,74 +1,119 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Explore</title>
+    <title>Tutorial</title>
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
     <link rel="stylesheet" href="styles/styles.css">
     <script type="module" src="firebase.js"></script>
     <script type="module" src="seed.js"></script>
+    <script type="module" src="script/auth.js"></script>
 </head>
 <body>
-    
-     <header>
+
+    <header>
         <div>
             <section>          
                 <a href="home.html" class="logo-wrapper"><h1>PerfectDate</h1>
                 <img src="images/logo.svg" alt="PerfectDate Logo"></a> 
-            </section>   
-            <div class="nav-and-profile">
-                <div class="nav">
-                    <a href="home.html"><img src="images/Home.svg" alt="Home"></a>
-                    <a href="randomize.html"><img src="images/Shuffle.svg" alt="Randomize"></a>
-                    <a href="explore.html"><img src="images/Search.svg" alt="Explore"><span></span></a>
-                    <a href="calendar.html"><img src="images/Calendar.svg" alt="Calendar"></a>        
-                    <button type="button" class="open-user-settings">
-                </div>
-
+            </section>           
             <button type="button" class="open-user-settings">
                 <img src="images/person.svg" alt="Person Icon">
             </button>
-            </div>
         </div>
     </header>
 
-    <main class="scroll-container">
-        <div>
-            <label for="search">
-                <input name="search" type="text">
-                <svg width="50" height="50" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M38.5 38.5L30.525 30.525M34.8333 20.1667C34.8333 28.2668 28.2668 34.8333 20.1667 34.8333C12.0665 34.8333 5.5 28.2668 5.5 20.1667C5.5 12.0665 12.0665 5.5 20.1667 5.5C28.2668 5.5 34.8333 12.0665 34.8333 20.1667Z" stroke="rgb(104, 104, 104)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </label>
+    <main class="scroll-container onboarding-main">
+        <div class="tutorial-container">
+            <!-- Welcome Screen -->
+                <div class="onboarding-welcome">
+                    <div>
+                        <h2 class="welcome">Welcome to</h2>
+                        <h1>PerfectDate!</h1>
+                    </div>
 
-            <div class="tags">
-                <button type="button" class="tag tag-button">Food & Drink</button>
-                <button type="button" class="tag tag-button" >Fitness</button>
-                <button type="button" class="tag tag-button" >Creative</button>
-                <button type="button" class="tag tag-button" >Games</button>
-                <button type="button" class="tag tag-button" >Learning & Culture</button>
-                <button type="button" class="tag tag-button" >Nature</button>
-            </div>
+                    <p>
+                        We make date night
+                        easy, one step at a
+                        time
+                    </p>
+                </div>
+               
+                <hr>
 
-            <div class="card-list" id="idea-list"></div>
+            <!-- Explore Screen -->
 
+                <div class="onboarding">
+                    <h2>Explore date ideas</h2>
+                    
+                    <p>
+                        Discover unique
+                        date ideas and
+                        save your
+                        favorites for later
+                    </p>
+                    
+                    <svg width="75" height="75" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M38.5 38.5L30.525 30.525M34.8333 20.1667C34.8333 28.2668 28.2668 34.8333 20.1667 34.8333C12.0665 34.8333 5.5 28.2668 5.5 20.1667C5.5 12.0665 12.0665 5.5 20.1667 5.5C28.2668 5.5 34.8333 12.0665 34.8333 20.1667Z" stroke="rgb(62,0,84)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+
+                <hr>
+
+
+            <!-- Randomize Screen -->
+
+                <div class="onboarding">
+                    <h2>Generate a random idea</h2>
+                    
+                    <p>
+                        Receive random
+                        date ideas when
+                        you can't decide
+                        what to do
+                    </p>
+
+                    <svg width="75" height="75" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M33.4375 37.25L39.1562 31.5312M39.1562 31.5312L33.4375 25.8125M39.1562 31.5312H31.5312C26.2673 31.5312 22 27.2639 22 22C22 16.736 17.7327 12.4688 12.4688 12.4688H4.84375M33.4375 6.75L39.1562 12.4688M39.1562 12.4688L33.4375 18.1875M39.1562 12.4688H31.5312C29.3856 12.4688 27.4056 13.1778 25.8125 14.3743M4.84375 31.5312H12.4688C14.6144 31.5312 16.5945 30.8216 18.1875 29.625" stroke="rgb(62,0,84)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+
+                <hr>
+
+            <!-- Calendar Screen -->
+
+                <div class="onboarding">
+                    <h2>Add to Your Calendar</h2>
+                    
+                    <p>
+                        Add your date idea
+                        directly to your
+                        calendar and keep
+                        your plans on track
+                    </p>
+
+                    <svg width="75" height="75" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M29.3333 3.66675V11.0001M14.6667 3.66675V11.0001M5.5 18.3334H38.5M9.16667 7.33341H34.8333C36.8584 7.33341 38.5 8.97504 38.5 11.0001V36.6667C38.5 38.6918 36.8584 40.3334 34.8333 40.3334H9.16667C7.14162 40.3334 5.5 38.6918 5.5 36.6667V11.0001C5.5 8.97504 7.14162 7.33341 9.16667 7.33341Z" stroke="rgb(62,0,84)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+    
         </div>
-    </main>
+        
+            <div class="tutorial-footer">
+                <a href="home.html" class="button high">Let's do it!</a>
+            </div>
+        
 
-    <footer>
-       <a href="home.html"><img src="images/Home.svg" alt="Home"></a>
-       <a href="randomize.html"><img src="images/Shuffle.svg" alt="Randomize"></a>
-       <a href="explore.html"><img src="images/Search.svg" alt="Explore"><span></span></a>
-       <a href="calendar.html"><img src="images/Calendar.svg" alt="Calendar"></a>
-    </footer>
-
-    <!-- User Settings -->
+            <!-- User Settings -->
     <div class="modal-overlay user-settings-overlay" id="user-settings-modal">
         <div class="user-settings-panel">
-            <div class="header">                   
-                <h2 id="user-settings-title">username123</h2>
+            <div class="header">   
+                <div class="pic-username">
+                    <img src="images/profilepicture.svg" alt="Profile Picture">                
+                    <h2 id="user-settings-title">username123</h2>
+                </div>
                 <button type="button" class="close-overlay" id="close-user-settings">
                     <img src="images/X.svg" alt="Close" width="24" height="24">
                 </button>
@@ -87,7 +132,7 @@
                     </div>
                 </button>
 
-                <button type="button" class="menu-item">
+                <button type="button" class="menu-item open-edit-account">
                     <div class="icon-wrapper">
                         <img src="images/purplecircleperson.svg" alt="Edit Account">
                     </div>
@@ -99,7 +144,7 @@
             </div>
 
             <div class="modal-footer">
-                <a href="login.html" class="button high">Log Out</a>
+                <button type="button" class="button high" id="logout-button">Log Out</button>
             </div>
         </div>
     </div>
@@ -138,7 +183,7 @@
             </div>
         </div>
 
-         <!-- Edit Account Acutual -->
+         <!-- Edit Account Actual -->
         <div class="modal-overlay user-settings-overlay" id="edit-account-form-modal">
             <div class="user-settings-panel">
                 <div class="header">
@@ -180,7 +225,7 @@
                 </div>
             </div>
         </div>
+    </main>
 
-    <script type="module" src="script/explore.js"></script>
 </body>
 </html>

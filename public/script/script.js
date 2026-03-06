@@ -1,6 +1,6 @@
 // Firebase imports and setup
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, getDocs, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { app } from '../firebase.js';
 
 export const db = getFirestore(app);
@@ -15,18 +15,31 @@ onAuthStateChanged(auth, (user) => {
     currentUser = user;
     if (!user) {
         // Redirect to login if on protected pages
-        const protectedPaths = ['/home.html', '/randomize.html', '/explore.html', '/calendar.html'];
+        const protectedPaths = ['/c1_home.html', '/c2_randomize.html', '/c3_explore.html', '/c4_calendar.html'];
         if (protectedPaths.includes(window.location.pathname)) {
-            window.location.href = 'login.html';
+            window.location.href = 'a2_login.html';
         }
     }
 });
 
-// Fetch all date ideas from Firestore
-export async function getAllIdeas() {
+// Fetch date ideas from Firestore, with optional filters
+export async function getAllIdeas(filters = {}) {
     try {
         const activitiesRef = collection(db, "activities");
-        const snapshot = await getDocs(activitiesRef);
+        let q;
+
+        // If there are category filters, build a query
+        if (filters.categories && filters.categories.length > 0) {
+            // Note: Firestore 'in' query is limited to 10 values.
+            // If you have more categories, you'll need to perform multiple queries.
+            q = query(activitiesRef, where("category", "in", filters.categories));
+        } else {
+            // Otherwise, create a query for all activities
+            q = query(activitiesRef);
+        }
+        
+        const snapshot = await getDocs(q);
+        
         return snapshot.docs.map(doc => ({
             id: doc.id,
             title: doc.data().title || doc.data().activity_name,
@@ -36,8 +49,8 @@ export async function getAllIdeas() {
             dollars: doc.data().dollars || doc.data().average_cost || 0,
             tags: doc.data().tags || []
         }));
+
     } catch (error) {
-        console.error("Error fetching ideas from Firestore:", error);
         return [];
     }
 }
@@ -47,20 +60,58 @@ export async function getAllIdeas() {
 export const openModal = (modal) => {
     if (!modal) return;
     modal.classList.add("is-open");
+    document.body.style.overflow = "hidden";
 };
 
 export const closeModal = (modal) => {
     if (!modal) return;
     modal.classList.remove("is-open");
+    document.body.style.overflow = "";
 };
 
 export const closeOnOverlayClick = (modal) => {
-    if (!modal) return;
-    modal.addEventListener("click", (event) => {
-        if (event.target === modal) {
-            closeModal(modal);
+    // Disabled - modals only close via X button now
+    // Keeping function so existing calls don't break
+};
+
+// MODULAR MODAL SETUP
+// This function sets up all modal functionality in one place
+export const initializeModal = (modalId, options = {}) => {
+    const modal = document.getElementById(modalId);
+    if (!modal) return null;
+
+    const {
+        openButtonSelector,      // CSS selector for button(s) that open modal
+        closeButtonSelector,     // CSS selector for X close button
+        onOpen = null,          // Function to run when modal opens
+        onClose = null          // Function to run when modal closes
+    } = options;
+
+    // Setup open button(s) - can have multiple buttons opening same modal
+    if (openButtonSelector) {
+        const openButtons = document.querySelectorAll(openButtonSelector);
+        openButtons.forEach(button => {
+            button.addEventListener("click", async () => {
+                openModal(modal);
+                if (onOpen) await onOpen(modal);
+            });
+        });
+    }
+
+    // Setup close button (the X icon)
+    if (closeButtonSelector) {
+        const closeButton = document.querySelector(closeButtonSelector);
+        if (closeButton) {
+            closeButton.addEventListener("click", () => {
+                closeModal(modal);
+                if (onClose) onClose(modal);
+            });
         }
-    });
+    }
+
+    // Overlay clicks do NOT close modals - removed that functionality entirely
+
+    return modal;
 };
 
 // Utilities ----------------------------------------------------------------------------------------------
@@ -88,7 +139,7 @@ export async function getLikedIdeas() {
             return userSnap.data().favorites;
         }
     } catch (error) {
-        console.error("Error loading favorites from Firebase:", error);
+        // Silent error handling
     }
     return [];
 }
@@ -115,7 +166,7 @@ export async function saveLikedIdeas(likedIds) {
             });
         }
     } catch (error) {
-        console.error("Error saving favorites to Firebase:", error);
+        // Silent error handling
     }
 }
 
@@ -212,28 +263,12 @@ async function renderFavoritesList() {
     favoritesList.innerHTML = cardsHTML.join('');
 }
 
-const favoritesModal = document.getElementById("favorites-modal");
-const openFavoritesButtons = document.querySelectorAll(
-    "#open-favorites, .open-favorites"
-);
-const closeFavoritesButton = document.getElementById("close-favorites");
-
-if (openFavoritesButtons.length) {
-    openFavoritesButtons.forEach((button) => {
-        button.addEventListener("click", async () => {
-            openModal(favoritesModal);
-            await renderFavoritesList();
-        });
-    });
-}
-
-if (closeFavoritesButton) {
-    closeFavoritesButton.addEventListener("click", () =>
-        closeModal(favoritesModal)
-    );
-}
-
-closeOnOverlayClick(favoritesModal);
+initializeModal("favorites-modal", {
+    openButtonSelector: "#open-favorites, .open-favorites",  
+    closeButtonSelector: "#close-favorites",                  
+    closeOnOverlay: false,                                    
+    onOpen: async () => await renderFavoritesList()          
+});
 
 
 // Interactive Buttons (Tags & Hearts) --------------------------------------------------------------
@@ -278,167 +313,3 @@ document.addEventListener("keydown", (event) => {
         toggleActive(activeElement);
     }
 });
-
-// Account Management  ---------------------------------------------------------------------------------
-const userSettingsModal = document.getElementById("user-settings-modal");
-const openUserSettingsButtons = document.querySelectorAll(".open-user-settings");
-const closeUserSettingsButton = document.getElementById("close-user-settings");
-const openEditAccountButtons = document.querySelectorAll(".open-edit-account");
-const editAccountModal = document.getElementById("edit-account-modal");
-const closeEditAccountButton = document.getElementById("close-edit-account");
-const backEditAccountButton = document.getElementById("back-edit-account");
-const openEditAccountFormButton = document.getElementById(
-    "open-edit-account-form"
-);
-const editAccountFormModal = document.getElementById("edit-account-form-modal");
-const closeEditAccountFormButton = document.getElementById(
-    "close-edit-account-form"
-);
-const cancelEditAccountFormButton = document.getElementById(
-    "cancel-edit-account-form"
-);
-const backEditAccountFormButton = document.getElementById(
-    "back-edit-account-form"
-);
-const deleteAccountButton = document.getElementById("delete-account");
-const userSettingsTitle = document.getElementById("user-settings-title");
-const editAccountNameValue = document.getElementById("edit-account-name");
-const editAccountUsernameValue = document.getElementById(
-    "edit-account-username"
-);
-const editAccountForm = document.getElementById("edit-account-form");
-const editNameInput = document.getElementById("edit-name");
-const editUsernameInput = document.getElementById("edit-username");
-
-if (openUserSettingsButtons.length) {
-    openUserSettingsButtons.forEach((button) => {
-        button.addEventListener("click", () => openModal(userSettingsModal));
-    });
-}
-
-if (closeUserSettingsButton) {
-    closeUserSettingsButton.addEventListener("click", () =>
-        closeModal(userSettingsModal)
-    );
-}
-
-closeOnOverlayClick(userSettingsModal);
-
-// Edit Account Modal
-if (openEditAccountButtons.length) {
-    openEditAccountButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-            applyProfile(readProfile());
-            closeModal(userSettingsModal);
-            openModal(editAccountModal);
-        });
-    });
-}
-
-if (closeEditAccountButton) {
-    closeEditAccountButton.addEventListener("click", () =>
-        closeModal(editAccountModal)
-    );
-}
-
-if (backEditAccountButton) {
-    backEditAccountButton.addEventListener("click", () => {
-        closeModal(editAccountModal);
-        openModal(userSettingsModal);
-    });
-}
-
-closeOnOverlayClick(editAccountModal);
-
-// Edit Account Form Modal
-if (openEditAccountFormButton) {
-    openEditAccountFormButton.addEventListener("click", () => {
-        applyProfile(readProfile());
-        closeModal(editAccountModal);
-        openModal(editAccountFormModal);
-    });
-}
-
-if (closeEditAccountFormButton) {
-    closeEditAccountFormButton.addEventListener("click", () =>
-        closeModal(editAccountFormModal)
-    );
-}
-
-if (cancelEditAccountFormButton) {
-    cancelEditAccountFormButton.addEventListener("click", () => {
-        closeModal(editAccountFormModal);
-        openModal(editAccountModal);
-    });
-}
-
-if (backEditAccountFormButton) {
-    backEditAccountFormButton.addEventListener("click", () => {
-        closeModal(editAccountFormModal);
-        openModal(editAccountModal);
-    });
-}
-
-if (deleteAccountButton) {
-    deleteAccountButton.addEventListener("click", () => {
-        window.location.href = "index.html";
-    });
-}
-
-if (editAccountForm) {
-    editAccountForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const current = readProfile();
-        const name = (editNameInput?.value || "").trim() || current.name;
-        const username =
-            (editUsernameInput?.value || "").trim() || current.username;
-
-        saveProfile({ name, username });
-        closeModal(editAccountFormModal);
-        openModal(editAccountModal);
-    });
-}
-
-closeOnOverlayClick(editAccountFormModal);
-
-const readProfile = () => {
-    const stored = localStorage.getItem("userProfile");
-    if (stored) {
-        try {
-            const parsed = JSON.parse(stored);
-            if (parsed && (parsed.name || parsed.username)) {
-                return parsed;
-            }
-        } catch (error) {
-            return null;
-        }
-    }
-
-    return {
-        name: editAccountNameValue?.textContent?.trim() || "",
-        username: editAccountUsernameValue?.textContent?.trim() || ""
-    };
-};
-
-const applyProfile = (profile) => {
-    if (!profile) return;
-    if (editAccountNameValue) editAccountNameValue.textContent = profile.name;
-    if (editAccountUsernameValue) {
-        editAccountUsernameValue.textContent = profile.username;
-    }
-    if (userSettingsTitle) {
-    userSettingsTitle.textContent = profile.name?.trim() 
-        ? profile.name 
-        : profile.username;
-    }
-    if (editNameInput) editNameInput.value = profile.name;
-    if (editUsernameInput) editUsernameInput.value = profile.username;
-};
-
-const saveProfile = (profile) => {
-    localStorage.setItem("userProfile", JSON.stringify(profile));
-    applyProfile(profile);
-};
-
-// Initialize profile on page load
-applyProfile(readProfile());

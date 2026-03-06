@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Randomize</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
     <link rel="stylesheet" href="styles/styles.css">
     <script type="module" src="firebase.js"></script>
     <script type="module" src="seed.js"></script>
@@ -68,7 +69,7 @@
         <div class="user-settings-panel">
             <div class="header">                   
                 <h2 id="user-settings-title">username123</h2>
-                <button type="button" class="close-btn" id="close-user-settings">
+                <button type="button" class="close-overlay" id="close-user-settings">
                     <img src="images/X.svg" alt="Close" width="24" height="24">
                 </button>
             </div>
@@ -244,7 +245,7 @@
                     <img src="images/profilepicture.svg" alt="Profile Picture">                
                     <h2 id="user-settings-title">username123</h2>
                 </div>
-                <button type="button" class="close-btn" id="close-user-settings">
+                <button type="button" class="close-overlay" id="close-user-settings">
                     <img src="images/X.svg" alt="Close" width="24" height="24">
                 </button>
             </div>
@@ -283,11 +284,11 @@
         <div class="modal-overlay user-settings-overlay" id="edit-account-modal">
             <div class="user-settings-panel">
                 <div class="header">
-                    <button type="button" class="close-btn" id="back-edit-account">
+                    <button type="button" class="close-overlay" id="back-edit-account">
                         <img src="images/arrowleft.svg" alt="Back" width="24" height="24">
                     </button>
                     <h2>Edit Account</h2>
-                        <button type="button" class="close-btn" id="close-edit-account">
+                        <button type="button" class="close-overlay" id="close-edit-account">
                         <img src="images/X.svg" alt="Close" width="24" height="24">
                     </button>
                 </div>                <div class="settings-menu">
@@ -317,18 +318,18 @@
         <div class="modal-overlay user-settings-overlay" id="edit-account-form-modal">
             <div class="user-settings-panel">
                 <div class="header">
-                    <button type="button" class="close-btn" id="back-edit-account-form">
+                    <button type="button" class="close-overlay" id="back-edit-account-form">
                         <img src="images/arrowleft.svg" alt="Back" width="24" height="24">
                     </button>
                     <h2>Edit Account</h2>
-                        <button type="button" class="close-btn" id="close-edit-account-form">
+                        <button type="button" class="close-overlay" id="close-edit-account-form">
                         <img src="images/X.svg" alt="Close" width="24" height="24">
                     </button>
                 </div>                <div class="settings-menu">
                     <div class="avatar-wrapper">
                         <img src="images/profilepicture.svg" alt="User Avatar" class="avatar-large" width="80" height="80">
                         <button type="button" class="edit-avatar-btn">
-                            <img src="images/edit.svg" alt="Edit" width="24" height="24">
+                            <img src="images/Edit.svg" alt="Edit" width="24" height="24">
                         </button>
                     </div>
 
