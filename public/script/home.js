@@ -66,6 +66,7 @@ const addIdeaModal = initializeModal("add-idea-modal", {
 });
 
 const addIdeaForm = document.getElementById("add-idea-form");
+const logoutButton = document.getElementById("logout-button");
 
 // Run when the page loads
 (async () => {
@@ -137,3 +138,20 @@ addIdeaForm.addEventListener("submit", async (event) => {
         alert("There was an error adding your date idea. Please try again.");
     }
 });
+
+// Add Idea Modal event listeners
+if (openModalButton) {
+    openModalButton.addEventListener("click", () => openModal(modalOverlay));
+}
+
+if (closeModalButton) {
+    closeModalButton.addEventListener("click", () => closeModal(modalOverlay));
+}
+
+if (logoutButton) {
+    logoutButton.addEventListener("click", () => {
+        window.location.href = "login.html";
+    });
+}
+
+closeOnOverlayClick(modalOverlay);
