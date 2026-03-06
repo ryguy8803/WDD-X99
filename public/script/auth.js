@@ -1,7 +1,7 @@
 // Authentication and Account Management
 import { auth, db, openModal, closeModal, initializeModal } from './script.js';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-import { doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, deleteUser } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+import { doc, setDoc, getDoc, updateDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 // ============================== LOGIN & REGISTRATION ==============================
 
@@ -124,8 +124,45 @@ if (backEditAccountFormButton) {
 // Setup delete account button
 const deleteAccountButton = document.getElementById("delete-account");
 if (deleteAccountButton) {
-    deleteAccountButton.addEventListener("click", () => {
-        window.location.href = "index.html";
+    deleteAccountButton.addEventListener("click", async () => {
+        const user = auth.currentUser;
+        if (!user) {
+            alert("No signed-in user found.");
+            return;
+        }
+
+        const confirmed = window.confirm("Are you sure you want to permanently delete your account?");
+        if (!confirmed) return;
+
+        try {
+            // Delete all event docs in the user's events subcollection
+            const eventsRef = collection(db, "users", user.uid, "events");
+            const eventsSnap = await getDocs(eventsRef);
+
+            for (const eventDoc of eventsSnap.docs) {
+                await deleteDoc(doc(db, "users", user.uid, "events", eventDoc.id));
+            }
+
+            // Delete the main user document
+            await deleteDoc(doc(db, "users", user.uid));
+
+            // Delete the Firebase Auth account
+            await deleteUser(user);
+
+            // Clear any local leftovers just in case
+            localStorage.removeItem("userProfile");
+
+            window.location.href = "index.html";
+        } catch (error) {
+            console.error("Error deleting account:", error);
+
+            if (error.code === "auth/requires-recent-login") {
+                alert("For security, please log out, log back in, and then try deleting your account again.");
+                return;
+            }
+
+            alert("Failed to delete account: " + error.message);
+        }
     });
 }
 
