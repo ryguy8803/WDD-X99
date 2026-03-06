@@ -421,11 +421,17 @@ select {
     border-radius: var(--medium-spacing);
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: scale(1.05);
 }
 
 /* Idea Card */
 .idea-card {
     width: clamp(280px, 30vw, 350px);
+    cursor: pointer;
     .hero {
         display: block;
         width: 100%;
@@ -592,6 +598,14 @@ select {
     display: flex;
     flex-direction: column;
     gap: var(--medium-spacing);
+    overflow-y: auto;
+}
+
+#idea-card-overlay .overlay-card {
+    overflow: hidden;
+}
+
+#idea-card-overlay .card-body {
     overflow-y: auto;
 }
 
