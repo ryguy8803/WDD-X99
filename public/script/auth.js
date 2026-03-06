@@ -1,7 +1,7 @@
 // Authentication and Account Management
 import { auth, db, openModal, closeModal, initializeModal } from './script.js';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-import { doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 // ============================== LOGIN & REGISTRATION ==============================
 
@@ -65,7 +65,7 @@ const userSettingsModal = initializeModal("user-settings-modal", {
 // Initialize Edit Account Modal
 const editAccountModal = initializeModal("edit-account-modal", {
     closeButtonSelector: "#close-edit-account",
-    onOpen: () => applyProfile(readProfile()) 
+    onOpen: () => readProfile().then(applyProfile)
 });
 
 // Setup Edit Account open buttons
@@ -89,7 +89,7 @@ if (backEditAccountButton) {
 // Initialize Edit Account Form Modal
 const editAccountFormModal = initializeModal("edit-account-form-modal", {
     closeButtonSelector: "#close-edit-account-form",
-    onOpen: () => applyProfile(readProfile())
+    onOpen: () => readProfile().then(applyProfile)
 });
 
 // Setup form open button
@@ -137,13 +137,13 @@ const editUsernameInput = document.getElementById("edit-username");
 
 // Setup form submission
 if (editAccountForm) {
-    editAccountForm.addEventListener("submit", (event) => {
+    editAccountForm.addEventListener("submit", async (event) => {
         event.preventDefault();
-        const current = readProfile();
+        const current = await readProfile();
         const name = (editNameInput?.value || "").trim() || current.name;
         const username = (editUsernameInput?.value || "").trim() || current.username;
 
-        saveProfile({ name, username });
+        await saveProfile({ name, username });
         closeModal(editAccountFormModal);
         openModal(editAccountModal);
     });
@@ -151,23 +151,24 @@ if (editAccountForm) {
 
 // ============================== PROFILE HELPERS ==============================
 
-const readProfile = () => {
-    const stored = localStorage.getItem("userProfile");
-    if (stored) {
-        try {
-            const parsed = JSON.parse(stored);
-            if (parsed && (parsed.name || parsed.username)) {
-                return parsed;
-            }
-        } catch (error) {
-            return null;
+const readProfile = async () => {
+    const user = auth.currentUser;
+    if (!user) return { name: "", username: "" };
+
+    try {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+            const data = userDoc.data();
+            return {
+                name: data.name || "",
+                username: data.username || ""
+            };
         }
+    } catch (error) {
+        console.error("Error reading profile:", error);
     }
 
-    return {
-        name: editAccountNameValue?.textContent?.trim() || "",
-        username: editAccountUsernameValue?.textContent?.trim() || ""
-    };
+    return { name: "", username: "" };
 };
 
 const applyProfile = (profile) => {
@@ -181,10 +182,21 @@ const applyProfile = (profile) => {
     if (editUsernameInput) editUsernameInput.value = profile.username;
 };
 
-const saveProfile = (profile) => {
-    localStorage.setItem("userProfile", JSON.stringify(profile));
-    applyProfile(profile);
+const saveProfile = async (profile) => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    try {
+        await updateDoc(doc(db, "users", user.uid), {
+            name: profile.name,
+            username: profile.username
+        });
+        applyProfile(profile);
+    } catch (error) {
+        console.error("Error saving profile:", error);
+        alert("Failed to save profile: " + error.message);
+    }
 };
 
 // Initialize profile on page load
-applyProfile(readProfile());
+readProfile().then(applyProfile);
