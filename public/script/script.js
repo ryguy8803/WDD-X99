@@ -1,6 +1,6 @@
 // Firebase imports and setup
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, getDocs, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { app } from '../firebase.js';
 
 export const db = getFirestore(app);
@@ -22,11 +22,24 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
-// Fetch all date ideas from Firestore
-export async function getAllIdeas() {
+// Fetch date ideas from Firestore, with optional filters
+export async function getAllIdeas(filters = {}) {
     try {
         const activitiesRef = collection(db, "activities");
-        const snapshot = await getDocs(activitiesRef);
+        let q;
+
+        // If there are category filters, build a query
+        if (filters.categories && filters.categories.length > 0) {
+            // Note: Firestore 'in' query is limited to 10 values.
+            // If you have more categories, you'll need to perform multiple queries.
+            q = query(activitiesRef, where("category", "in", filters.categories));
+        } else {
+            // Otherwise, create a query for all activities
+            q = query(activitiesRef);
+        }
+        
+        const snapshot = await getDocs(q);
+        
         return snapshot.docs.map(doc => ({
             id: doc.id,
             title: doc.data().title || doc.data().activity_name,
@@ -36,6 +49,7 @@ export async function getAllIdeas() {
             dollars: doc.data().dollars || doc.data().average_cost || 0,
             tags: doc.data().tags || []
         }));
+
     } catch (error) {
         console.error("Error fetching ideas from Firestore:", error);
         return [];

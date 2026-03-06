@@ -63,6 +63,7 @@ const modalOverlay = document.getElementById("add-idea-modal");
 const openModalButton = document.getElementById("open-add-idea");
 const closeModalButton = document.getElementById("close-add-idea");
 const addIdeaForm = document.getElementById("add-idea-form");
+const logoutButton = document.getElementById("logout-button");
 
 // Run when the page loads
 (async () => {
@@ -143,6 +144,12 @@ if (openModalButton) {
 
 if (closeModalButton) {
     closeModalButton.addEventListener("click", () => closeModal(modalOverlay));
+}
+
+if (logoutButton) {
+    logoutButton.addEventListener("click", () => {
+        window.location.href = "login.html";
+    });
 }
 
 closeOnOverlayClick(modalOverlay);

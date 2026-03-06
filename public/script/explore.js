@@ -6,24 +6,27 @@ const exploreIdeaList = document.getElementById("idea-list");
 
 // Get selected category tags
 const getSelectedTags = () => {
-    const tags = Array.from(
+    return Array.from(
         document.querySelectorAll(".tags .tag-button.is-active")
-    ).map((button) => button.textContent.trim().toLowerCase());
-    return tags;
+    ).map((button) => button.textContent.trim()); // Removed .toLowerCase()
 };
 
-// Render all idea cards
+// Render idea cards
 const renderExploreIdeas = async (ideas) => {
     if (!exploreIdeaList) return;
-    
-    // Clear the container
-    exploreIdeaList.innerHTML = "";
-    
-    // Render each idea card
-    for (const idea of ideas) {
-        const cardHTML = await createIdeaCardHTML(idea);
-        exploreIdeaList.innerHTML += cardHTML;
+
+    if (ideas.length === 0) {
+        exploreIdeaList.innerHTML = '<p style="text-align: center; color: var(--gray-50); padding: var(--large-spacing);">No ideas found matching your criteria. Try a different search or filter!</p>';
+        return;
     }
+
+    // Build all card HTML in an array
+    const cardsHTML = await Promise.all(
+        ideas.map(idea => createIdeaCardHTML(idea))
+    );
+    
+    // Set the innerHTML once with all the cards
+    exploreIdeaList.innerHTML = cardsHTML.join('');
 };
 
 // Filter and display ideas based on search and tags
@@ -31,30 +34,23 @@ const filterExploreIdeas = async () => {
     const query = (exploreSearchInput?.value || "").trim().toLowerCase();
     const selectedTags = getSelectedTags();
 
-    // Fetch ideas from Firestore
-    const allIdeas = await getAllIdeas();
+    // Fetch ideas from Firestore, pre-filtering by category on the server
+    const ideasFromDB = await getAllIdeas({ categories: selectedTags });
     
-    const filtered = allIdeas.filter((idea) => {
-        const category = (idea.category || "").toLowerCase();
-        const title = (idea.title || "").toLowerCase();
-        const description = (idea.description || "").toLowerCase();
+    // If there is a search query, perform a client-side search on the filtered results
+    const filteredIdeas = query
+        ? ideasFromDB.filter((idea) => {
+            const title = (idea.title || "").toLowerCase();
+            const description = (idea.description || "").toLowerCase();
+            const category = (idea.category || "").toLowerCase();
 
-        // Check if matches search query
-        const matchesQuery = query
-            ? title.includes(query) ||
-              description.includes(query) ||
-              category.includes(query)
-            : true;
+            return title.includes(query) ||
+                   description.includes(query) ||
+                   category.includes(query);
+        })
+        : ideasFromDB; // If no query, show all ideas that matched the category filter
 
-        // Check if matches selected category tags
-        const matchesTags = selectedTags.length
-            ? selectedTags.includes(category)
-            : true;
-
-        return matchesQuery && matchesTags;
-    });
-
-    await renderExploreIdeas(filtered);
+    await renderExploreIdeas(filteredIdeas);
 };
 
 // Init and Event Listeners ------------------------------------------------------------------------------
@@ -64,35 +60,30 @@ filterExploreIdeas();
 
 // Search input listener
 if (exploreSearchInput) {
-    exploreSearchInput.addEventListener("input", () => {
-        filterExploreIdeas();
-    });
+    exploreSearchInput.addEventListener("input", filterExploreIdeas);
 }
 
-// Tag button click listener
+// Tag button and heart icon click listener
 document.addEventListener("click", async (event) => {
     const tagButton = event.target.closest(".tags .tag-button");
+    const heart = event.target.closest(".heart-icon");
+
     if (tagButton) {
         tagButton.classList.toggle("is-active");
         await filterExploreIdeas();
     }
     
-    // Heart icon click listener
-    const heart = event.target.closest(".heart-icon");
     if (heart) {
         const ideaId = heart.getAttribute("data-idea-id");
+        if (!ideaId) return;
+
         const isNowLiked = await toggleLike(ideaId);
         
-        // Update ALL heart icons for this idea ID
+        // Update ALL heart icons for this idea ID on the page
         const allHeartsForIdea = document.querySelectorAll(`[data-idea-id="${ideaId}"]`);
         allHeartsForIdea.forEach(heartIcon => {
-            if (isNowLiked) {
-                heartIcon.src = "images/HeartFilled.svg";
-                heartIcon.classList.add("is-active");
-            } else {
-                heartIcon.src = "images/Heart.svg";
-                heartIcon.classList.remove("is-active");
-            }
+            heartIcon.src = isNowLiked ? "images/HeartFilled.svg" : "images/Heart.svg";
+            heartIcon.classList.toggle("is-active", isNowLiked);
         });
     }
 });
