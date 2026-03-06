@@ -1,6 +1,6 @@
 // Authentication and Account Management
 import { auth, db, openModal, closeModal, initializeModal } from './script.js';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, deleteUser } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, deleteUser, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 import { doc, setDoc, getDoc, updateDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 // ============================== LOGIN & REGISTRATION ==============================
@@ -239,3 +239,15 @@ const saveProfile = async (profile) => {
 
 // Initialize profile on page load
 readProfile().then(applyProfile);
+
+const logoutButton = document.getElementById("logout-button");
+if (logoutButton) {
+    logoutButton.addEventListener("click", async () => {
+        try {
+            await signOut(auth);
+            window.location.href = "login.html";
+        } catch (error) {
+            alert("Failed to log out: " + error.message);
+        }
+    });
+}
