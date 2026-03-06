@@ -1,12 +1,7 @@
 // Authentication and Account Management
 import { auth, db, openModal, closeModal, initializeModal } from './script.js';
-<<<<<<< Updated upstream
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, deleteUser, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 import { doc, setDoc, getDoc, updateDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-=======
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updatePassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-import { doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
->>>>>>> Stashed changes
 
 // ============================== LOGIN & REGISTRATION ==============================
 
