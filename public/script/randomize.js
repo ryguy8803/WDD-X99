@@ -1,14 +1,23 @@
 import { renderDollarSigns, saveLikedIdeas, getLikedIdeas, getAllIdeas } from "./script.js";
-import { openModal, closeModal, closeOnOverlayClick } from "./script.js";
+import { openModal, closeModal, initializeModal } from "./script.js";
+import "./auth.js";
 
 // ============================== RANDOMIZE FEATURE ==============================
-// Randomize & Preferences Modals
+const randomizeModal = initializeModal("randomize-modal", {
+    closeButtonSelector: "#close-randomize"
+});
+
+const preferencesModal = initializeModal("preferences-modal", {
+    closeButtonSelector: "#close-preferences",
+    onOpen: () => {
+        // Load user preferences when modal opens
+        loadPreferences();
+    }
+});
+
+// Button references
 const openRandomizeButton = document.getElementById("open-randomize");
 const openPreferencesButton = document.getElementById("open-preferences");
-const randomizeModal = document.getElementById("randomize-modal");
-const preferencesModal = document.getElementById("preferences-modal");
-const closeRandomizeButton = document.getElementById("close-randomize");
-const closePreferencesButton = document.getElementById("close-preferences");
 const applyPreferencesButton = document.getElementById("apply-preferences");
 const randomizeRejectButton = document.getElementById("randomize-reject");
 const randomizeFavoriteButton = document.getElementById("randomize-favorite");
@@ -132,7 +141,6 @@ const getFilteredIdeas = (preferences) => {
         });
     }
 
-    console.log(preferences);
     return filtered;
 };
 
@@ -202,9 +210,7 @@ openRandomizeButton.addEventListener("click", async () => {
     openModal(randomizeModal);
     showNextIdea();
 });
-closeRandomizeButton.addEventListener("click", () =>
-    closeModal(randomizeModal)
-);
+
 randomizeRejectButton.addEventListener("click", () => {
     // Animate the button
     randomizeRejectButton.classList.remove("btn-click-animate");
@@ -262,9 +268,12 @@ randomizeAddCalendarButton.addEventListener("click", () => {
     }
 });
 
-// Preferences Modal Event Listeners
-openPreferencesButton.addEventListener("click", () => openModal(preferencesModal));
-closePreferencesButton.addEventListener("click", () => closeModal(preferencesModal));
+// ============================== MODAL EVENT LISTENERS ==============================
+// Preferences Modal
+openPreferencesButton.addEventListener("click", () => {
+    openModal(preferencesModal);
+});
+
 applyPreferencesButton.addEventListener("click", async () => {
     currentPreferences = getSelectedPreferences();
     remainingIdeaIds = [];
@@ -292,6 +301,3 @@ if (adjustPreferencesButton) {
         openModal(preferencesModal);
     });
 }
-
-closeOnOverlayClick(randomizeModal);
-closeOnOverlayClick(preferencesModal);

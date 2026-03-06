@@ -1,4 +1,5 @@
 import { createIdeaCardHTML, toggleLike, getAllIdeas } from "./script.js";
+import "./auth.js";
 
 // Elements
 const exploreSearchInput = document.querySelector("input[name='search']");
