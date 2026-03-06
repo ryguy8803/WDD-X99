@@ -1,5 +1,5 @@
 // Authentication and Account Management
-import { auth, db, openModal, closeModal, initializeModal } from './script.js';
+import { auth, db, openModal, closeModal, initializeModal, closeOnOverlayClick } from './script.js';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, deleteUser, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 import { doc, setDoc, getDoc, updateDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
@@ -94,6 +94,8 @@ const userSettingsModal = initializeModal("user-settings-modal", {
     openButtonSelector: ".open-user-settings",
     closeButtonSelector: "#close-user-settings"
 });
+
+closeOnOverlayClick(userSettingsModal);
 
 // Initialize Edit Account Modal
 const editAccountModal = initializeModal("edit-account-modal", {
