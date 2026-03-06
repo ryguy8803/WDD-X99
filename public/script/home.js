@@ -1,5 +1,6 @@
-import { createIdeaCardHTML, getLikedIdeas, toggleLike, openModal, closeModal, initializeModal, getAllIdeas, db } from "./script.js";
+import { createIdeaCardHTML, getLikedIdeas, toggleLike, openModal, closeModal, initializeModal, getAllIdeas, db, auth } from "./script.js";
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 import "./auth.js";
 
 
@@ -140,18 +141,3 @@ addIdeaForm.addEventListener("submit", async (event) => {
 });
 
 // Add Idea Modal event listeners
-if (openModalButton) {
-    openModalButton.addEventListener("click", () => openModal(modalOverlay));
-}
-
-if (closeModalButton) {
-    closeModalButton.addEventListener("click", () => closeModal(modalOverlay));
-}
-
-if (logoutButton) {
-    logoutButton.addEventListener("click", () => {
-        window.location.href = "login.html";
-    });
-}
-
-closeOnOverlayClick(modalOverlay);

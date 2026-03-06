@@ -153,9 +153,6 @@ header {
     gap: var(--small-medium-spacing);
     align-items: center;
 }
-.logged-out {
-    display: none;
-}
 .nav {
     display: none;
 }
@@ -571,7 +568,7 @@ select {
 .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.35);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -581,8 +578,10 @@ select {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
+
     transition: opacity 0.25s ease, visibility 0.25s ease;
 }
+
 .modal-overlay.is-open {
     opacity: 1;
     visibility: visible;
@@ -639,9 +638,11 @@ select {
     flex-direction: column;
     gap: var(--medium-spacing);
     padding: var(--medium-spacing);
+
     transform: translateX(100%);
     transition: transform 0.3s ease;
 }
+
 .settings-menu {
     display: flex;
     flex-direction: column;
@@ -771,25 +772,25 @@ select {
 
 /* Login & Register Page --------------------------------------------------- */
 
-.login-actions {
+.login-actions, .register-actions, .forgot-actions {
     display: flex;
     flex-direction: row;
     gap: var(--large-spacing);
     align-items: center;
 }
 
-.register-actions {
+.forgot-actions {
     display: flex;
     flex-direction: row;
-    gap: var(--large-spacing);
-    align-items: center;
+    gap: var(--small-medium-spacing);
+    justify-content: flex-end;
 }
 
-.login-form, .register-form {
+.login-form, .register-form, .forgot-form {
     display: flex;
     flex-direction: column;
     gap: var(--medium-spacing);
-    .register-div {
+    .register-div, .login-div, .forgot-div {
         display: flex;
         flex-direction: column;
         gap: var(--medium-spacing);
@@ -1008,10 +1009,7 @@ select {
     }
 
     /* Login and Register */
-    .logged-out {
-        display: block;
-    }
-    .login-form, .register-form {
+    .login-form, .register-form, .forgot-form {
         gap: var(--extra-large-spacing);
         min-width: 500px;
     }

@@ -70,8 +70,14 @@ export const closeModal = (modal) => {
 };
 
 export const closeOnOverlayClick = (modal) => {
-    // Disabled - modals only close via X button now
-    // Keeping function so existing calls don't break
+    if (!modal) return;
+
+    modal.addEventListener("click", (event) => {
+        // Only close if the overlay itself is clicked
+        if (event.target === modal) {
+            closeModal(modal);
+        }
+    });
 };
 
 // MODULAR MODAL SETUP
