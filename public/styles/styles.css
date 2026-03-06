@@ -153,9 +153,6 @@ header {
     gap: var(--small-medium-spacing);
     align-items: center;
 }
-.logged-out {
-    display: none;
-}
 .nav {
     display: none;
 }
@@ -757,25 +754,25 @@ select {
 
 /* Login & Register Page --------------------------------------------------- */
 
-.login-actions {
+.login-actions, .register-actions, .forgot-actions {
     display: flex;
     flex-direction: row;
     gap: var(--large-spacing);
     align-items: center;
 }
 
-.register-actions {
+.forgot-actions {
     display: flex;
     flex-direction: row;
-    gap: var(--large-spacing);
-    align-items: center;
+    gap: var(--small-medium-spacing);
+    justify-content: flex-end;
 }
 
-.login-form, .register-form {
+.login-form, .register-form, .forgot-form {
     display: flex;
     flex-direction: column;
     gap: var(--medium-spacing);
-    .register-div {
+    .register-div, .login-div, .forgot-div {
         display: flex;
         flex-direction: column;
         gap: var(--medium-spacing);
@@ -994,10 +991,7 @@ select {
     }
 
     /* Login and Register */
-    .logged-out {
-        display: block;
-    }
-    .login-form, .register-form {
+    .login-form, .register-form, .forgot-form {
         gap: var(--extra-large-spacing);
         min-width: 500px;
     }
