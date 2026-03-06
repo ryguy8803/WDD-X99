@@ -40,7 +40,7 @@ if (registerForm) {
         }
         
         try {
-            const userCredential = await createUserWithEmailAndPassword(auth, username, email, password);
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             
             await setDoc(doc(db, "users", userCredential.user.uid), {
                 username: username,
