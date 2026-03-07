@@ -1,6 +1,6 @@
 // Firebase imports and setup
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, getDocs, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { app } from '../firebase.js';
 
 export const db = getFirestore(app);
@@ -15,9 +15,9 @@ onAuthStateChanged(auth, (user) => {
     currentUser = user;
     if (!user) {
         // Redirect to login if on protected pages
-        const protectedPaths = ['/c1_home.html', '/c2_randomize.html', '/c3_explore.html', '/c4_calendar.html'];
+        const protectedPaths = ['/home.html', '/randomize.html', '/explore.html', '/calendar.html'];
         if (protectedPaths.includes(window.location.pathname)) {
-            window.location.href = 'a2_login.html';
+            window.location.href = 'login.html';
         }
     }
 });
@@ -243,16 +243,12 @@ export async function createIdeaCardHTML(idea) {
 // Favorites  ----------------------------------------------------------------
 
 // Function to render favorites list in modal
-async function renderFavoritesList() {
-    const favoritesList = document.getElementById("favorites-list");
-    if (!favoritesList) return;
-
+export async function renderFavoritesList() {
     // Get liked idea IDs
     const likedIds = await getLikedIdeas();
     
     if (likedIds.length === 0) {
-        favoritesList.innerHTML = '<p style="text-align: center; color: var(--gray-50); padding: var(--large-spacing);">No favorites yet! Start liking ideas to see them here.</p>';
-        return;
+        return '<p style="text-align: center; color: var(--gray-50); padding: var(--large-spacing);">No favorites yet! Start liking ideas to see them here.</p>';
     }
 
     // Get all ideas
@@ -266,14 +262,19 @@ async function renderFavoritesList() {
         likedIdeas.map(idea => createIdeaCardHTML(idea))
     );
     
-    favoritesList.innerHTML = cardsHTML.join('');
+    return cardsHTML.join('');
 }
 
 initializeModal("favorites-modal", {
     openButtonSelector: "#open-favorites, .open-favorites",  
     closeButtonSelector: "#close-favorites",                  
     closeOnOverlay: false,                                    
-    onOpen: async () => await renderFavoritesList()          
+    onOpen: async () => {
+        const favoritesList = document.getElementById("favorites-list");
+        if (favoritesList) {
+            favoritesList.innerHTML = await renderFavoritesList();
+        }
+    }
 });
 
 
@@ -301,10 +302,20 @@ const toggleActive = async (element) => {
 };
 
 // Event listeners for interactive buttons (only heart icons)
-document.addEventListener("click", (event) => {
+document.addEventListener("click", async (event) => {
     const target = event.target.closest(".heart-icon");
     if (target) {
-        toggleActive(target);
+        await toggleActive(target);
+        
+        // Check if we're inside the favorites modal
+        const favoritesModal = document.getElementById("favorites-modal");
+        if (favoritesModal && favoritesModal.classList.contains("is-open")) {
+            // We're in the favorites overlay, so refresh the list
+            const favoritesList = document.getElementById("favorites-list");
+            if (favoritesList) {
+                favoritesList.innerHTML = await renderFavoritesList();
+            }
+        }
     }
 });
 

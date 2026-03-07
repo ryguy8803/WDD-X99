@@ -73,7 +73,7 @@
     <div class="modal-overlay user-settings-overlay" id="user-settings-modal">
         <div class="user-settings-panel">
             <div class="header">                   
-                <h2 id="user-settings-title">username123</h2>
+                <h2 id="user-settings-title"></h2>
                 <button type="button" class="close-overlay" id="close-user-settings">
                     <img src="images/X.svg" alt="Close" width="24" height="24">
                 </button>
@@ -121,15 +121,9 @@
                         <img src="images/X.svg" alt="Close" width="24" height="24">
                     </button>
                 </div>                <div class="settings-menu">
-                    <img src="images/profilepicture.svg" alt="User Avatar" class="avatar-large" width="80" height="80">
-
-                    <div class="user-detail">
-                        <label>Name</label>
-                        <div class="detail-value" id="edit-account-name">Rebecca Black</div>
-                    </div>
                     <div class="user-detail">
                         <label>Username</label>
-                        <div class="detail-value" id="edit-account-username">username123</div>
+                        <div class="detail-value" id="edit-account-username"></div>
                     </div>
                     <div class="user-detail">
                         <label>Password</label>
@@ -155,21 +149,10 @@
                         <img src="images/X.svg" alt="Close" width="24" height="24">
                     </button>
                 </div>                <div class="settings-menu">
-                    <div class="avatar-wrapper">
-                        <img src="images/profilepicture.svg" alt="User Avatar" class="avatar-large" width="80" height="80">
-                        <button type="button" class="edit-avatar-btn">
-                            <img src="images/Edit.svg" alt="Edit" width="24" height="24">
-                        </button>
-                    </div>
-
                     <form id="edit-account-form">
                         <div class="form-group">
-                            <label for="edit-name">Name</label>
-                            <input type="text" id="edit-name" name="name" value="Rebecca Black">
-                        </div>
-                        <div class="form-group">
                             <label for="edit-username">Username</label>
-                            <input type="text" id="edit-username" name="username" value="username123">
+                            <input type="text" id="edit-username" name="username" value="">
                         </div>
                         
                         <div class="form-actions">
@@ -406,6 +389,20 @@
                 </div>
             </div>
         </div>
+
+    <!-- Your Favorites -->
+    <div class="modal-overlay" id="favorites-modal">
+        <div class="card overlay-card favorites-overlay-card">
+            <div class="header">
+                <h2 id="favorites-title">Your favorites</h2>
+                <button type="button" class="close-overlay" id="close-favorites">
+                    <img src="images/X.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+
+            <div class="favorites-list" id="favorites-list"></div>
+        </div>
+    </div>
 
     <script type="module" src="script/calendar.js"></script>
 </body>

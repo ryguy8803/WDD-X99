@@ -1,26 +1,25 @@
 import { createIdeaCardHTML, getLikedIdeas, toggleLike, openModal, closeModal, initializeModal, getAllIdeas, db, auth } from "./script.js";
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-import { signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js";
 import "./auth.js";
+
+const storage = getStorage();
 
 
 // Main function that renders all idea cards to the home page
 async function renderHomeIdeas() {
-    // Get the container where cards will go
     const container = document.getElementById("home-idea-list");
     
-    // Clear container first
     container.innerHTML = "";
     
-    // Fetch ideas from Firestore
-    const ideas = await getAllIdeas();
+    const allIdeas = await getAllIdeas();
     
-    // Loop through all ideas from Firestore
-    for (const idea of ideas) {
-        // Create the HTML for this card (now async)
+    const shuffled = allIdeas.sort(() => 0.5 - Math.random());
+    const randomIdeas = shuffled.slice(0, 7);
+    
+    for (const idea of randomIdeas) {
         const cardHTML = await createIdeaCardHTML(idea);
         
-        // Add it to the container
         container.innerHTML += cardHTML;
     }
 }
@@ -30,22 +29,22 @@ async function renderHomeFavoritesPreview() {
     const container = document.getElementById("home-favorites-list");
     const emptyMessage = document.querySelector(".favorites");
     
+    // Clear the container first to prevent duplicates
+    container.innerHTML = "";
+    
     // Get liked IDs (now async)
     const likedIds = await getLikedIdeas();
     
     // Show/hide empty message based on whether there are likes
     if (likedIds.length === 0) {
-        if (emptyMessage) emptyMessage.hidden = false;
+        emptyMessage.hidden = false;
         container.hidden = true;
         return;
     }
     
     // Hide empty message and show container
-    if (emptyMessage) emptyMessage.hidden = true;
+    emptyMessage.hidden = true;
     container.hidden = false;
-    
-    // Clear the container to prevent duplicates
-    container.innerHTML = "";
     
     // Fetch ideas from Firestore and filter to only liked ones
     const allIdeas = await getAllIdeas();
@@ -67,13 +66,10 @@ const addIdeaModal = initializeModal("add-idea-modal", {
 });
 
 const addIdeaForm = document.getElementById("add-idea-form");
-const logoutButton = document.getElementById("logout-button");
 
 // Run when the page loads
-(async () => {
-    await renderHomeIdeas();
-    await renderHomeFavoritesPreview();
-})();
+renderHomeIdeas();
+renderHomeFavoritesPreview();
 
 // Listen for clicks on heart icons
 document.addEventListener("click", async (event) => {
@@ -110,24 +106,44 @@ addIdeaForm.addEventListener("submit", async (event) => {
     const description = String(formData.get("description") || "").trim();
     const category = String(formData.get("category") || "");    
     const priceValue = Number(formData.get("price") || 0);
+    const location = String(formData.get("location") || "");
+    const energy = String(formData.get("energy") || "");
+    const duration = String(formData.get("duration") || "");
+    const imageFile = formData.get("image");
 
     if (!name) {
+        alert("Please enter a name for your date idea.");
         return;
     }
 
-    const priceMap = { 0: 0, 1: 20, 2: 50, 3: 100 };
-    const average_cost = priceMap[priceValue];
+    // Build tags array from preferences
+    const tags = [];
+    if (location) tags.push(location);
+    if (energy) tags.push(energy);
+    if (duration) tags.push(duration);
 
-    const newActivity = {
-        title: name,
-        description: description,
-        dollars: priceValue,
-        category: category,
-        image: "",
-        tags: []
-    };
-    
     try {
+        let imageUrl = "";
+        
+        // Upload image to Firebase Storage if a file was selected
+        if (imageFile && imageFile.size > 0) {
+            const timestamp = Date.now();
+            const fileName = `${timestamp}_${imageFile.name}`;
+            const storageRef = ref(storage, `activity-images/${fileName}`);
+            
+            await uploadBytes(storageRef, imageFile);
+            imageUrl = await getDownloadURL(storageRef);
+        }
+
+        const newActivity = {
+            title: name,
+            description: description,
+            dollars: priceValue,
+            category: category,
+            image: imageUrl,
+            tags: tags
+        };
+        
         await addDoc(collection(db, "activities"), newActivity);
         
         // Re-render the ideas
@@ -139,5 +155,3 @@ addIdeaForm.addEventListener("submit", async (event) => {
         alert("There was an error adding your date idea. Please try again.");
     }
 });
-
-// Add Idea Modal event listeners

@@ -34,7 +34,7 @@
         </div>
     </header>
 
-    <main class="scroll-container">
+    <main class="scroll-container home">
         
         <section class="layout-band">
             <div class="explore-header">
@@ -96,10 +96,7 @@
     <div class="modal-overlay user-settings-overlay" id="user-settings-modal">
         <div class="user-settings-panel">
             <div class="header">   
-                <div class="pic-username">
-                    <img src="images/profilepicture.svg" alt="Profile Picture">                
-                    <h2 id="user-settings-title">username123</h2>
-                </div>
+                <h2 id="user-settings-title"></h2>
                 <button type="button" class="close-overlay" id="close-user-settings">
                     <img src="images/X.svg" alt="Close" width="24" height="24">
                 </button>
@@ -149,16 +146,9 @@
             </div>
 
             <div class="settings-menu">
-                <img src="images/profilepicture.svg" alt="User Avatar" class="avatar-large" width="80" height="80">
-
-                <div class="user-detail">
-                    <label>Name</label>
-                    <div class="detail-value" id="edit-account-name">Rebecca Black</div>
-                </div>
-
                 <div class="user-detail">
                     <label>Username</label>
-                    <div class="detail-value" id="edit-account-username">username123</div>
+                    <div class="detail-value" id="edit-account-username"></div>
                 </div>
 
                 <div class="user-detail">
@@ -187,22 +177,10 @@
             </div>
 
             <div class="settings-menu">
-                <div class="avatar-wrapper">
-                    <img src="images/profilepicture.svg" alt="User Avatar" class="avatar-large" width="80" height="80">
-                    <button type="button" class="edit-avatar-btn">
-                        <img src="images/Edit.svg" alt="Edit" width="24" height="24">
-                    </button>
-                </div>
-
                 <form id="edit-account-form">
                     <div class="form-group">
-                        <label for="edit-name">Name</label>
-                        <input type="text" id="edit-name" name="name" value="Rebecca Black">
-                    </div>
-
-                    <div class="form-group">
                         <label for="edit-username">Username</label>
-                        <input type="text" id="edit-username" name="username" value="username123">
+                        <input type="text" id="edit-username" name="username" value="">
                     </div>
                     
                     <div class="form-actions">
@@ -259,10 +237,62 @@
                             <option value="0">Free</option> 
                             <option value="1">$</option>
                             <option value="2">$$</option>
-                            <option value="3">$$</option>                       
+                            <option value="3">$$$</option>                       
                         </select>
                     </label>
                 </div>
+
+                <label for="idea-image">Image
+                    <input type="file" id="idea-image" name="image" accept="image/*">
+                </label>
+
+                <div class="preference-section">
+                        <h4>Where?</h4>
+                        <div class="radio-group">
+                            <label class="radio">
+                                <input type="radio" name="location" value="indoors">
+                                <span class="dot"></span>
+                                Indoors
+                            </label>
+                            <label class="radio">
+                                <input type="radio" name="location" value="outdoors">
+                                <span class="dot"></span>
+                                Outdoors
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="preference-section">
+                        <h4>Energy Level</h4>
+                        <div class="radio-group">
+                            <label class="radio">
+                                <input type="radio" name="energy" value="lazy">
+                                <span class="dot"></span>
+                                Lazy
+                            </label>
+                            <label class="radio">
+                                <input type="radio" name="energy" value="high-energy">
+                                <span class="dot"></span>
+                                High Energy
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="preference-section">
+                        <h4>How long?</h4>
+                        <div class="radio-group">
+                            <label class="radio">
+                                <input type="radio" name="duration" value="quick">
+                                <span class="dot"></span>
+                                Quick
+                            </label>
+                            <label class="radio">
+                                <input type="radio" name="duration" value="long">
+                                <span class="dot"></span>
+                                Long
+                            </label>
+                        </div>
+                    </div>
 
                 <div class="footer">
                     <button type="submit" class="button high">Add Date Idea</button>
