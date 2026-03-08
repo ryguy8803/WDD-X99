@@ -215,6 +215,12 @@ export async function createIdeaCardHTML(idea) {
     const priceHTML = idea.dollars > 0 
         ? `<div class="price-level">${renderDollarSigns(idea.dollars)}</div>`
         : "";
+
+    
+    // Determine which heart icon to show (filled if liked, empty if not)
+    const isLiked = await isIdeaLiked(ideaId);
+    const heartSrc = isLiked ? "images/HeartFilled.svg" : "images/Heart.svg";
+    const heartClass = isLiked ? "heart-icon is-active" : "heart-icon";
     
     // Build the complete card HTML
     return `
