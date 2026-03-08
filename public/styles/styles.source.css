@@ -132,27 +132,27 @@ header {
     top: 0;
     z-index: 1;
     background-color: var(--gray-10);
-}
-header a {
+    a {
         text-decoration: none;
     }
-header div {
+    div {
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
-header img {
+    img {
         cursor: pointer;
     }
+}
 .logo-wrapper{
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: var(--small-spacing);
-}
-.logo-wrapper h1 {
+    h1 {
         color: var(--purple)
     }
+}
 .auth-buttons {
     display: flex;
     gap: var(--small-medium-spacing);
@@ -176,18 +176,17 @@ footer {
     bottom: 0;
     width: 100%;
     background-color: var(--gray-10);
-}
-footer a {
+    a {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: flex-end;
         position: relative;
     }
-footer img {
+    img {
         width: 30px;
     }
-footer span {
+    span {
         height: 5px;
         width: 40px;
         background-color: var(--purple);
@@ -196,6 +195,7 @@ footer span {
         left: 50%;
         transform: translateX(-50%);
     }
+}
 
 /* Button */
 .button {
@@ -225,17 +225,17 @@ a {
     color: black;
     display: inline-block;
     width: auto;
-}
-a :visited {
+    :visited {
         color: var(--purple)
     }
-a.high {
+    &.high {
         text-decoration: none;
         background-color: var(--purple);
         color: var(--gray-10);
         padding: var(--small-spacing) var(--small-medium-spacing);
         border-radius: var(--small-spacing);
     }
+}
 
 /* Emphasises */
 .medium {
@@ -255,8 +255,7 @@ label {
     align-items: flex-start;
     gap: var(--small-spacing);
     font-size: var(--p);
-}
-label svg {
+    svg {
         width: var(--medium-large-spacing);
         height: var(--medium-large-spacing);
         position: absolute;
@@ -264,6 +263,7 @@ label svg {
         pointer-events: none;
         margin: var(--small-medium-spacing);
     }
+}
 
 
 /* Text Field and Text Area*/
@@ -272,13 +272,13 @@ input[type="text"], input[type="password"], input[type="time"],  input[type="dat
     border: 1.5px solid var(--gray-30);
     border-radius: var(--small-spacing);
     width: 100%;
-    }
-input[type="text"]:focus, input[type="text"]:focus-visible, input[type="password"]:focus, input[type="password"]:focus-visible, input[type="time"]:focus, input[type="time"]:focus-visible, input[type="date"]:focus, input[type="date"]:focus-visible, input[type="email"]:focus, input[type="email"]:focus-visible, textarea:focus, textarea:focus-visible {
+    &:focus, &:focus-visible {
         outline: 2px solid var(--purple);
         outline-offset: 1px;
     }
-input[type="text"]::placeholder, input[type="password"]::placeholder, input[type="time"]::placeholder, input[type="date"]::placeholder, input[type="email"]::placeholder, textarea::placeholder {
+    &::placeholder {
         color: var(--gray-30);
+    }
     }
 textarea {
     resize: vertical;
@@ -290,14 +290,14 @@ select {
     padding: var(--small-spacing) var(--small-medium-spacing);
     border: 1.5px solid var(--gray-30);
     border-radius: var(--small-spacing);
-}
-select:focus, select:focus-visible {
+     &:focus, &:focus-visible {
         outline: 2px solid var(--purple);
         outline-offset: 1px;
     }
-select::placeholder {
+    &::placeholder {
         color: var(--gray-30);
     }
+}
 
 /* Checkbox */
 .checkbox {
@@ -307,12 +307,13 @@ select::placeholder {
     gap: 0.5rem;
     cursor: pointer;
     position: relative;
-}
-.checkbox input {
+
+    input {
         position: absolute;
         opacity: 0;
     }
-.checkbox .box {
+
+    .box {
         width: 30px;
         height: 30px;
         border: 2px solid var(--gray-30);
@@ -320,8 +321,8 @@ select::placeholder {
         display: grid;
         place-items: center;
         position: relative;
-    }
-.checkbox .box::after {
+
+        &::after {
             content: "";
             position: absolute;
             inset: 0;
@@ -333,12 +334,15 @@ select::placeholder {
             opacity: 0;
             transition: opacity 0.15s ease;
         }
-.checkbox input:checked + .box::after {
+    }
+
+    input:checked + .box::after {
         opacity: 1;
     }
-.checkbox input:checked + .box {
+    input:checked + .box {
         border-color: var(--purple);
     }
+}
 
 /* Radio */
 .radio {
@@ -348,12 +352,13 @@ select::placeholder {
     gap: 0.5rem;
     cursor: pointer;
     position: relative;
-}
-.radio input {
+
+    input {
         position: absolute;
         opacity: 0;
     }
-.radio .dot {
+
+    .dot {
         width: 30px;
         height: 30px;
         border: 2px solid var(--gray-30);
@@ -361,8 +366,8 @@ select::placeholder {
         display: grid;
         place-items: center;
         position: relative;
-    }
-.radio .dot::after {
+
+        &::after {
             content: "";
             position: absolute;
             inset: 0;
@@ -375,12 +380,15 @@ select::placeholder {
             opacity: 0;
             transition: opacity 0.15s ease;
         }
-.radio input:checked + .dot::after {
+    }
+
+    input:checked + .dot::after {
         opacity: 1;
     }
-.radio input:checked + .dot {
+    input:checked + .dot {
         border-color: var(--purple);
     }
+}
 
 /* Tag */ 
 .tag {
@@ -422,11 +430,10 @@ select::placeholder {
     width: clamp(280px, 30vw, 350px);
     cursor: pointer;
     transition: transform 0.2s ease-in-out;
-}
-.idea-card:hover {
+    &:hover {
     transform: scale(1.05);
 }
-.idea-card .hero {
+    .hero {
         display: block;
         width: 100%;
         height: 140px;
@@ -434,40 +441,41 @@ select::placeholder {
         padding: 0;
         object-fit: cover;
     }
-.idea-card .card-body {
+    .card-body {
         padding: var(--medium-spacing) var(--medium-spacing) var(--medium-large-spacing) var(--medium-spacing);
         display: flex;
         flex-direction: column;
         gap: var(--large-spacing);
-    }
-.idea-card .card-body .top-half {
+        .top-half {
             display: flex;
             flex-direction: column;
             gap: var(--small-spacing);
         }
-.idea-card .card-body .top3rd {
+        .top3rd {
             display: flex;
             align-items: center;
             gap: var(--small-medium-spacing);
-        }
-.idea-card .card-body .top3rd div {
+            div {
                 display: flex;
-            }
-.idea-card .card-body .top3rd div img {
+                img {
                     width: var(--large-spacing);
                 }
-.idea-card .card-body p {
+            }
+        }
+        p {
             color: var(--gray-60);
             font-size: var(--p);
         }
-.idea-card .card-body .bottom3rd {
+        .bottom3rd {
             display: flex;
             align-items: center;
             justify-content: space-between;
-        }
-.idea-card .card-body .bottom3rd img {
+            img {
                 width: var(--large-spacing);
             }
+        }
+    }
+}
 
 /* Event Card */
 .event-card {
@@ -477,30 +485,30 @@ select::placeholder {
     gap: var(--extra-large-spacing);
     width: clamp(280px, 100%, 400px);
     cursor: pointer;
-}
-.event-card img {
+    img {
         width: 25px;
     }
-.event-card .card-header {
+    .card-header {
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
     }
-.event-card .event-details {
+    .event-details {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: flex-end;
-    }
-.event-card .event-details div {
+        div {
             display: flex;
             flex-direction: column;
             gap: var(--small-spacing);
-        }
-.event-card .event-details div p:first-of-type {
+            p:first-of-type {
                 color: var(--gray-60);
             }
+        }
+    }
+}
 
 /* Icon Card */
 .icon-card {
@@ -510,45 +518,45 @@ select::placeholder {
     height: 160px;
     width: clamp(320px, 90%, 400px);
     cursor: pointer;
-}
-.icon-card svg {
+    svg {
         align-self: center;
         justify-self: end;
         grid-column: 1/2;
     }
-.icon-card div {
+    div {
         grid-column: 2/5;
         align-self: center;
     }
-.icon-card.white{
+    &.white{
         color: var(--purple);
         border: 1.5px solid var(--purple);
         border-radius: var(--large-spacing);
     }
-.icon-card.purple {
+    &.purple {
         color: var(--gray-10);
         background-color: var(--purple);
     }
-.icon-card.gradient {
+    &.gradient {
     color: var(--gray-10);
     background: linear-gradient(90deg, var(--purple),rgb(98, 34, 121));
+}
 }
 
 /* Overlay Card */
 .overlay-card {
     padding: var(--medium-spacing);
-}
-.overlay-card .dropdowns {
+    .dropdowns {
         display: flex;
         flex-direction: row;
         gap: var(--small-spacing);
     }
-.overlay-card form {
+    form {
         display: flex;
         flex-direction: column;
         gap: var(--medium-spacing);
         padding: var(--medium-spacing) 0;
     }
+}
 .header {
     display: flex;
     flex-direction: row;
@@ -556,14 +564,14 @@ select::placeholder {
     align-items: center;
     padding: var(--medium-spacing);
     gap: var(--medium-spacing);
-}
-.header h2 {
+    h2 {
         color: var(--purple);
         word-wrap: break-word;
         overflow-wrap: break-word;
         flex: 1;
         min-width: 0;
     }
+}
 
 /* Modal */
 .modal-overlay {
@@ -647,10 +655,10 @@ select::placeholder {
     display: flex;
     flex-direction: column;
     gap: var(--small-spacing);
-}
-.user-detail label {
+    label {
         color: var(--gray-60);
     }
+}
 
 .settings-menu {
     display: flex;
@@ -658,19 +666,17 @@ select::placeholder {
     gap: var(--large-spacing);
     margin: var(--large-spacing);
     height: 100%;
-}
-
-.settings-menu form {
+    form {
         display: flex;
         flex-direction: column;
         gap: var(--medium-spacing);
-    }
-
-.settings-menu form .form-actions {
+        .form-actions {
             display: flex;
             justify-content: flex-end;
             gap: var(--small-spacing);
         }
+    }
+}
 .menu-item {
     display: flex;
     flex-direction: row;
@@ -761,14 +767,13 @@ select::placeholder {
     color: var(--gray-40);
     margin: var(--large-spacing);
     gap: var(--large-spacing);
-}
-
-.nav-grid div {
+    div {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
     }
+}
 
 /* Login & Register Page --------------------------------------------------- */
 
@@ -790,13 +795,12 @@ select::placeholder {
     display: flex;
     flex-direction: column;
     gap: var(--medium-spacing);
-}
-
-.login-form .register-div, .login-form .login-div, .login-form .forgot-div, .register-form .register-div, .register-form .login-div, .register-form .forgot-div, .forgot-form .register-div, .forgot-form .login-div, .forgot-form .forgot-div {
+    .register-div, .login-div, .forgot-div {
         display: flex;
         flex-direction: column;
         gap: var(--medium-spacing);
     }
+}
 
 /* Onboarding --------------------------------------------------- */
 
@@ -812,12 +816,11 @@ select::placeholder {
     align-items: flex-start;
     justify-content: center;
     height: 50vh;
-}
-
-.onboarding h2, .onboarding-welcome h2 {
+    h2 {
         color: var(--purple);
         font-size: var(--h1);
     }
+}
 .onboarding-welcome {
     gap: var(--small-medium-spacing);
 }
@@ -855,14 +858,14 @@ select::placeholder {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-}
-.explore-header .desktop, .favorites-header .desktop {
+    .desktop {
        display: none;
        gap: var(--small-spacing);
     }
-.explore-header .desktop-large, .favorites-header .desktop-large {
+    .desktop-large {
        display: none;
     }
+}
 .clown {
     display: flex;
     flex-direction: column;
@@ -914,11 +917,10 @@ select::placeholder {
     margin: var(--medium-spacing) 0;
     flex-wrap: wrap;
     justify-content: center;
-}
-
-.card-list .idea-card {
+    .idea-card {
         width: 100%;
     }
+}
 
 /* Calendar ---------------------------------------------------------- */
 
@@ -936,11 +938,10 @@ select::placeholder {
     align-items: center;
     justify-content: center;
     gap: var(--medium-spacing);
-}
-
-.calendar-controls h2 {
+    h2 {
         color: var(--purple);
     }
+}
 
 .calendar-grid {
     display: grid;
@@ -1002,11 +1003,10 @@ select::placeholder {
 .info-col {
     display: flex;
     flex-direction: column;
-}
-
-.info-col .label {
+    .label {
         color: var(--gray-50);
     }
+}
 
 .event-details {
     display: flex;
@@ -1064,15 +1064,14 @@ select::placeholder {
         justify-content: space-between;
         align-items: center;
         gap: var(--large-spacing);
-    }
-        .nav a {
+        a {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-end;
             position: relative;
         }
-        .nav span {
+        span {
             height: 5px;
             width: 40px;
             background-color: var(--purple);
@@ -1081,10 +1080,11 @@ select::placeholder {
             left: 50%;
             transform: translateX(-50%);
         }
-        .nav img {
+        img {
             width: 30px;
             height: 30px;
         }
+    }
     .nav-and-profile {
         display: flex;
         flex-direction: row;
@@ -1092,11 +1092,13 @@ select::placeholder {
     }
 
     /* Home */
-        .favorites-header .desktop {
+    .favorites-header {
+        .desktop {
             display: flex;
             flex-direction: row;
             gap: var(--small-spacing);
-        } 
+        }   
+    } 
 
     /* Randomize */
     .cards {
@@ -1107,10 +1109,10 @@ select::placeholder {
     /* Explore */
     .card-list { 
         flex-direction: row;
-    }
-        .card-list .idea-card {
+        .idea-card {
             width: 280px;
         }
+    }
 
     /* Calendar */ 
     .calendar-page {
