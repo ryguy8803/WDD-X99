@@ -818,7 +818,11 @@ select {
     height: 50vh;
     h2 {
         color: var(--purple);
+        font-size: var(--h1);
     }
+}
+.onboarding-welcome {
+    gap: var(--small-medium-spacing);
 }
 
 .onboarding-main {
@@ -832,6 +836,16 @@ select {
     display: flex;
     flex-direction: column;
     gap: var(--extra-large-spacing);
+}
+
+.tutorial-button-wrapper.desktop {
+    display: none;
+}
+
+.tutorial-button-wrapper.mobile {
+    display: block;
+    text-align: center;
+    margin-top: var(--large-spacing);
 }
 
 /* Home ---------------------------------------------------------- */
@@ -1143,42 +1157,36 @@ select {
         flex: 1.5 1 0;
         min-width: 0;
     }
+    
+    .tutorial-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        max-width: 1200px;
+    }
 
-    /* Onboarding */
-    .onboarding-main {
-        justify-content: center;
-        padding: var(--extra-large-spacing);
-        min-height: calc(100vh - 120px);
+    .tutorial-button-wrapper.desktop {
+        display: block;
+    }
+
+    .tutorial-button-wrapper.mobile {
+        display: none;
     }
 
     .tutorial-container {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         gap: var(--extra-large-spacing);
         max-width: 1200px;
-        align-items: start;
+        align-items: center;
     }
 
     .tutorial-container hr {
         display: none;
     }
 
-    .onboarding, .onboarding-welcome {
-        margin: 0;
-        gap: var(--large-spacing); 
-        text-align: center;
-    }
-
-    .onboarding {
-        align-items: center;
-    }
-
-    .onboarding-welcome {
-        text-align: left;
-    }
-
-    .tutorial-footer {
-        margin-top: var(--large-spacing);
-        padding: var(--large-spacing);
+    .onboarding-welcome, .onboarding-main {
+        height: 20vh
     }
 }

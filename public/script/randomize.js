@@ -49,7 +49,7 @@ const createRandomizeCardHTML = (idea) => {
                     <h3>${idea.title}</h3>
                     ${priceHTML}
                 </section>
-                <p>${idea.description}</p>
+                <p>${idea.location}</p>
             </div>
             <section class="bottom3rd">
                 <span class="tag">${idea.category}</span>

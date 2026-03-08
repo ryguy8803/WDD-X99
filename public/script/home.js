@@ -1,6 +1,7 @@
 import { createIdeaCardHTML, getLikedIdeas, toggleLike, openModal, closeModal, initializeModal, getAllIdeas, db, auth } from "./script.js";
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 import "./auth.js";
 
 const storage = getStorage();
@@ -67,9 +68,20 @@ const addIdeaModal = initializeModal("add-idea-modal", {
 
 const addIdeaForm = document.getElementById("add-idea-form");
 
-// Run when the page loads
-renderHomeIdeas();
-renderHomeFavoritesPreview();
+// Run when the page loads - wait for auth to be ready
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        renderHomeIdeas();
+        renderHomeFavoritesPreview();
+    }
+});
+
+// Re-render favorites when returning to the page
+document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+        renderHomeFavoritesPreview();
+    }
+});
 
 // Listen for clicks on heart icons
 document.addEventListener("click", async (event) => {

@@ -15,8 +15,10 @@ onAuthStateChanged(auth, (user) => {
     currentUser = user;
     if (!user) {
         // Redirect to login if on protected pages
-        const protectedPaths = ['/home.html', '/randomize.html', '/explore.html', '/calendar.html'];
-        if (protectedPaths.includes(window.location.pathname)) {
+        const protectedPages = ['tutorial.html', 'home.html', 'randomize.html', 'explore.html', 'calendar.html'];
+        const currentPage = window.location.pathname.split('/').pop();
+        
+        if (protectedPages.includes(currentPage)) {
             window.location.href = 'login.html';
         }
     }
@@ -42,11 +44,15 @@ export async function getAllIdeas(filters = {}) {
         
         return snapshot.docs.map(doc => ({
             id: doc.id,
-            title: doc.data().title || doc.data().activity_name,
+            title: doc.data().title || "",
             description: doc.data().description || "",
+            details: doc.data().details || "",
+            address: doc.data().address || "",
+            website: doc.data().website || "",
             category: doc.data().category || "",
-            image: doc.data().image || doc.data().images?.[0] || "",
-            dollars: doc.data().dollars || doc.data().average_cost || 0,
+            location: doc.data().location || 0,
+            image: doc.data().image || "",
+            dollars: doc.data().dollars || 0,
             tags: doc.data().tags || []
         }));
 
@@ -210,11 +216,6 @@ export async function createIdeaCardHTML(idea) {
         ? `<div class="price-level">${renderDollarSigns(idea.dollars)}</div>`
         : "";
     
-    // Determine which heart icon to show (filled if liked, empty if not)
-    const isLiked = await isIdeaLiked(ideaId);
-    const heartSrc = isLiked ? "images/HeartFilled.svg" : "images/Heart.svg";
-    const heartClass = isLiked ? "heart-icon is-active" : "heart-icon";
-    
     // Build the complete card HTML
     return `
         <div class="card idea-card">
@@ -225,7 +226,7 @@ export async function createIdeaCardHTML(idea) {
                         <h3>${idea.title}</h3>
                         ${priceHTML}
                     </section>
-                    <p>${idea.description}</p>
+                    <p>${idea.location}</p>
                 </div>
                 <section class="bottom3rd">
                     <span class="tag">${idea.category}</span>
