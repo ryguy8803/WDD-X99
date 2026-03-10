@@ -1,4 +1,4 @@
-import { createIdeaCardHTML, toggleLike, getAllIdeas } from "./script.js";
+import { createIdeaCardHTML, toggleLike, getAllIdeas, showIdeaDetail } from "./script.js";
 import "./auth.js";
 
 // Elements
@@ -21,13 +21,23 @@ const renderExploreIdeas = async (ideas) => {
         return;
     }
 
-    // Build all card HTML in an array
-    const cardsHTML = await Promise.all(
-        ideas.map(idea => createIdeaCardHTML(idea))
-    );
+    exploreIdeaList.innerHTML = '';
     
-    // Set the innerHTML once with all the cards
-    exploreIdeaList.innerHTML = cardsHTML.join('');
+    // Create and append each card with click listener
+    for (const idea of ideas) {
+        const cardHTML = await createIdeaCardHTML(idea);
+        
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = cardHTML;
+        const card = tempDiv.firstElementChild;
+
+        card.addEventListener('click', (e) => {
+            if (e.target.closest('.heart-icon')) return;
+            showIdeaDetail(idea);
+        });
+        
+        exploreIdeaList.appendChild(card);
+    }
 };
 
 // Filter and display ideas based on search and tags

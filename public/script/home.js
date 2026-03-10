@@ -1,4 +1,4 @@
-import { createIdeaCardHTML, getLikedIdeas, toggleLike, openModal, closeModal, initializeModal, getAllIdeas, db, auth } from "./script.js";
+import { createIdeaCardHTML, getLikedIdeas, toggleLike, openModal, closeModal, initializeModal, getAllIdeas, db, auth, showIdeaDetail } from "./script.js";
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
@@ -21,7 +21,18 @@ async function renderHomeIdeas() {
     for (const idea of randomIdeas) {
         const cardHTML = await createIdeaCardHTML(idea);
         
-        container.innerHTML += cardHTML;
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = cardHTML;
+        const card = tempDiv.firstElementChild;
+        
+        card.addEventListener('click', (e) => {
+            // Don't trigger if clicking the heart icon
+            if (e.target.closest('.heart-icon')) return;
+            
+            showIdeaDetail(idea);
+        });
+        
+        container.appendChild(card);
     }
 }
 
@@ -54,7 +65,19 @@ async function renderHomeFavoritesPreview() {
     // Render each liked idea card
     for (const idea of likedIdeas) {
         const cardHTML = await createIdeaCardHTML(idea);
-        container.innerHTML += cardHTML;
+        
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = cardHTML;
+        const card = tempDiv.firstElementChild;
+        
+        // Add click listener
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', (e) => {
+            if (e.target.closest('.heart-icon')) return;
+            showIdeaDetail(idea);
+        });
+        
+        container.appendChild(card);
     }
 }
 

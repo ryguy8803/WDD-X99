@@ -565,6 +565,51 @@ select::placeholder {
         min-width: 0;
     }
 
+/* Idea Card Detail */
+.idea-card-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+.idea-card-hero .hero {
+        height: 250px;
+    }
+.idea-card-hero img {
+        grid-column: 1/3;
+        grid-row: 1/3;
+    }
+.idea-card-hero button {
+        display: flex;
+        grid-column: 2/3;
+        grid-row: 1/2;
+        z-index: 10;
+        justify-self: end;
+        align-self: start;
+        margin: var(--small-spacing);
+        padding: var(--small-spacing);
+        border-radius: 50%;
+        transition: background-color 0.2s ease-in-out;
+    }
+.idea-card-hero button:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+.idea-card-hero button img {
+            justify-content: center;
+            align-items: centerx;
+        }
+
+/* Detail card */ 
+.detail-card {
+    cursor: default;
+    min-width: 50%;
+} 
+.detail-card:hover {
+        transform: none;
+    } 
+.detail-card .card-body {
+        padding: var(--large-spacing);
+    }
+
 /* Modal */
 .modal-overlay {
     position: fixed;

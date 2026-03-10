@@ -573,6 +573,51 @@ select {
     }
 }
 
+/* Idea Card Detail */
+.idea-card-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    .hero {
+        height: 250px;
+    }
+    img {
+        grid-column: 1/3;
+        grid-row: 1/3;
+    }
+    button {
+        display: flex;
+        grid-column: 2/3;
+        grid-row: 1/2;
+        z-index: 10;
+        justify-self: end;
+        align-self: start;
+        margin: var(--small-spacing);
+        padding: var(--small-spacing);
+        border-radius: 50%;
+        transition: background-color 0.2s ease-in-out;
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+        img {
+            justify-content: center;
+            align-items: centerx;
+        }
+    }
+}
+
+/* Detail card */ 
+.detail-card {
+    cursor: default;
+    min-width: 50%;
+    &:hover {
+        transform: none;
+    }
+    .card-body {
+        padding: var(--large-spacing);
+    }
+}
+
 /* Modal */
 .modal-overlay {
     position: fixed;

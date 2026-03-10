@@ -137,6 +137,41 @@ export function renderDollarSigns(count) {
     return dollarHTML;
 }
 
+// Show Idea Detail Overlay
+export async function showIdeaDetail(idea) {
+    const modal = document.getElementById('idea-detail-modal');
+    const content = document.getElementById('idea-detail-content')
+    
+    if (!modal || !content) return;
+    
+    // Generate the overlay HTML
+    content.innerHTML = await createIdeaOverlayHTML(idea);
+    
+    // Show the modal
+    modal.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+    
+    // Setup close button
+    const closeBtn = content.querySelector('.close-overlay');
+    if (closeBtn) {
+        closeBtn.onclick = () => {
+            modal.classList.remove('is-open');
+            document.body.style.overflow = '';
+        };
+    }
+    
+    // Setup heart icon click
+    const heartIcon = content.querySelector('.heart-icon');
+    if (heartIcon) {
+        heartIcon.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            await toggleLike(idea.id);
+            // Refresh the overlay to show updated heart state
+            content.innerHTML = await createIdeaOverlayHTML(idea);
+        });
+    }
+}
+
 // Liked Ideas Management ----------------------------------------------------------------------------------------------
 
 // Gets the list of liked idea IDs from Firebase
@@ -243,6 +278,60 @@ export async function createIdeaCardHTML(idea) {
                         data-idea-id="${ideaId}">
                 </section>
             </div>
+        </div>
+    `;
+}
+
+// Creates the HTML for a single idea card overlay
+export async function createIdeaOverlayHTML(idea) {
+    // Use the ID from the idea object
+    const ideaId = idea.id;
+    
+    // Build the dollar signs HTML if there's a price
+    const priceHTML = idea.dollars > 0 
+        ? `<div class="price-level">${renderDollarSigns(idea.dollars)}</div>`
+        : "";
+
+    
+    // Determine which heart icon to show (filled if liked, empty if not)
+    const isLiked = await isIdeaLiked(ideaId);
+    const heartSrc = isLiked ? "images/HeartFilled.svg" : "images/Heart.svg";
+    const heartClass = isLiked ? "heart-icon is-active" : "heart-icon";
+    
+    // Build the complete card HTML
+    return `
+        <div class="idea-card-hero">
+            <img src="${idea.image}" alt="${idea.title}" class="hero">
+            <button type="button" class="close-overlay" id="close-favorites">
+                <img src="images/Xwhite.svg" alt="Close" width="30" height="30">
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="top-half">
+                <section class="top3rd">
+                    <h3>${idea.title}</h3>
+                    ${priceHTML}
+                </section>
+                <p>${idea.location}</p>
+            </div>
+            <div>
+                <p>${idea.description}</p>
+                <br>
+                <p>${idea.details}</p>
+            </div>
+            <div>
+                <p>${idea.address}</p>
+                <br>
+                <a target=_blank href="${idea.website}">${idea.title} Website</a>
+            </div>
+            <section class="bottom3rd">
+            <span class="tag">${idea.category}</span>
+                <img 
+                    src="${heartSrc}" 
+                    alt="Heart Icon" 
+                    class="${heartClass}"
+                    data-idea-id="${ideaId}">
+            </section>
         </div>
     `;
 }

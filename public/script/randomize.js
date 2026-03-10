@@ -1,4 +1,4 @@
-import { renderDollarSigns, saveLikedIdeas, getLikedIdeas, getAllIdeas } from "./script.js";
+import { renderDollarSigns, saveLikedIdeas, getLikedIdeas, getAllIdeas, showIdeaDetail } from "./script.js";
 import { openModal, closeModal, initializeModal } from "./script.js";
 import "./auth.js";
 
@@ -62,6 +62,12 @@ const createRandomizeCardHTML = (idea) => {
 const renderRandomizeIdea = (idea) => {
     if (!idea || !randomizeCard) return;
     randomizeCard.innerHTML = createRandomizeCardHTML(idea);
+    
+    randomizeCard.onclick = (e) => {
+        // Don't open if clicking action buttons
+        if (e.target.closest('.icon-action-btn')) return;
+        showIdeaDetail(idea);
+    };
 };
 
 // Add Idea to favorites
