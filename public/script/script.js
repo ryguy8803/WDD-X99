@@ -144,32 +144,38 @@ export async function showIdeaDetail(idea) {
     
     if (!modal || !content) return;
     
-    // Generate the overlay HTML
-    content.innerHTML = await createIdeaOverlayHTML(idea);
+    // Function to render content and setup listeners
+    const renderContent = async () => {
+        // Generate the overlay HTML
+        content.innerHTML = await createIdeaOverlayHTML(idea);
+        
+        // Setup close button
+        const closeBtn = content.querySelector('.close-overlay');
+        if (closeBtn) {
+            closeBtn.onclick = () => {
+                modal.classList.remove('is-open');
+                document.body.style.overflow = '';
+            };
+        }
+        
+        // Setup heart icon click
+        const heartIcon = content.querySelector('.heart-icon');
+        if (heartIcon) {
+            heartIcon.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                await toggleLike(idea.id);
+                // Refresh the overlay and re-setup listeners
+                await renderContent();
+            });
+        }
+    };
+    
+    // Initial render
+    await renderContent();
     
     // Show the modal
     modal.classList.add('is-open');
     document.body.style.overflow = 'hidden';
-    
-    // Setup close button
-    const closeBtn = content.querySelector('.close-overlay');
-    if (closeBtn) {
-        closeBtn.onclick = () => {
-            modal.classList.remove('is-open');
-            document.body.style.overflow = '';
-        };
-    }
-    
-    // Setup heart icon click
-    const heartIcon = content.querySelector('.heart-icon');
-    if (heartIcon) {
-        heartIcon.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            await toggleLike(idea.id);
-            // Refresh the overlay to show updated heart state
-            content.innerHTML = await createIdeaOverlayHTML(idea);
-        });
-    }
 }
 
 // Liked Ideas Management ----------------------------------------------------------------------------------------------
@@ -231,11 +237,23 @@ export async function toggleLike(ideaId) {
         // Remove from liked array
         const newLikedIds = likedIds.filter(id => id !== ideaId);
         await saveLikedIdeas(newLikedIds);
+        
+        // Dispatch event to update all hearts
+        window.dispatchEvent(new CustomEvent('favoritesChanged', { 
+            detail: { ideaId, isLiked: false } 
+        }));
+        
         return false; // Now unliked
     } else {
         // Add to liked array
         likedIds.push(ideaId);
         await saveLikedIdeas(likedIds);
+        
+        // Dispatch event to update all hearts
+        window.dispatchEvent(new CustomEvent('favoritesChanged', { 
+            detail: { ideaId, isLiked: true } 
+        }));
+        
         return true; // Now liked
     }
 }
@@ -425,4 +443,22 @@ document.addEventListener("keydown", (event) => {
         event.preventDefault();
         toggleActive(activeElement);
     }
+});
+
+// Global listener to update all heart icons when favorites change
+window.addEventListener('favoritesChanged', (event) => {
+    const { ideaId, isLiked } = event.detail;
+    
+    // Find all heart icons for this idea
+    const heartIcons = document.querySelectorAll(`.heart-icon[data-idea-id="${ideaId}"]`);
+    
+    heartIcons.forEach(heart => {
+        if (isLiked) {
+            heart.src = "images/HeartFilled.svg";
+            heart.classList.add('is-active');
+        } else {
+            heart.src = "images/Heart.svg";
+            heart.classList.remove('is-active');
+        }
+    });
 });
