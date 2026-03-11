@@ -272,6 +272,7 @@ randomizeAddCalendarButton.addEventListener("click", () => {
     // Prefill the form with idea data
     if (addEventTitle) addEventTitle.value = currentRandomIdea.title;
     if (addEventCategory) addEventCategory.value = currentRandomIdea.category || "";
+    if (addEventLocation) addEventLocation.value = currentRandomIdea.address || "";
     
     // Open the add event modal
     if (addEventModal) {

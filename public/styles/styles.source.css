@@ -99,14 +99,15 @@ h4 {
 .horizontal-card-list {
     display: grid;
     grid-auto-flow: column;
+    grid-auto-rows: min-content;
     gap: var(--medium-spacing);
     overflow-x: auto;
-    height: auto;
     padding: var(--medium-spacing);
 }
 
 .horizontal-card-list > .card {
     scroll-snap-align: start;
+    align-self: start;
 }
 
 h1 {
