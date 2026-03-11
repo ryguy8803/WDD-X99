@@ -99,10 +99,10 @@ h4 {
 .horizontal-card-list {
     display: grid;
     grid-auto-flow: column;
-    /* grid-auto-columns: 280px; */
     gap: var(--medium-spacing);
     overflow-x: auto;
-    padding-bottom: var(--small-spacing);
+    height: auto;
+    padding: var(--medium-spacing);
 }
 
 .horizontal-card-list > .card {
@@ -475,7 +475,7 @@ select::placeholder {
     display: flex;
     flex-direction: column;
     gap: var(--extra-large-spacing);
-    width: clamp(280px, 100%, 400px);
+    width: clamp(280px, 100%, 350px);
     cursor: pointer;
 }
 .event-card img {
@@ -501,6 +501,9 @@ select::placeholder {
 .event-card .event-details div p:first-of-type {
                 color: var(--gray-60);
             }
+.event-card .no-dates {
+        color: var(--gray-60);
+    }
 
 /* Icon Card */
 .icon-card {
@@ -952,7 +955,7 @@ select::placeholder {
     margin: var(--medium-spacing) 0;
 }
 
-.card-list {
+.explore-card-list {
     display: flex;
     flex-direction: column;
     gap: var(--medium-spacing);
@@ -961,7 +964,7 @@ select::placeholder {
     justify-content: center;
 }
 
-.card-list .idea-card {
+.explore-card-list .idea-card {
         width: 100%;
     }
 
@@ -987,6 +990,13 @@ select::placeholder {
         color: var(--purple);
     }
 
+.calendar-controls-w-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
@@ -1010,8 +1020,9 @@ select::placeholder {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    justify-content: flex-start;
     font-size: var(--p);
+    gap: 2px;
+    cursor: pointer
 }
 .empty {
     border: none;
@@ -1020,8 +1031,12 @@ select::placeholder {
 .circle-highlight {
     background-color: var(--purple);
     color: var(--gray-10);
-    border-radius: 100px;
-    padding: 2px;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .event-pill {
@@ -1029,6 +1044,13 @@ select::placeholder {
     color: var(--gray-10);
     border-radius: 2px;
     padding: 2px;
+    width: 80%;
+    justify-self: center;
+    align-self: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer
 }
 
 .event-title {
@@ -1063,10 +1085,35 @@ select::placeholder {
     cursor: pointer;
 }
 
+.desktop {
+    display: none;
+}
+
+.upcoming-dates-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--medium-spacing);
+}
+
+#upcoming-dates-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--medium-spacing);
+}
 
 
 /* Media Queries ---------------------------------------------------------- */
-@media screen and (min-width: 725px) {
+@media screen and (min-width: 500px) { 
+        .explore-card-list { 
+        flex-direction: row;
+    }
+        .explore-card-list .idea-card {
+            width: 280px;
+        }
+}
+
+@media screen and (min-width: 800px) {
     .scroll-container {
         padding: var(--large-spacing) 75px;
     }
@@ -1148,32 +1195,6 @@ select::placeholder {
         flex-direction: row;
         justify-content: center;
     }
-
-    /* Explore */
-    .card-list { 
-        flex-direction: row;
-    }
-        .card-list .idea-card {
-            width: 280px;
-        }
-
-    /* Calendar */ 
-    .calendar-page {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: var(--extra-large-spacing);
-        align-items: flex-start;
-    }
-    
-    .calendar {
-        max-width: 100%;
-        gap: var(--extra-large-spacing);
-    }
-    
-    #upcoming-dates-list { 
-        display: flex;
-        flex-direction: column;
-    }
 }
 
 @media screen and (min-width: 1000px) {
@@ -1201,6 +1222,7 @@ select::placeholder {
         min-width: 0;
     }
     
+    /* Tutorial */
     .tutorial-header {
         display: flex;
         justify-content: space-between;
@@ -1231,5 +1253,24 @@ select::placeholder {
 
     .onboarding-welcome, .onboarding-main {
         height: 20vh
+    }
+
+     /* Calendar */ 
+    .calendar-page {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: var(--extra-large-spacing);
+        align-items: flex-start;
+    }
+    
+    .calendar {
+        max-width: 100%;
+        max-height: 90vh;
+        gap: var(--extra-large-spacing);
+    }
+    
+    #upcoming-dates-list { 
+        display: flex;
+        flex-direction: column;
     }
 }

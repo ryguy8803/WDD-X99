@@ -34,10 +34,15 @@
 
     <main class="scroll-container calendar-page">
         <div class="calendar card">
-            <div class="calendar-controls">
-                <button class="nav-arrow" id="calendar-prev"><img src="images/arrowleft.svg" alt="Left Arrow"></button>
-                <h2 class="month-title" id="calendar-month-title">January 2026</h2>
-                <button class="nav-arrow" id="calendar-next"><img src="images/arrowright.svg" alt="Right Arrow"></button>
+            <div class="calendar-controls-w-button">
+                <div class="calendar-controls">
+                    <button class="nav-arrow" id="calendar-prev"><img src="images/arrowleft.svg" alt="Left Arrow"></button>
+                    <h2 class="month-title" id="calendar-month-title">January 2026</h2>
+                    <button class="nav-arrow" id="calendar-next"><img src="images/arrowright.svg" alt="Right Arrow"></button>
+                </div>
+                <div>
+                    <button class="button high desktop" id="open-add-event">Add New Event</button>
+                </div>
             </div>
 
             <div class="calendar-grid" id="calendar-grid">
@@ -51,12 +56,13 @@
             </div>
 
             <div>
-                <button class="button high" id="open-add-event">Add New Event</button>
+                <button class="button high mobile" id="open-add-event">Add New Event</button>
             </div>
         </div>
 
-        <div class="card-list" id="upcoming-dates-list">
+        <div class="upcoming-dates-section">
             <h2>Upcoming Dates</h2>
+            <div id="upcoming-dates-list"></div>
         </div>
 
     </main>
@@ -209,12 +215,12 @@
                         <label for="event-category">Category
                             <select id="event-category" name="category">
                             <option value="">Select one</option>
-                            <option value="active">Active</option>
-                            <option value="food-and-drink">Food & Drink</option>
-                            <option value="games">Games</option>
-                            <option value="creative">Creative</option>
-                            <option value="nature">Nature</option>
-                            <option value="learning-and-culture">Learning and Culture</option>
+                            <option value="Active">Active</option>
+                            <option value="Food & Drink">Food & Drink</option>
+                            <option value="Games">Games</option>
+                            <option value="Creative">Creative</option>
+                            <option value="Nature">Nature</option>
+                            <option value="Learning & Culture">Learning & Culture</option>
                         </select>
                         </label>
                     </div>
@@ -282,12 +288,12 @@
                 <div class="form-group">
                     <label for="edit-event-category">Category</label>
                     <select id="edit-event-category" name="category">
-                        <option value="active">Active</option>
-                        <option value="food">Food & Drink</option>
-                        <option value="games">Games</option>
-                        <option value="creative">Creative</option>
-                        <option value="learning">Learning & Culture</option>
-                        <option value="nature">Nature</option>
+                        <option value="Active">Active</option>
+                        <option value="Food & Drink">Food & Drink</option>
+                        <option value="Games">Games</option>
+                        <option value="Creative">Creative</option>
+                        <option value="Learning & Culture">Learning & Culture</option>
+                        <option value="Nature">Nature</option>
                     </select>
                 </div>
 

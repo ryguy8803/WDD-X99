@@ -1,5 +1,7 @@
 import { renderDollarSigns, saveLikedIdeas, getLikedIdeas, getAllIdeas, showIdeaDetail } from "./script.js";
 import { openModal, closeModal, initializeModal } from "./script.js";
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { db, getCurrentUser } from "./script.js";
 import "./auth.js";
 
 // ============================== RANDOMIZE FEATURE ==============================
@@ -29,6 +31,18 @@ const randomizeAddCalendarButton = document.getElementById(
 );
 const adjustPreferencesButton = document.getElementById("adjust-preferences-button");
 const adjustPreferencesSection = document.getElementById("randomize-adjust-preferences");
+
+// Add Event Modal elements
+const addEventModal = document.getElementById("add-event-modal");
+const addEventForm = document.getElementById("add-event-form");
+const addEventTitle = document.getElementById("event-title");
+const addEventDate = document.getElementById("event-date");
+const addEventTime = document.getElementById("event-time");
+const addEventLocation = document.getElementById("event-location");
+const addEventCategory = document.getElementById("event-category");
+const addEventPartner = document.getElementById("your-date");
+const addEventNotes = document.getElementById("event-notes");
+const cancelAddEventButton = document.getElementById("cancel-add-event");
 
 let currentRandomIdea = null;
 let currentPreferences = null;
@@ -255,26 +269,56 @@ randomizeAddCalendarButton.addEventListener("click", () => {
     closeModal(randomizeModal);
     if (!currentRandomIdea) return;
 
-    const pendingEvent = {
-        title: currentRandomIdea.title,
-        category: currentRandomIdea.category || "",
-        dollars: currentRandomIdea.dollars || 0
-    };
-
+    // Prefill the form with idea data
+    if (addEventTitle) addEventTitle.value = currentRandomIdea.title;
+    if (addEventCategory) addEventCategory.value = currentRandomIdea.category || "";
+    
+    // Open the add event modal
     if (addEventModal) {
         openModal(addEventModal);
-        if (addEventTitle) addEventTitle.value = pendingEvent.title;
-        if (addEventCategory) {
-            addEventCategory.value = pendingEvent.category
-                .toLowerCase()
-                .replace(/\s+/g, "-");
-        }
-    } else {
-        window.location.href = "calendar.html";
     }
 });
 
-// ============================== MODAL EVENT LISTENERS ==============================
+// Handle add event modal
+if (cancelAddEventButton) {
+    cancelAddEventButton.addEventListener("click", () => {
+        closeModal(addEventModal);
+        if (addEventForm) addEventForm.reset();
+    });
+}
+
+if (addEventForm) {
+    addEventForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const user = getCurrentUser();
+        if (!user) return;
+
+        const title = (addEventTitle?.value || "").trim();
+        const date = (addEventDate?.value || "").trim();
+        if (!title || !date) return;
+
+        const newEvent = {
+            title,
+            date,
+            time: (addEventTime?.value || "").trim(),
+            location: (addEventLocation?.value || "").trim(),
+            category: (addEventCategory?.value || "").trim(),
+            partner: (addEventPartner?.value || "").trim(),
+            notes: (addEventNotes?.value || "").trim(),
+            dollars: 0
+        };
+
+        try {
+            const eventsRef = collection(db, "users", user.uid, "events");
+            await addDoc(eventsRef, newEvent);
+            closeModal(addEventModal);
+            if (addEventForm) addEventForm.reset();
+        } catch (error) {
+            console.error("Error adding event:", error);
+        }
+    });
+}
 // Preferences Modal
 openPreferencesButton.addEventListener("click", () => {
     openModal(preferencesModal);

@@ -316,6 +316,76 @@
         </div>
     </div>
 
+    <!-- Add Calendar Event -->
+    <div class="modal-overlay" id="add-event-modal">
+        <div class="card overlay-card">
+            <div class="header">
+                <h2>Add Event to Calendar</h2>
+                <button type="button" class="close-overlay" id="close-add-event">
+                    <img src="images/X.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+
+            <hr>
+
+            <form class="event-form" id="add-event-form">
+                
+                <div class="form-group">
+                    <label for="event-title">Event Title</label>
+                    <input type="text" id="event-title" name="title">
+                </div>
+
+                <div class="form-group">
+                    <label for="event-date">Date
+                        <input id="event-date" name="date" type="date">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-time">Time
+                        <input id="event-time" name="time" type="time">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-location">Location
+                        <input id="event-location" name="location" type="text">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-category">Category
+                        <select id="event-category" name="category">
+                        <option value="">Select one</option>
+                        <option value="Active">Active</option>
+                        <option value="Food & Drink">Food & Drink</option>
+                        <option value="Games">Games</option>
+                        <option value="Creative">Creative</option>
+                        <option value="Nature">Nature</option>
+                        <option value="Learning & Culture">Learning & Culture</option>
+                    </select>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="your-date">Your Date
+                        <input id="your-date" name="partner" type="text">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-notes">Notes</label>
+                    <textarea id="event-notes" name="notes"></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="button medium" id="cancel-add-event">Cancel</button>
+                    <button type="submit" class="button high" id="save-add-event">Add Event</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
     <script type="module" src="script/randomize.js"></script>
 
 </body>

@@ -358,11 +358,15 @@ export async function createIdeaOverlayHTML(idea) {
 
 // Function to render favorites list in modal
 export async function renderFavoritesList() {
+    const favoritesList = document.getElementById("favorites-list");
+    if (!favoritesList) return;
+    
     // Get liked idea IDs
     const likedIds = await getLikedIdeas();
     
     if (likedIds.length === 0) {
-        return '<p style="text-align: center; color: var(--gray-50); padding: var(--large-spacing);">No favorites yet! Start liking ideas to see them here.</p>';
+        favoritesList.innerHTML = '<p style="text-align: center; color: var(--gray-50); padding: var(--large-spacing);">No favorites yet! Start liking ideas to see them here.</p>';
+        return;
     }
 
     // Get all ideas
@@ -371,12 +375,25 @@ export async function renderFavoritesList() {
     // Filter to only liked ideas
     const likedIdeas = allIdeas.filter(idea => likedIds.includes(idea.id));
     
-    // Render each favorite card
-    const cardsHTML = await Promise.all(
-        likedIdeas.map(idea => createIdeaCardHTML(idea))
-    );
+    // Clear existing content
+    favoritesList.innerHTML = '';
     
-    return cardsHTML.join('');
+    // Render each favorite card with click listeners
+    for (const idea of likedIdeas) {
+        const cardHTML = await createIdeaCardHTML(idea);
+        const cardElement = document.createElement('div');
+        cardElement.innerHTML = cardHTML;
+        const card = cardElement.firstElementChild;
+        
+        // Add click listener
+        card.addEventListener('click', (e) => {
+            // Don't open overlay if clicking heart icon
+            if (e.target.closest('.heart-icon')) return;
+            showIdeaDetail(idea);
+        });
+        
+        favoritesList.appendChild(card);
+    }
 }
 
 initializeModal("favorites-modal", {
@@ -384,10 +401,7 @@ initializeModal("favorites-modal", {
     closeButtonSelector: "#close-favorites",                  
     closeOnOverlay: false,                                    
     onOpen: async () => {
-        const favoritesList = document.getElementById("favorites-list");
-        if (favoritesList) {
-            favoritesList.innerHTML = await renderFavoritesList();
-        }
+        await renderFavoritesList();
     }
 });
 
@@ -425,10 +439,7 @@ document.addEventListener("click", async (event) => {
         const favoritesModal = document.getElementById("favorites-modal");
         if (favoritesModal && favoritesModal.classList.contains("is-open")) {
             // We're in the favorites overlay, so refresh the list
-            const favoritesList = document.getElementById("favorites-list");
-            if (favoritesList) {
-                favoritesList.innerHTML = await renderFavoritesList();
-            }
+            await renderFavoritesList();
         }
     }
 });

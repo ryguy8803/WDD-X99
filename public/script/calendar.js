@@ -148,17 +148,15 @@ const renderUpcomingDates = async () => {
 
     if (dates.length === 0) {
         upcomingDatesList.innerHTML = `
-            <h2>Upcoming Dates</h2>
-            <p class="instruction-text">No upcoming dates yet. Add one to get started!</p>
+             <div class="card event-card">
+                <p class="no-dates">No upcoming dates yet. Add one to get started!</p>
+             </div>
         `;
         return;
     }
 
     const cardsHTML = dates.map(event => createEventCardHTML(event)).join("");
-    upcomingDatesList.innerHTML = `
-        <h2>Upcoming Dates</h2>
-        ${cardsHTML}
-    `;
+    upcomingDatesList.innerHTML = cardsHTML;
 };
 
 // ============================== CALENDAR GRID ==============================
@@ -221,10 +219,26 @@ const renderCalendar = async (date) => {
             const pill = document.createElement("button");
             pill.type = "button";
             pill.className = "event-pill";
-            pill.textContent = `${eventMap.get(dateKey).title.slice(0, 2)}...`;
+            pill.textContent = `${eventMap.get(dateKey).title}`;
             pill.dataset.firestoreId = eventMap.get(dateKey).firestoreId;
             cell.appendChild(pill);
         }
+        
+        cell.addEventListener("click", (e) => {
+            // Don't open add modal if clicking on an event pill
+            if (e.target.classList.contains("event-pill")) return;
+            
+            // Open add event modal with this date prefilled
+            const addEventDateInput = document.getElementById("event-date");
+            if (addEventDateInput) {
+                addEventDateInput.value = dateKey;
+            }
+            
+            const addEventModalElement = document.getElementById("add-event-modal");
+            if (addEventModalElement) {
+                openModal(addEventModalElement);
+            }
+        });
 
         calendarGrid.appendChild(cell);
     }

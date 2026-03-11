@@ -4,6 +4,7 @@
   "description": "Date ideas web app",
   "scripts": {
     "build:css": "postcss public/styles/styles.source.css -o public/styles/styles.css",
+    "watch:css": "postcss public/styles/styles.source.css -o public/styles/styles.css --watch",
     "deploy": "npm run build:css && firebase deploy --only hosting"
   },
   "devDependencies": {
