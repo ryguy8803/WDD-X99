@@ -24,13 +24,14 @@ const openPreferencesButton = document.getElementById("open-preferences");
 const applyPreferencesButton = document.getElementById("apply-preferences");
 const randomizeRejectButton = document.getElementById("randomize-reject");
 const randomizeFavoriteButton = document.getElementById("randomize-favorite");
+const randomizeEmptyState = document.getElementById("randomize-empty-state");
 const randomizeEmptyMessage = document.getElementById("randomize-empty-message");
 const randomizeCard = document.getElementById("randomize-idea-card");
+const randomizeSwipeStage = document.getElementById("randomize-swipe-stage");
 const randomizeActions = document.getElementById("randomize-actions");
 const randomizeAddCalendarButton = document.getElementById("randomize-add-calendar");
 const adjustPreferencesButton = document.getElementById("adjust-preferences-button");
 const adjustPreferencesSection = document.getElementById("randomize-adjust-preferences");
-const randomizeSwipeHint = document.getElementById("randomize-swipe-hint");
 
 // Add Event Modal elements
 const addEventModal = document.getElementById("add-event-modal");
@@ -77,7 +78,12 @@ const createRandomizeCardHTML = (idea) => {
 const flashSwipeFeedback = (direction) => {
     if (!randomizeCard) return;
 
-    randomizeCard.classList.remove("is-swiping-left", "is-swiping-right", "swipe-confirm-like", "swipe-confirm-nope");
+    randomizeCard.classList.remove(
+        "is-swiping-left",
+        "is-swiping-right",
+        "swipe-confirm-like",
+        "swipe-confirm-nope"
+    );
 
     if (direction === "left") {
         randomizeCard.classList.add("is-swiping-left", "swipe-confirm-nope");
@@ -89,13 +95,17 @@ const flashSwipeFeedback = (direction) => {
 const animateCardEntrance = () => {
     if (!randomizeCard) return;
 
+    const isDesktop = window.matchMedia("(min-width: 800px)").matches;
+    const duration = isDesktop ? 0.42 : 0.28;
+    const startScale = isDesktop ? 0.96 : 0.94;
+
     randomizeCard.style.transition = "none";
     randomizeCard.style.opacity = "0";
-    randomizeCard.style.transform = "translateX(0) translateY(0) scale(0.94)";
+    randomizeCard.style.transform = `translateX(0) translateY(0) scale(${startScale})`;
 
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-            randomizeCard.style.transition = "transform 0.28s ease, opacity 0.28s ease";
+            randomizeCard.style.transition = `transform ${duration}s ease, opacity ${duration}s ease`;
             randomizeCard.style.transform = "translateX(0) translateY(0) scale(1)";
             randomizeCard.style.opacity = "1";
         });
@@ -104,6 +114,7 @@ const animateCardEntrance = () => {
 
 const resetCardPosition = () => {
     if (!randomizeCard) return;
+
     randomizeCard.style.transition = "";
     randomizeCard.style.transform = "";
     randomizeCard.style.opacity = "";
@@ -121,6 +132,7 @@ const setSwipeVisual = (offsetX) => {
 
     const rotation = offsetX * 0.06;
     const normalized = Math.min(Math.abs(offsetX) / 120, 1);
+
     randomizeCard.style.transform = `translateX(${offsetX}px) rotate(${rotation}deg) scale(${1 + normalized * 0.02})`;
     randomizeCard.style.opacity = `${1 - normalized * 0.18}`;
 
@@ -139,11 +151,14 @@ const animateSwipeOut = async (direction) => {
     if (!randomizeCard || !currentRandomIdea) return;
 
     const isRight = direction === "right";
+    const isDesktop = window.matchMedia("(min-width: 800px)").matches;
+
     const endX = isRight ? window.innerWidth * 1.15 : -window.innerWidth * 1.15;
+    const duration = isDesktop ? 460 : 340;
 
     flashSwipeFeedback(direction);
 
-    randomizeCard.style.transition = "transform 0.34s cubic-bezier(.22,.9,.31,1), opacity 0.34s ease";
+    randomizeCard.style.transition = `transform ${duration}ms cubic-bezier(.22,.9,.31,1), opacity ${duration}ms ease`;
     randomizeCard.style.transform = `translateX(${endX}px) rotate(${isRight ? 24 : -24}deg) scale(1.06)`;
     randomizeCard.style.opacity = "0";
 
@@ -153,7 +168,7 @@ const animateSwipeOut = async (direction) => {
 
     window.setTimeout(() => {
         showNextIdea();
-    }, 340);
+    }, duration);
 };
 
 const initializeSwipeableCard = (idea) => {
@@ -243,6 +258,7 @@ const renderRandomizeIdea = (idea) => {
 // Add Idea to favorites
 const addIdeaToFavorites = async (idea) => {
     if (!idea) return;
+
     const likedIds = await getLikedIdeas();
     if (likedIds.includes(idea.id)) return;
 
@@ -317,31 +333,53 @@ const getFilteredIdeas = (preferences) => {
 
 // Functions to toggle between empty state and idea display
 const showEmptyState = (message) => {
-    randomizeEmptyMessage.textContent = message;
-    randomizeEmptyMessage.hidden = false;
-    randomizeCard.hidden = true;
-    randomizeActions.style.display = "none";
+    resetCardPosition();
 
-    if (randomizeSwipeHint) {
-        randomizeSwipeHint.hidden = true;
+    if (randomizeEmptyMessage) {
+        randomizeEmptyMessage.textContent = message;
+        randomizeEmptyMessage.hidden = false;
+    }
+
+    if (randomizeEmptyState) {
+        randomizeEmptyState.hidden = false;
+    }
+
+    if (randomizeSwipeStage) {
+        randomizeSwipeStage.hidden = true;
+    }
+
+    if (randomizeCard) {
+        randomizeCard.hidden = true;
+    }
+
+    if (randomizeActions) {
+        randomizeActions.style.display = "none";
     }
 
     if (adjustPreferencesSection) {
-        if (currentPreferences) {
-            adjustPreferencesSection.style.display = "flex";
-        } else {
-            adjustPreferencesSection.style.display = "none";
-        }
+        adjustPreferencesSection.style.display = currentPreferences ? "flex" : "none";
     }
 };
 
 const showIdeaState = () => {
-    randomizeEmptyMessage.hidden = true;
-    randomizeCard.hidden = false;
-    randomizeActions.style.display = "flex";
+    if (randomizeEmptyState) {
+        randomizeEmptyState.hidden = true;
+    }
 
-    if (randomizeSwipeHint) {
-        randomizeSwipeHint.hidden = !window.matchMedia("(max-width: 799px)").matches;
+    if (randomizeSwipeStage) {
+        randomizeSwipeStage.hidden = false;
+    }
+
+    if (randomizeEmptyMessage) {
+        randomizeEmptyMessage.hidden = true;
+    }
+
+    if (randomizeCard) {
+        randomizeCard.hidden = false;
+    }
+
+    if (randomizeActions) {
+        randomizeActions.style.display = "flex";
     }
 
     if (adjustPreferencesSection) {
@@ -359,6 +397,7 @@ const showNextIdea = () => {
         const message = currentPreferences
             ? "You're all out of ideas that match your preferences. Try adjusting your filters."
             : "You're all out of date ideas for now. Try again later or add your own!";
+
         showEmptyState(message);
         currentRandomIdea = null;
         return;
@@ -394,10 +433,12 @@ randomizeRejectButton.addEventListener("click", () => {
     void randomizeRejectButton.offsetWidth;
     randomizeRejectButton.classList.add("btn-click-animate");
 
+    flashSwipeFeedback("left");
+
     window.setTimeout(() => {
         randomizeRejectButton.classList.remove("btn-click-animate");
         animateSwipeOut("left");
-    }, 120);
+    }, 140);
 });
 
 randomizeFavoriteButton.addEventListener("click", async () => {
@@ -411,15 +452,17 @@ randomizeFavoriteButton.addEventListener("click", async () => {
     void randomizeFavoriteButton.offsetWidth;
     randomizeFavoriteButton.classList.add("btn-click-animate");
 
+    flashSwipeFeedback("right");
+
     window.setTimeout(async () => {
         if (heartPath) {
             heartPath.setAttribute("fill", "none");
         }
+
         randomizeFavoriteButton.classList.remove("btn-click-animate");
         await animateSwipeOut("right");
-    }, 120);
+    }, 140);
 });
-
 randomizeAddCalendarButton.addEventListener("click", () => {
     closeModal(randomizeModal);
     if (!currentRandomIdea) return;

@@ -767,7 +767,12 @@ select::placeholder {
     transform: scale(1.1);
 }
 .randomize-empty-message {
-    padding: 100px 0;
+    padding: 24px 12px 8px;
+    text-align: center;
+    color: var(--gray-60);
+    line-height: 1.5;
+    max-width: 320px;
+    margin: 0 auto;
 }
 @keyframes btn-click-scale {
     0% {
@@ -827,11 +832,7 @@ select::placeholder {
 }
 
 .swipe-hint {
-    display: none;
-    text-align: center;
-    color: var(--gray-60);
-    font-size: 13px;
-    margin-top: -4px;
+    display: none !important;
 }
 
 #randomize-idea-card {
@@ -858,6 +859,27 @@ select::placeholder {
 
 .swipe-confirm-nope {
     box-shadow: 0 0 0 4px rgba(180, 0, 0, 0.08), 0 14px 34px rgba(180, 0, 0, 0.18);
+}
+
+@keyframes badge-pop {
+    0% {
+        transform: scale(0.85) rotate(0deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.08) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+.swipe-stage .idea-card.swipe-confirm-like ~ .swipe-badge-right,
+.swipe-stage .idea-card.swipe-confirm-nope ~ .swipe-badge-left {
+    opacity: 1;
+    animation: badge-pop 0.24s ease;
 }
 
 /* Special Color Classes */
@@ -1015,6 +1037,36 @@ select::placeholder {
 .center-content {
     align-items: center;
     justify-content: center;
+}
+
+/* Empty state layout fixes */
+#randomize-modal .overlay-card {
+    min-height: 520px;
+    justify-content: flex-start;
+}
+
+#randomize-idea-card[hidden] {
+    display: none !important;
+}
+
+#randomize-actions[style*="display: none"] {
+    display: none !important;
+}
+
+#randomize-adjust-preferences {
+    justify-content: center;
+    margin-top: auto;
+    padding-top: 8px;
+}
+
+#randomize-adjust-preferences .button {
+    width: 100%;
+    max-width: 260px;
+}
+
+.swipe-stage {
+    min-height: 320px;
+    align-items: center;
 }
 
 /* Explore ---------------------------------------------------------- */
@@ -1178,9 +1230,7 @@ select::placeholder {
 
 /* Media Queries ---------------------------------------------------------- */
 @media screen and (max-width: 799px) {
-    .swipe-hint {
-        display: block;
-    }
+
 
     .swipe-stage {
         min-height: 320px;
@@ -1300,10 +1350,96 @@ select::placeholder {
         justify-content: center;
     }
 
-    .swipe-badge,
     .swipe-hint {
         display: none;
     }
+}
+
+.randomize-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--medium-spacing);
+    min-height: 320px;
+    padding: var(--medium-spacing) 0;
+}
+
+.randomize-empty-art {
+    width: 180px;
+    height: 180px;
+    border-radius: 24px;
+    background: linear-gradient(180deg, rgb(250,245,252), rgb(243,237,247));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgba(62, 0, 84, 0.06);
+}
+
+.randomize-empty-art img {
+    width: 120px;
+    height: auto;
+    object-fit: contain;
+    opacity: 0.95;
+}
+
+.randomize-empty-message {
+    padding: 0;
+    text-align: center;
+    color: var(--gray-60);
+    line-height: 1.5;
+    max-width: 320px;
+    margin: 0 auto;
+}
+
+.randomize-empty-links {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: var(--small-spacing);
+}
+
+.randomize-empty-links .button {
+    min-width: 200px;
+    text-align: center;
+}
+
+#randomize-modal .overlay-card {
+    min-height: 520px;
+    justify-content: flex-start;
+}
+
+#randomize-swipe-stage[hidden] {
+    display: none !important;
+}
+
+#randomize-empty-state[hidden] {
+    display: none !important;
+}
+
+#randomize-idea-card[hidden] {
+    display: none !important;
+}
+
+#randomize-actions[style*="display: none"] {
+    display: none !important;
+}
+
+#randomize-adjust-preferences {
+    justify-content: center;
+    margin-top: auto;
+    padding-top: 8px;
+}
+
+#randomize-adjust-preferences .button {
+    width: 100%;
+    max-width: 260px;
+}
+
+.swipe-stage {
+    min-height: 320px;
+    align-items: center;
 }
 
 @media screen and (min-width: 1000px) {
