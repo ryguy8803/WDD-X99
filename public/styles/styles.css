@@ -637,13 +637,13 @@ select::placeholder {
     visibility: visible;
     pointer-events: auto;
 }
+
 .overlay-card {
-    width: 100%;
-    max-width: 480px;
+    width: min(92vw, 420px);
     max-height: calc(100vh - 40px);
     background-color: var(--gray-10);
-    border-radius: var(--medium-spacing);
-    padding: var(--medium-spacing);
+    border-radius: 20px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     gap: var(--medium-spacing);
@@ -782,6 +782,82 @@ select::placeholder {
 }
 .icon-action-btn.btn-click-animate {
     animation: btn-click-scale 0.3s ease;
+}
+
+/* Swipe UI */
+.swipe-stage {
+    position: relative;
+    align-self: center;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 4px 0;
+    overflow: visible;
+}
+
+.swipe-badge {
+    position: absolute;
+    top: 18px;
+    z-index: 4;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background-color: rgba(255, 255, 255, 0.96);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.swipe-badge-left {
+    left: 18px;
+    color: var(--red);
+    border: 2px solid var(--red);
+    transform: rotate(-12deg) scale(0.9);
+}
+
+.swipe-badge-right {
+    right: 18px;
+    color: var(--purple);
+    border: 2px solid var(--purple);
+    transform: rotate(12deg) scale(0.9);
+}
+
+.swipe-hint {
+    display: none;
+    text-align: center;
+    color: var(--gray-60);
+    font-size: 13px;
+    margin-top: -4px;
+}
+
+#randomize-idea-card {
+    align-self: center;
+}
+
+#randomize-idea-card.is-dragging {
+    transition: none !important;
+}
+
+.swipe-stage .idea-card.is-swiping-left ~ .swipe-badge-left {
+    opacity: 1;
+    transform: rotate(-12deg) scale(1);
+}
+
+.swipe-stage .idea-card.is-swiping-right ~ .swipe-badge-right {
+    opacity: 1;
+    transform: rotate(12deg) scale(1);
+}
+
+.swipe-confirm-like {
+    box-shadow: 0 0 0 4px rgba(62, 0, 84, 0.08), 0 14px 34px rgba(62, 0, 84, 0.22);
+}
+
+.swipe-confirm-nope {
+    box-shadow: 0 0 0 4px rgba(180, 0, 0, 0.08), 0 14px 34px rgba(180, 0, 0, 0.18);
 }
 
 /* Special Color Classes */
@@ -940,10 +1016,6 @@ select::placeholder {
     align-items: center;
     justify-content: center;
 }
-#randomize-idea-card {
-    align-self: center;
-}
-
 
 /* Explore ---------------------------------------------------------- */
 
@@ -1105,6 +1177,37 @@ select::placeholder {
 
 
 /* Media Queries ---------------------------------------------------------- */
+@media screen and (max-width: 799px) {
+    .swipe-hint {
+        display: block;
+    }
+
+    .swipe-stage {
+        min-height: 320px;
+        width: 100%;
+    }
+
+    #randomize-idea-card {
+        width: min(100%, 340px);
+        max-width: 340px;
+        touch-action: pan-y;
+        will-change: transform;
+    }
+
+    #randomize-idea-card:hover {
+        transform: none;
+    }
+
+    .randomize-actions {
+        margin-top: 4px;
+    }
+
+    .swipe-stage .idea-card.is-swiping-left ~ .swipe-badge-left,
+    .swipe-stage .idea-card.is-swiping-right ~ .swipe-badge-right {
+        opacity: 1;
+    }
+}
+
 @media screen and (min-width: 500px) { 
         .explore-card-list { 
         flex-direction: row;
@@ -1195,6 +1298,11 @@ select::placeholder {
     .cards {
         flex-direction: row;
         justify-content: center;
+    }
+
+    .swipe-badge,
+    .swipe-hint {
+        display: none;
     }
 }
 

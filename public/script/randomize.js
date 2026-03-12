@@ -12,8 +12,9 @@ const randomizeModal = initializeModal("randomize-modal", {
 const preferencesModal = initializeModal("preferences-modal", {
     closeButtonSelector: "#close-preferences",
     onOpen: () => {
-        // Load user preferences when modal opens
-        loadPreferences();
+        if (typeof loadPreferences === "function") {
+            loadPreferences();
+        }
     }
 });
 
@@ -26,11 +27,10 @@ const randomizeFavoriteButton = document.getElementById("randomize-favorite");
 const randomizeEmptyMessage = document.getElementById("randomize-empty-message");
 const randomizeCard = document.getElementById("randomize-idea-card");
 const randomizeActions = document.getElementById("randomize-actions");
-const randomizeAddCalendarButton = document.getElementById(
-    "randomize-add-calendar"
-);
+const randomizeAddCalendarButton = document.getElementById("randomize-add-calendar");
 const adjustPreferencesButton = document.getElementById("adjust-preferences-button");
 const adjustPreferencesSection = document.getElementById("randomize-adjust-preferences");
+const randomizeSwipeHint = document.getElementById("randomize-swipe-hint");
 
 // Add Event Modal elements
 const addEventModal = document.getElementById("add-event-modal");
@@ -47,14 +47,16 @@ const cancelAddEventButton = document.getElementById("cancel-add-event");
 let currentRandomIdea = null;
 let currentPreferences = null;
 let remainingIdeaIds = [];
-let allIdeas = []; 
+let allIdeas = [];
+let isSwipingCard = false;
+let swipeBoundIdeaId = null;
 
 // Template for cards
 const createRandomizeCardHTML = (idea) => {
-    const priceHTML = idea.dollars > 0 
+    const priceHTML = idea.dollars > 0
         ? `<div class="price-level">${renderDollarSigns(idea.dollars)}</div>`
         : "";
-    
+
     return `
         <img src="${idea.image}" alt="${idea.title}" class="hero">
         <div class="card-body">
@@ -72,16 +74,170 @@ const createRandomizeCardHTML = (idea) => {
     `;
 };
 
+const flashSwipeFeedback = (direction) => {
+    if (!randomizeCard) return;
+
+    randomizeCard.classList.remove("is-swiping-left", "is-swiping-right", "swipe-confirm-like", "swipe-confirm-nope");
+
+    if (direction === "left") {
+        randomizeCard.classList.add("is-swiping-left", "swipe-confirm-nope");
+    } else if (direction === "right") {
+        randomizeCard.classList.add("is-swiping-right", "swipe-confirm-like");
+    }
+};
+
+const animateCardEntrance = () => {
+    if (!randomizeCard) return;
+
+    randomizeCard.style.transition = "none";
+    randomizeCard.style.opacity = "0";
+    randomizeCard.style.transform = "translateX(0) translateY(0) scale(0.94)";
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            randomizeCard.style.transition = "transform 0.28s ease, opacity 0.28s ease";
+            randomizeCard.style.transform = "translateX(0) translateY(0) scale(1)";
+            randomizeCard.style.opacity = "1";
+        });
+    });
+};
+
+const resetCardPosition = () => {
+    if (!randomizeCard) return;
+    randomizeCard.style.transition = "";
+    randomizeCard.style.transform = "";
+    randomizeCard.style.opacity = "";
+    randomizeCard.classList.remove(
+        "is-dragging",
+        "is-swiping-left",
+        "is-swiping-right",
+        "swipe-confirm-like",
+        "swipe-confirm-nope"
+    );
+};
+
+const setSwipeVisual = (offsetX) => {
+    if (!randomizeCard) return;
+
+    const rotation = offsetX * 0.06;
+    const normalized = Math.min(Math.abs(offsetX) / 120, 1);
+    randomizeCard.style.transform = `translateX(${offsetX}px) rotate(${rotation}deg) scale(${1 + normalized * 0.02})`;
+    randomizeCard.style.opacity = `${1 - normalized * 0.18}`;
+
+    if (offsetX > 35) {
+        randomizeCard.classList.add("is-swiping-right");
+        randomizeCard.classList.remove("is-swiping-left");
+    } else if (offsetX < -35) {
+        randomizeCard.classList.add("is-swiping-left");
+        randomizeCard.classList.remove("is-swiping-right");
+    } else {
+        randomizeCard.classList.remove("is-swiping-left", "is-swiping-right");
+    }
+};
+
+const animateSwipeOut = async (direction) => {
+    if (!randomizeCard || !currentRandomIdea) return;
+
+    const isRight = direction === "right";
+    const endX = isRight ? window.innerWidth * 1.15 : -window.innerWidth * 1.15;
+
+    flashSwipeFeedback(direction);
+
+    randomizeCard.style.transition = "transform 0.34s cubic-bezier(.22,.9,.31,1), opacity 0.34s ease";
+    randomizeCard.style.transform = `translateX(${endX}px) rotate(${isRight ? 24 : -24}deg) scale(1.06)`;
+    randomizeCard.style.opacity = "0";
+
+    if (isRight) {
+        await addIdeaToFavorites(currentRandomIdea);
+    }
+
+    window.setTimeout(() => {
+        showNextIdea();
+    }, 340);
+};
+
+const initializeSwipeableCard = (idea) => {
+    if (!randomizeCard || !idea) return;
+
+    swipeBoundIdeaId = idea.id;
+    resetCardPosition();
+
+    let startX = 0;
+    let currentX = 0;
+    let pointerMoved = false;
+
+    const isMobileViewport = () => window.matchMedia("(max-width: 799px)").matches;
+
+    const onTouchStart = (event) => {
+        if (!isMobileViewport() || swipeBoundIdeaId !== currentRandomIdea?.id) return;
+        if (!event.touches || event.touches.length !== 1) return;
+
+        startX = event.touches[0].clientX;
+        currentX = 0;
+        pointerMoved = false;
+        isSwipingCard = false;
+
+        randomizeCard.classList.add("is-dragging");
+        randomizeCard.style.transition = "none";
+    };
+
+    const onTouchMove = (event) => {
+        if (!isMobileViewport() || !event.touches || event.touches.length !== 1) return;
+        if (!randomizeCard.classList.contains("is-dragging")) return;
+
+        currentX = event.touches[0].clientX - startX;
+
+        if (Math.abs(currentX) > 8) {
+            pointerMoved = true;
+            isSwipingCard = true;
+        }
+
+        if (!pointerMoved) return;
+
+        setSwipeVisual(currentX);
+    };
+
+    const onTouchEnd = async () => {
+        if (!randomizeCard.classList.contains("is-dragging")) return;
+
+        randomizeCard.classList.remove("is-dragging");
+        randomizeCard.style.transition = "transform 0.22s ease, opacity 0.22s ease";
+
+        const threshold = 110;
+
+        if (currentX > threshold) {
+            await animateSwipeOut("right");
+        } else if (currentX < -threshold) {
+            await animateSwipeOut("left");
+        } else {
+            resetCardPosition();
+            window.setTimeout(() => {
+                isSwipingCard = false;
+            }, 50);
+        }
+    };
+
+    randomizeCard.ontouchstart = onTouchStart;
+    randomizeCard.ontouchmove = onTouchMove;
+    randomizeCard.ontouchend = onTouchEnd;
+    randomizeCard.ontouchcancel = onTouchEnd;
+};
+
 // Use a random idea
 const renderRandomizeIdea = (idea) => {
     if (!idea || !randomizeCard) return;
+
+    resetCardPosition();
     randomizeCard.innerHTML = createRandomizeCardHTML(idea);
-    
+
     randomizeCard.onclick = (e) => {
-        // Don't open if clicking action buttons
-        if (e.target.closest('.icon-action-btn')) return;
+        if (e.target.closest(".icon-action-btn")) return;
+        if (isSwipingCard) return;
         showIdeaDetail(idea);
     };
+
+    initializeSwipeableCard(idea);
+    animateCardEntrance();
 };
 
 // Add Idea to favorites
@@ -89,7 +245,7 @@ const addIdeaToFavorites = async (idea) => {
     if (!idea) return;
     const likedIds = await getLikedIdeas();
     if (likedIds.includes(idea.id)) return;
-    
+
     likedIds.push(idea.id);
     await saveLikedIdeas(likedIds);
 };
@@ -101,9 +257,7 @@ const getSelectedPreferences = () => {
     ).map((button) => button.textContent.trim().toLowerCase());
 
     const getCheckedValues = (name) => {
-        const inputs = preferencesModal.querySelectorAll(
-            `input[name='${name}']:checked`
-        );
+        const inputs = preferencesModal.querySelectorAll(`input[name='${name}']:checked`);
         return Array.from(inputs).map(input => input.value);
     };
 
@@ -113,13 +267,14 @@ const getSelectedPreferences = () => {
     const durations = getCheckedValues("duration");
     const cost = getCheckedValues("cost")[0];
 
-    // Add all selected location tags
-    locations.forEach(loc => { requiredTags.push(loc === "indoors" ? "indoor" : "outdoor"); });
-    
-    // Add all selected energy tags
-    energies.forEach(energy => { requiredTags.push(energy === "high-energy" ? "high energy" : "lazy"); });
-    
-    // Add all selected duration tags
+    locations.forEach(loc => {
+        requiredTags.push(loc === "indoors" ? "indoor" : "outdoor");
+    });
+
+    energies.forEach(energy => {
+        requiredTags.push(energy === "high-energy" ? "high energy" : "lazy");
+    });
+
     durations.forEach(duration => requiredTags.push(duration));
 
     if (selectedCategories.length === 0 && requiredTags.length === 0 && !cost) {
@@ -137,23 +292,19 @@ const getSelectedPreferences = () => {
 const getFilteredIdeas = (preferences) => {
     let filtered = allIdeas;
 
-    // Filter categories
     if (preferences?.categories?.length) {
         filtered = filtered.filter((idea) =>
             preferences.categories.includes((idea.category || "").toLowerCase())
         );
     }
 
-    // Filter tags (indoor/outdoor, lazy/high energy, quick/long)
     if (preferences?.tags?.length) {
         filtered = filtered.filter((idea) => {
             const ideaTags = (idea.tags || []).map((tag) => tag.toLowerCase());
-            // Idea must have at least one of the selected tags
             return preferences.tags.some((tag) => ideaTags.includes(tag));
         });
     }
 
-    //Filter cost
     if (preferences?.cost) {
         filtered = filtered.filter((idea) => {
             if (preferences.cost === "free") return Number(idea.dollars) === 0;
@@ -165,14 +316,16 @@ const getFilteredIdeas = (preferences) => {
 };
 
 // Functions to toggle between empty state and idea display
-// Show if empty
 const showEmptyState = (message) => {
     randomizeEmptyMessage.textContent = message;
     randomizeEmptyMessage.hidden = false;
     randomizeCard.hidden = true;
     randomizeActions.style.display = "none";
-    
-    // Show adjust preferences button only if using preferences
+
+    if (randomizeSwipeHint) {
+        randomizeSwipeHint.hidden = true;
+    }
+
     if (adjustPreferencesSection) {
         if (currentPreferences) {
             adjustPreferencesSection.style.display = "flex";
@@ -181,23 +334,27 @@ const showEmptyState = (message) => {
         }
     }
 };
-// Show if there are more ideas
+
 const showIdeaState = () => {
     randomizeEmptyMessage.hidden = true;
     randomizeCard.hidden = false;
     randomizeActions.style.display = "flex";
+
+    if (randomizeSwipeHint) {
+        randomizeSwipeHint.hidden = !window.matchMedia("(max-width: 799px)").matches;
+    }
+
     if (adjustPreferencesSection) {
         adjustPreferencesSection.style.display = "none";
     }
 };
-// Use showEmptyState or showIdeaState
+
 const showNextIdea = () => {
     const filteredIdeas = getFilteredIdeas(currentPreferences);
     const remainingIdeas = filteredIdeas.filter((idea) =>
         !remainingIdeaIds.includes(idea.id)
     );
 
-    // No more ideas available
     if (remainingIdeas.length === 0) {
         const message = currentPreferences
             ? "You're all out of ideas that match your preferences. Try adjusting your filters."
@@ -207,11 +364,11 @@ const showNextIdea = () => {
         return;
     }
 
-    // Pick a random idea from remaining ones
     const randomIndex = Math.floor(Math.random() * remainingIdeas.length);
     currentRandomIdea = remainingIdeas[randomIndex];
     remainingIdeaIds.push(currentRandomIdea.id);
-    
+    isSwipingCard = false;
+
     showIdeaState();
     renderRandomizeIdea(currentRandomIdea);
 };
@@ -220,61 +377,57 @@ const showNextIdea = () => {
 openRandomizeButton.addEventListener("click", async () => {
     currentPreferences = null;
     remainingIdeaIds = [];
+    isSwipingCard = false;
+
     if (adjustPreferencesSection) {
         adjustPreferencesSection.style.display = "none";
     }
-    
-    // Load ideas from Firestore
+
     allIdeas = await getAllIdeas();
-    
+
     openModal(randomizeModal);
     showNextIdea();
 });
 
 randomizeRejectButton.addEventListener("click", () => {
-    // Animate the button
     randomizeRejectButton.classList.remove("btn-click-animate");
     void randomizeRejectButton.offsetWidth;
     randomizeRejectButton.classList.add("btn-click-animate");
-    
-    // Wait for animation to complete, then show next idea
+
     window.setTimeout(() => {
         randomizeRejectButton.classList.remove("btn-click-animate");
-        showNextIdea();
-    }, 300);
+        animateSwipeOut("left");
+    }, 120);
 });
+
 randomizeFavoriteButton.addEventListener("click", async () => {
-    // Add to favorites (now async)
-    await addIdeaToFavorites(currentRandomIdea);
-    
-    // Get the heart SVG path element
     const heartPath = randomizeFavoriteButton.querySelector("svg path");
-    
-    // Fill the heart
-    heartPath.setAttribute("fill", "rgb(62,0,84)");
-    
-    // Animate the button
+
+    if (heartPath) {
+        heartPath.setAttribute("fill", "rgb(62,0,84)");
+    }
+
     randomizeFavoriteButton.classList.remove("btn-click-animate");
     void randomizeFavoriteButton.offsetWidth;
     randomizeFavoriteButton.classList.add("btn-click-animate");
-    
-    // Wait for animation to complete, then unfill and show next idea
-    window.setTimeout(() => {
-        heartPath.setAttribute("fill", "none");
+
+    window.setTimeout(async () => {
+        if (heartPath) {
+            heartPath.setAttribute("fill", "none");
+        }
         randomizeFavoriteButton.classList.remove("btn-click-animate");
-        showNextIdea();
-    }, 300);
+        await animateSwipeOut("right");
+    }, 120);
 });
+
 randomizeAddCalendarButton.addEventListener("click", () => {
     closeModal(randomizeModal);
     if (!currentRandomIdea) return;
 
-    // Prefill the form with idea data
     if (addEventTitle) addEventTitle.value = currentRandomIdea.title;
     if (addEventCategory) addEventCategory.value = currentRandomIdea.category || "";
     if (addEventLocation) addEventLocation.value = currentRandomIdea.address || "";
-    
-    // Open the add event modal
+
     if (addEventModal) {
         openModal(addEventModal);
     }
@@ -320,6 +473,7 @@ if (addEventForm) {
         }
     });
 }
+
 // Preferences Modal
 openPreferencesButton.addEventListener("click", () => {
     openModal(preferencesModal);
@@ -328,10 +482,10 @@ openPreferencesButton.addEventListener("click", () => {
 applyPreferencesButton.addEventListener("click", async () => {
     currentPreferences = getSelectedPreferences();
     remainingIdeaIds = [];
-    
-    // Load ideas from Firestore
+    isSwipingCard = false;
+
     allIdeas = await getAllIdeas();
-    
+
     closeModal(preferencesModal);
     openModal(randomizeModal);
     showNextIdea();

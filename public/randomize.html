@@ -76,7 +76,13 @@
 
                 <p class="instruction-text randomize-empty-message" id="randomize-empty-message" hidden></p>
 
-                <div class="card idea-card" id="randomize-idea-card"></div>
+                <div class="swipe-stage" id="randomize-swipe-stage">
+                    <div class="card idea-card" id="randomize-idea-card"></div>
+                    <span class="swipe-badge swipe-badge-left">NOPE</span>
+                    <span class="swipe-badge swipe-badge-right">LIKE</span>
+                </div>
+
+                <p class="swipe-hint" id="randomize-swipe-hint">Swipe left to skip or right to like</p>
 
                 <div class="randomize-actions" id="randomize-actions">
                     <button type="button" class="icon-action-btn" id="randomize-reject">
@@ -382,8 +388,8 @@
                     <button type="button" class="button medium" id="cancel-add-event">Cancel</button>
                     <button type="submit" class="button high" id="save-add-event">Add Event</button>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 
     <script type="module" src="script/randomize.js"></script>
