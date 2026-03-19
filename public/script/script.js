@@ -1,7 +1,7 @@
 // Firebase imports and setup
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-import { app } from '../firebase.js';
+import { app } from './auth.js';
 
 export const db = getFirestore(app);
 export const auth = getAuth(app);
@@ -261,28 +261,29 @@ export async function toggleLike(ideaId) {
 // Card Template ----------------------------------------------------------------
 // Creates the HTML for a single idea card
 export async function createIdeaCardHTML(idea) {
-    // Use the ID from the idea object
     const ideaId = idea.id;
-    
-    // Build the dollar signs HTML if there's a price
-    const priceHTML = idea.dollars > 0 
-        ? `<div class="price-level">${renderDollarSigns(idea.dollars)}</div>`
-        : "";
+    const title = idea.title || idea.name;
 
-    
-    // Determine which heart icon to show (filled if liked, empty if not)
+    // Handle price display for both database ideas (dollars) and AI ideas (price)
+    let priceHTML = '';
+    if (idea.dollars) {
+        priceHTML = `<div class="price-level">${renderDollarSigns(idea.dollars)}</div>`;
+    } else if (idea.price) {
+        const dollarCount = idea.price.length;
+        priceHTML = `<div class="price-level">${renderDollarSigns(dollarCount)}</div>`;
+    }
+
     const isLiked = await isIdeaLiked(ideaId);
     const heartSrc = isLiked ? "images/HeartFilled.svg" : "images/Heart.svg";
     const heartClass = isLiked ? "heart-icon is-active" : "heart-icon";
-    
-    // Build the complete card HTML
+
     return `
         <div class="card idea-card">
-            <img src="${idea.image}" alt="${idea.title}" class="hero">
+            <img src="${idea.image}" alt="${title}" class="hero">
             <div class="card-body">
                 <div class="top-half">
                     <section class="top3rd">
-                        <h3>${idea.title}</h3>
+                        <h3>${title}</h3>
                         ${priceHTML}
                     </section>
                     <p>${idea.location}</p>
@@ -302,24 +303,30 @@ export async function createIdeaCardHTML(idea) {
 
 // Creates the HTML for a single idea card overlay
 export async function createIdeaOverlayHTML(idea) {
-    // Use the ID from the idea object
     const ideaId = idea.id;
-    
-    // Build the dollar signs HTML if there's a price
-    const priceHTML = idea.dollars > 0 
-        ? `<div class="price-level">${renderDollarSigns(idea.dollars)}</div>`
-        : "";
+    const title = idea.title || idea.name;
 
-    
-    // Determine which heart icon to show (filled if liked, empty if not)
+    // Handle price display for both database ideas (dollars) and AI ideas (price)
+    let priceHTML = '';
+    if (idea.dollars) {
+        priceHTML = `<div class="price-level">${renderDollarSigns(idea.dollars)}</div>`;
+    } else if (idea.price) {
+        const dollarCount = idea.price.length;
+        priceHTML = `<div class="price-level">${renderDollarSigns(dollarCount)}</div>`;
+    }
+
     const isLiked = await isIdeaLiked(ideaId);
     const heartSrc = isLiked ? "images/HeartFilled.svg" : "images/Heart.svg";
     const heartClass = isLiked ? "heart-icon is-active" : "heart-icon";
-    
-    // Build the complete card HTML
+
+    // Conditionally build details, address, and website HTML
+    const detailsHTML = idea.details ? `<p>${idea.details}</p>` : '';
+    const addressHTML = idea.address ? `<p>${idea.address}</p>` : '';
+    const websiteHTML = idea.website ? `<a target="_blank" href="${idea.website}">${title} Website</a>` : '';
+
     return `
         <div class="idea-card-hero">
-            <img src="${idea.image}" alt="${idea.title}" class="hero">
+            <img src="${idea.image}" alt="${title}" class="hero">
             <button type="button" class="close-overlay" id="close-favorites">
                 <img src="images/Xwhite.svg" alt="Close" width="30" height="30">
             </button>
@@ -327,23 +334,21 @@ export async function createIdeaOverlayHTML(idea) {
         <div class="card-body">
             <div class="top-half">
                 <section class="top3rd">
-                    <h3>${idea.title}</h3>
+                    <h3>${title}</h3>
                     ${priceHTML}
                 </section>
                 <p>${idea.location}</p>
             </div>
             <div>
-                <p>${idea.description}</p>
-                <br>
-                <p>${idea.details}</p>
+                <p>${idea.description || ''}</p>
+                ${detailsHTML ? `<br>${detailsHTML}` : ''}
             </div>
             <div>
-                <p>${idea.address}</p>
-                <br>
-                <a target=_blank href="${idea.website}">${idea.title} Website</a>
+                ${addressHTML ? `${addressHTML}<br>` : ''}
+                ${websiteHTML}
             </div>
             <section class="bottom3rd">
-            <span class="tag">${idea.category}</span>
+                <span class="tag">${idea.category || ''}</span>
                 <img 
                     src="${heartSrc}" 
                     alt="Heart Icon" 

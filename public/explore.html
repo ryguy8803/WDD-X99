@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,7 +7,8 @@
     <title>Explore</title>
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
     <link rel="stylesheet" href="styles/styles.css">
-    <script type="module" src="firebase.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@google/generative-ai/dist/main.min.js"></script>
+    <script type="module" src="script/auth.js"></script>
 </head>
 <body>
     
@@ -43,6 +44,13 @@
                     <path d="M38.5 38.5L30.525 30.525M34.8333 20.1667C34.8333 28.2668 28.2668 34.8333 20.1667 34.8333C12.0665 34.8333 5.5 28.2668 5.5 20.1667C5.5 12.0665 12.0665 5.5 20.1667 5.5C28.2668 5.5 34.8333 12.0665 34.8333 20.1667Z" stroke="rgb(104, 104, 104)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </label>
+
+            <div class="explore-actions">
+                <button type="button" class="button high" id="generate-ideas-button">
+                    <span>Find Date's Near You</span>
+                </button>
+                <p id="location-prompt-message" class="hidden-style"></p>
+            </div>
 
             <div class="tags">
                 <button type="button" class="tag tag-button">Food & Drink</button>
