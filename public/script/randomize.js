@@ -285,7 +285,7 @@ const getSelectedPreferences = () => {
     const locations = getCheckedValues("location");
     const energies = getCheckedValues("energy");
     const durations = getCheckedValues("duration");
-    const cost = getCheckedValues("cost")[0];
+    const cost = getCheckedValues("cost");
 
     locations.forEach(loc => {
         requiredTags.push(loc === "indoors" ? "indoor" : "outdoor");
@@ -297,7 +297,7 @@ const getSelectedPreferences = () => {
 
     durations.forEach(duration => requiredTags.push(duration));
 
-    if (selectedCategories.length === 0 && requiredTags.length === 0 && !cost) {
+    if (selectedCategories.length === 0 && requiredTags.length === 0 && cost.length === 0) {
         return null;
     }
 
@@ -325,10 +325,15 @@ const getFilteredIdeas = (preferences) => {
         });
     }
 
-    if (preferences?.cost) {
+    if (preferences?.cost?.length) {
         filtered = filtered.filter((idea) => {
-            if (preferences.cost === "free") return Number(idea.dollars) === 0;
-            return Number(idea.dollars) > 0;
+            const isFree = Number(idea.dollars) === 0;
+            const isPurchase = Number(idea.dollars) > 0;
+
+            return (
+                (preferences.cost.includes("free") && isFree) ||
+                (preferences.cost.includes("purchase") && isPurchase)
+            );
         });
     }
 
