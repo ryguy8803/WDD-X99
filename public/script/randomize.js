@@ -166,8 +166,8 @@ const animateSwipeOut = async (direction) => {
         await addIdeaToFavorites(currentRandomIdea);
     }
 
-    window.setTimeout(() => {
-        showNextIdea();
+    window.setTimeout(async () => {
+        await showNextIdea();
     }, duration);
 };
 
@@ -387,10 +387,13 @@ const showIdeaState = () => {
     }
 };
 
-const showNextIdea = () => {
+const showNextIdea = async () => {
     const filteredIdeas = getFilteredIdeas(currentPreferences);
+    const likedIds = await getLikedIdeas();
+
     const remainingIdeas = filteredIdeas.filter((idea) =>
-        !remainingIdeaIds.includes(idea.id)
+        !remainingIdeaIds.includes(idea.id) &&
+        !likedIds.includes(idea.id)
     );
 
     if (remainingIdeas.length === 0) {
@@ -425,7 +428,7 @@ openRandomizeButton.addEventListener("click", async () => {
     allIdeas = await getAllIdeas();
 
     openModal(randomizeModal);
-    showNextIdea();
+    await showNextIdea();
 });
 
 randomizeRejectButton.addEventListener("click", () => {
@@ -463,6 +466,7 @@ randomizeFavoriteButton.addEventListener("click", async () => {
         await animateSwipeOut("right");
     }, 140);
 });
+
 randomizeAddCalendarButton.addEventListener("click", () => {
     closeModal(randomizeModal);
     if (!currentRandomIdea) return;
@@ -531,7 +535,7 @@ applyPreferencesButton.addEventListener("click", async () => {
 
     closeModal(preferencesModal);
     openModal(randomizeModal);
-    showNextIdea();
+    await showNextIdea();
 });
 
 // Toggle tag buttons active state in preferences modal
