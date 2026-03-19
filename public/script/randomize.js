@@ -18,6 +18,11 @@ const preferencesModal = initializeModal("preferences-modal", {
     }
 });
 
+const addEventModal = initializeModal("add-event-modal", {
+    closeButtonSelector: "#close-add-event",
+    closeOnOverlay: true
+});
+
 // Button references
 const openRandomizeButton = document.getElementById("open-randomize");
 const openPreferencesButton = document.getElementById("open-preferences");
@@ -34,7 +39,6 @@ const adjustPreferencesButton = document.getElementById("adjust-preferences-butt
 const adjustPreferencesSection = document.getElementById("randomize-adjust-preferences");
 
 // Add Event Modal elements
-const addEventModal = document.getElementById("add-event-modal");
 const addEventForm = document.getElementById("add-event-form");
 const addEventTitle = document.getElementById("event-title");
 const addEventDate = document.getElementById("event-date");
