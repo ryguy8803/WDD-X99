@@ -96,7 +96,8 @@ export const initializeModal = (modalId, options = {}) => {
         openButtonSelector,      // CSS selector for button(s) that open modal
         closeButtonSelector,     // CSS selector for X close button
         onOpen = null,          // Function to run when modal opens
-        onClose = null          // Function to run when modal closes
+        onClose = null,         // Function to run when modal closes
+        closeOnOverlay = true
     } = options;
 
     // Setup open button(s) - can have multiple buttons opening same modal
@@ -112,7 +113,7 @@ export const initializeModal = (modalId, options = {}) => {
 
     // Setup close button (the X icon)
     if (closeButtonSelector) {
-        const closeButton = document.querySelector(closeButtonSelector);
+        const closeButton = modal.querySelector(closeButtonSelector) || document.querySelector(closeButtonSelector);
         if (closeButton) {
             closeButton.addEventListener("click", () => {
                 closeModal(modal);
@@ -121,7 +122,15 @@ export const initializeModal = (modalId, options = {}) => {
         }
     }
 
-    // Overlay clicks do NOT close modals - removed that functionality entirely
+    // Allow overlay click to close modal
+    if (closeOnOverlay) {
+        modal.addEventListener("click", (event) => {
+            if (event.target === modal) {
+                closeModal(modal);
+                if (onClose) onClose(modal);
+            }
+        });
+    }
 
     return modal;
 };

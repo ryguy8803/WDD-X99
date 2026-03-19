@@ -18,6 +18,11 @@ const preferencesModal = initializeModal("preferences-modal", {
     }
 });
 
+const addEventModal = initializeModal("add-event-modal", {
+    closeButtonSelector: "#close-add-event",
+    closeOnOverlay: true
+});
+
 // Button references
 const openRandomizeButton = document.getElementById("open-randomize");
 const openPreferencesButton = document.getElementById("open-preferences");
@@ -34,7 +39,6 @@ const adjustPreferencesButton = document.getElementById("adjust-preferences-butt
 const adjustPreferencesSection = document.getElementById("randomize-adjust-preferences");
 
 // Add Event Modal elements
-const addEventModal = document.getElementById("add-event-modal");
 const addEventForm = document.getElementById("add-event-form");
 const addEventTitle = document.getElementById("event-title");
 const addEventDate = document.getElementById("event-date");
@@ -166,8 +170,8 @@ const animateSwipeOut = async (direction) => {
         await addIdeaToFavorites(currentRandomIdea);
     }
 
-    window.setTimeout(() => {
-        showNextIdea();
+    window.setTimeout(async () => {
+        await showNextIdea();
     }, duration);
 };
 
@@ -281,7 +285,7 @@ const getSelectedPreferences = () => {
     const locations = getCheckedValues("location");
     const energies = getCheckedValues("energy");
     const durations = getCheckedValues("duration");
-    const cost = getCheckedValues("cost")[0];
+    const cost = getCheckedValues("cost");
 
     locations.forEach(loc => {
         requiredTags.push(loc === "indoors" ? "indoor" : "outdoor");
@@ -293,7 +297,7 @@ const getSelectedPreferences = () => {
 
     durations.forEach(duration => requiredTags.push(duration));
 
-    if (selectedCategories.length === 0 && requiredTags.length === 0 && !cost) {
+    if (selectedCategories.length === 0 && requiredTags.length === 0 && cost.length === 0) {
         return null;
     }
 
@@ -321,10 +325,15 @@ const getFilteredIdeas = (preferences) => {
         });
     }
 
-    if (preferences?.cost) {
+    if (preferences?.cost?.length) {
         filtered = filtered.filter((idea) => {
-            if (preferences.cost === "free") return Number(idea.dollars) === 0;
-            return Number(idea.dollars) > 0;
+            const isFree = Number(idea.dollars) === 0;
+            const isPurchase = Number(idea.dollars) > 0;
+
+            return (
+                (preferences.cost.includes("free") && isFree) ||
+                (preferences.cost.includes("purchase") && isPurchase)
+            );
         });
     }
 
@@ -387,10 +396,13 @@ const showIdeaState = () => {
     }
 };
 
-const showNextIdea = () => {
+const showNextIdea = async () => {
     const filteredIdeas = getFilteredIdeas(currentPreferences);
+    const likedIds = await getLikedIdeas();
+
     const remainingIdeas = filteredIdeas.filter((idea) =>
-        !remainingIdeaIds.includes(idea.id)
+        !remainingIdeaIds.includes(idea.id) &&
+        !likedIds.includes(idea.id)
     );
 
     if (remainingIdeas.length === 0) {
@@ -425,7 +437,7 @@ openRandomizeButton.addEventListener("click", async () => {
     allIdeas = await getAllIdeas();
 
     openModal(randomizeModal);
-    showNextIdea();
+    await showNextIdea();
 });
 
 randomizeRejectButton.addEventListener("click", () => {
@@ -463,6 +475,7 @@ randomizeFavoriteButton.addEventListener("click", async () => {
         await animateSwipeOut("right");
     }, 140);
 });
+
 randomizeAddCalendarButton.addEventListener("click", () => {
     closeModal(randomizeModal);
     if (!currentRandomIdea) return;
@@ -531,7 +544,7 @@ applyPreferencesButton.addEventListener("click", async () => {
 
     closeModal(preferencesModal);
     openModal(randomizeModal);
-    showNextIdea();
+    await showNextIdea();
 });
 
 // Toggle tag buttons active state in preferences modal
