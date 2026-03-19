@@ -1,33 +1,40 @@
-// Forgot Password Page Handler
 import { auth } from './script.js';
-import { updatePassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+import { sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js';
 
-// Forgot Password Form Handler
-const forgotForm = document.getElementById('forgot-form');
-if (forgotForm) {
-    forgotForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const newPassword = document.getElementById('newPassword').value;
-        const confirmPassword = document.getElementById('password').value;
-        
-        if (newPassword !== confirmPassword) {
-            alert('Passwords do not match');
-            return;
-        }
-        
-        const user = auth.currentUser;
-        if (!user) {
-            alert('You must be logged in to change your password');
-            return;
-        }
-        
-        try {
-            await updatePassword(user, newPassword);
-            alert('Password updated successfully!');
-            history.back();
-        } catch (error) {
-            alert('Failed to update password: ' + error.message);
-        }
-    });
-}
+document.addEventListener('DOMContentLoaded', () => {
+    const forgotPasswordForm = document.getElementById('forgot-form');
+
+    if (forgotPasswordForm) {
+        forgotPasswordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = forgotPasswordForm.email.value;
+            const appContainer = document.querySelector('.app-container');
+
+            sendPasswordResetEmail(auth, email)
+                .then(() => {
+                    if (appContainer) {
+                        appContainer.innerHTML = `
+                            <div class="card" style="text-align: center; padding: var(--large-spacing); max-width: 400px;">
+                                <h1 class="page-title">Email Sent</h1>
+                                <p style="margin-bottom: var(--medium-spacing);">A password reset link has been sent to <strong>${email}</strong>. Please check your inbox.</p>
+                                <a href="login.html" class="button high">Back to Login</a>
+                            </div>
+                        `;
+                    }
+                })
+                .catch((error) => {
+                    const errorMessage = error.message;
+                    console.error('Error sending password reset email:', error.code, errorMessage);
+                     if (appContainer) {
+                        appContainer.innerHTML = `
+                            <div class="card" style="text-align: center; padding: var(--large-spacing); max-width: 400px;">
+                                <h1 class="page-title">Error</h1>
+                                <p style="margin-bottom: var(--medium-spacing); color: var(--color-error);">${errorMessage}</p>
+                                <a href="forgotpassword.html" class="button high">Try Again</a>
+                            </div>
+                        `;
+                    }
+                });
+        });
+    }
+});

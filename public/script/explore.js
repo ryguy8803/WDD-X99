@@ -9,7 +9,7 @@ const exploreIdeaList = document.getElementById("idea-list");
 const getSelectedTags = () => {
     return Array.from(
         document.querySelectorAll(".tags .tag-button.is-active")
-    ).map((button) => button.textContent.trim()); // Removed .toLowerCase()
+    ).map((button) => button.textContent.trim());
 };
 
 // Render idea cards
@@ -22,11 +22,14 @@ const renderExploreIdeas = async (ideas) => {
     }
 
     exploreIdeaList.innerHTML = '';
-    
-    // Create and append each card with click listener
-    for (const idea of ideas) {
-        const cardHTML = await createIdeaCardHTML(idea);
-        
+
+    const cardHTMLPromises = ideas.map(idea => createIdeaCardHTML(idea));
+    const cardHTMLs = await Promise.all(cardHTMLPromises);
+
+    const fragment = document.createDocumentFragment();
+
+    cardHTMLs.forEach((cardHTML, index) => {
+        const idea = ideas[index];
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = cardHTML;
         const card = tempDiv.firstElementChild;
@@ -35,33 +38,23 @@ const renderExploreIdeas = async (ideas) => {
             if (e.target.closest('.heart-icon')) return;
             showIdeaDetail(idea);
         });
-        
-        exploreIdeaList.appendChild(card);
-    }
+
+        fragment.appendChild(card);
+    });
+
+    exploreIdeaList.appendChild(fragment);
 };
+
 
 // Filter and display ideas based on search and tags
 const filterExploreIdeas = async () => {
     const query = (exploreSearchInput?.value || "").trim().toLowerCase();
     const selectedTags = getSelectedTags();
 
-    // Fetch ideas from Firestore, pre-filtering by category on the server
-    const ideasFromDB = await getAllIdeas({ categories: selectedTags });
+    // Fetch ideas from Firestore, pre-filtering by category and query on the server
+    const ideasFromDB = await getAllIdeas({ categories: selectedTags, query: query });
     
-    // If there is a search query, perform a client-side search on the filtered results
-    const filteredIdeas = query
-        ? ideasFromDB.filter((idea) => {
-            const title = (idea.title || "").toLowerCase();
-            const description = (idea.description || "").toLowerCase();
-            const category = (idea.category || "").toLowerCase();
-
-            return title.includes(query) ||
-                   description.includes(query) ||
-                   category.includes(query);
-        })
-        : ideasFromDB; // If no query, show all ideas that matched the category filter
-
-    await renderExploreIdeas(filteredIdeas);
+    await renderExploreIdeas(ideasFromDB);
 };
 
 // Init and Event Listeners ------------------------------------------------------------------------------
