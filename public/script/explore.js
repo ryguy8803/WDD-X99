@@ -70,7 +70,8 @@ const exploreIdeaList = document.getElementById("idea-list");
 const generateIdeasButton = document.getElementById("generate-ideas-button");
 const locationPromptMessage = document.getElementById("location-prompt-message");
 
-const API_KEY = "AIzaSyCKPnIjprdO4G-dtwJMFmBSQ-Kc53b6qgo";
+// ** IMPORTANT: Add your new, valid Gemini API key here, INSIDE the quotes **
+const API_KEY = "AIzaSyCqTqGfn6AjJ_7h_YSyiftsqD8qkzz-YHc";
 
 const getSelectedTags = () => {
     return Array.from(

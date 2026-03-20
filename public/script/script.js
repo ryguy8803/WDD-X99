@@ -1,7 +1,21 @@
 // Firebase imports and setup
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-import { app } from './auth.js';
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyBrs8ZXvUypKfF1cRsqLYwgHEcQI6qrev0",
+  authDomain: "wdd-x99-86659873-cf284.firebaseapp.com",
+  databaseURL: "https://wdd-x99-86659873-cf284-default-rtdb.firebaseio.com",
+  projectId: "wdd-x99-86659873-cf284",
+  storageBucket: "wdd-x99-86659873-cf284.firebasestorage.app",
+  messagingSenderId: "43055830649",
+  appId: "1:43055830649:web:3c244e1d5bea6300dfe6a8"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
 export const db = getFirestore(app);
 export const auth = getAuth(app);
