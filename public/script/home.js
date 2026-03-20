@@ -7,91 +7,139 @@ import "./auth.js";
 const storage = getStorage();
 
 
-// Main function that renders all idea cards to the home page
+// -------------------- RENDER FUNCTIONS --------------------
+
 async function renderHomeIdeas() {
     const container = document.getElementById("home-idea-list");
-    
     container.innerHTML = "";
-    
+
     const allIdeas = await getAllIdeas();
-    
     const shuffled = allIdeas.sort(() => 0.5 - Math.random());
     const randomIdeas = shuffled.slice(0, 7);
-    
+
     for (const idea of randomIdeas) {
         const cardHTML = await createIdeaCardHTML(idea);
-        
+
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = cardHTML;
         const card = tempDiv.firstElementChild;
-        
+
         card.addEventListener('click', (e) => {
-            // Don't trigger if clicking the heart icon
             if (e.target.closest('.heart-icon')) return;
-            
             showIdeaDetail(idea);
         });
-        
+
         container.appendChild(card);
     }
 }
 
-// Renders the favorites preview section on the home page
 async function renderHomeFavoritesPreview() {
     const container = document.getElementById("home-favorites-list");
     const emptyMessage = document.querySelector(".favorites");
-    
-    // Clear the container first to prevent duplicates
+
     container.innerHTML = "";
-    
-    // Get liked IDs (now async)
+
     const likedIds = await getLikedIdeas();
-    
-    // Show/hide empty message based on whether there are likes
+
     if (likedIds.length === 0) {
         emptyMessage.hidden = false;
         container.hidden = true;
         return;
     }
-    
-    // Hide empty message and show container
+
     emptyMessage.hidden = true;
     container.hidden = false;
-    
-    // Fetch ideas from Firestore and filter to only liked ones
+
     const allIdeas = await getAllIdeas();
     const likedIdeas = allIdeas.filter(idea => likedIds.includes(idea.id));
-    
-    // Render each liked idea card
+
     for (const idea of likedIdeas) {
         const cardHTML = await createIdeaCardHTML(idea);
-        
+
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = cardHTML;
         const card = tempDiv.firstElementChild;
-        
-        // Add click listener
+
         card.style.cursor = 'pointer';
         card.addEventListener('click', (e) => {
             if (e.target.closest('.heart-icon')) return;
             showIdeaDetail(idea);
         });
-        
+
         container.appendChild(card);
     }
 }
 
-// Init and Event Listeners ------------------------------------------------------------------------------
 
-// Add Idea Modal - allows users to create custom date ideas
+// -------------------- MODALS --------------------
+
+// Add Idea
 const addIdeaModal = initializeModal("add-idea-modal", {
     openButtonSelector: "#open-add-idea",
     closeButtonSelector: "#close-add-idea"
 });
 
-const addIdeaForm = document.getElementById("add-idea-form");
+// ✅ USER SETTINGS (FIXED BUG)
+const userSettingsModal = initializeModal("user-settings-modal", {
+    openButtonSelector: ".open-user-settings",
+    closeButtonSelector: "#close-user-settings"
+});
 
-// Run when the page loads - wait for auth to be ready
+const editAccountModal = initializeModal("edit-account-modal", {
+    closeButtonSelector: "#close-edit-account"
+});
+
+const editAccountFormModal = initializeModal("edit-account-form-modal", {
+    closeButtonSelector: "#close-edit-account-form"
+});
+
+
+// -------------------- MODAL NAVIGATION --------------------
+
+const openEditAccountButton = document.querySelector(".open-edit-account");
+const backEditAccountButton = document.getElementById("back-edit-account");
+const openEditAccountFormButton = document.getElementById("open-edit-account-form");
+const backEditAccountFormButton = document.getElementById("back-edit-account-form");
+const cancelEditAccountFormButton = document.getElementById("cancel-edit-account-form");
+
+if (openEditAccountButton) {
+    openEditAccountButton.addEventListener("click", () => {
+        closeModal(document.getElementById("user-settings-modal"));
+        openModal(document.getElementById("edit-account-modal"));
+    });
+}
+
+if (backEditAccountButton) {
+    backEditAccountButton.addEventListener("click", () => {
+        closeModal(document.getElementById("edit-account-modal"));
+        openModal(document.getElementById("user-settings-modal"));
+    });
+}
+
+if (openEditAccountFormButton) {
+    openEditAccountFormButton.addEventListener("click", () => {
+        closeModal(document.getElementById("edit-account-modal"));
+        openModal(document.getElementById("edit-account-form-modal"));
+    });
+}
+
+if (backEditAccountFormButton) {
+    backEditAccountFormButton.addEventListener("click", () => {
+        closeModal(document.getElementById("edit-account-form-modal"));
+        openModal(document.getElementById("edit-account-modal"));
+    });
+}
+
+if (cancelEditAccountFormButton) {
+    cancelEditAccountFormButton.addEventListener("click", () => {
+        closeModal(document.getElementById("edit-account-form-modal"));
+        openModal(document.getElementById("edit-account-modal"));
+    });
+}
+
+
+// -------------------- AUTH --------------------
+
 onAuthStateChanged(auth, (user) => {
     if (user) {
         renderHomeIdeas();
@@ -99,47 +147,49 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
-// Re-render favorites when returning to the page
 document.addEventListener("visibilitychange", () => {
     if (!document.hidden) {
         renderHomeFavoritesPreview();
     }
 });
 
-// Listen for clicks on heart icons
+
+// -------------------- HEART HANDLING --------------------
+
 document.addEventListener("click", async (event) => {
-    // Check if a heart icon was clicked
     const heart = event.target.closest(".heart-icon");
-    if (!heart) return; // Not a heart, ignore
-    
-    // Get the idea ID from the heart (keep as string for Firestore)
+    if (!heart) return;
+
     const ideaId = heart.getAttribute("data-idea-id");
-    
-    // Toggle the like status (now async)
     const isNowLiked = await toggleLike(ideaId);
-    
-    // Update ALL heart icons for this idea ID (in both main and favorites sections)
-    const allHeartsForIdea = document.querySelectorAll(`[data-idea-id="${ideaId}"]`);
-    allHeartsForIdea.forEach(heartIcon => {
+
+    const allHearts = document.querySelectorAll(`[data-idea-id="${ideaId}"]`);
+    allHearts.forEach(icon => {
         if (isNowLiked) {
-            heartIcon.src = "images/HeartFilled.svg";
-            heartIcon.classList.add("is-active");
+            icon.src = "images/HeartFilled.svg";
+            icon.classList.add("is-active");
         } else {
-            heartIcon.src = "images/Heart.svg";
-            heartIcon.classList.remove("is-active");
+            icon.src = "images/Heart.svg";
+            icon.classList.remove("is-active");
         }
     });
-    
-    // Re-render the favorites preview to reflect the change
+
     await renderHomeFavoritesPreview();
 });
 
+
+// -------------------- ADD IDEA --------------------
+
+const addIdeaForm = document.getElementById("add-idea-form");
+
 addIdeaForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+
     const formData = new FormData(addIdeaForm);
+
     const name = String(formData.get("name") || "").trim();
     const description = String(formData.get("description") || "").trim();
-    const category = String(formData.get("category") || "");    
+    const category = String(formData.get("category") || "");
     const priceValue = Number(formData.get("price") || 0);
     const location = String(formData.get("location") || "");
     const energy = String(formData.get("energy") || "");
@@ -151,7 +201,6 @@ addIdeaForm.addEventListener("submit", async (event) => {
         return;
     }
 
-    // Build tags array from preferences
     const tags = [];
     if (location) tags.push(location);
     if (energy) tags.push(energy);
@@ -159,34 +208,32 @@ addIdeaForm.addEventListener("submit", async (event) => {
 
     try {
         let imageUrl = "";
-        
-        // Upload image to Firebase Storage if a file was selected
+
         if (imageFile && imageFile.size > 0) {
-            const timestamp = Date.now();
-            const fileName = `${timestamp}_${imageFile.name}`;
+            const fileName = `${Date.now()}_${imageFile.name}`;
             const storageRef = ref(storage, `activity-images/${fileName}`);
-            
+
             await uploadBytes(storageRef, imageFile);
             imageUrl = await getDownloadURL(storageRef);
         }
 
         const newActivity = {
             title: name,
-            description: description,
+            description,
             dollars: priceValue,
-            category: category,
+            category,
             image: imageUrl,
-            tags: tags
+            tags
         };
-        
+
         await addDoc(collection(db, "activities"), newActivity);
-        
-        // Re-render the ideas
+
         await renderHomeIdeas();
-        
+
         addIdeaForm.reset();
         closeModal(addIdeaModal.element);
+
     } catch (e) {
-        alert("There was an error adding your date idea. Please try again.");
+        alert("There was an error adding your date idea.");
     }
 });

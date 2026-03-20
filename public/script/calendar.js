@@ -1,501 +1,706 @@
-import { openModal, closeModal, initializeModal, renderDollarSigns, db, getCurrentUser, auth } from "./script.js";
-import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+import { openModal, closeModal, initializeModal, auth, db, getCurrentUser } from "./script.js";
 import "./auth.js";
+import {
+    collection,
+    addDoc,
+    getDocs,
+    deleteDoc,
+    updateDoc,
+    doc
+} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
-// ============================== DATA MANAGEMENT ==============================
+// ============================== SHARED ACCOUNT / FAVORITES MODALS ==============================
+initializeModal("user-settings-modal", {
+    openButtonSelector: ".open-user-settings",
+    closeButtonSelector: "#close-user-settings"
+});
 
-let activeEvent = null;
+initializeModal("edit-account-modal", {
+    closeButtonSelector: "#close-edit-account"
+});
 
-// Get upcoming dates from Firebase only
-const getUpcomingDates = async () => {
-    const user = getCurrentUser();
-    if (!user) return [];
-    
-    try {
-        const eventsRef = collection(db, "users", user.uid, "events");
-        const eventsSnap = await getDocs(eventsRef);
-        return eventsSnap.docs.map(doc => ({
-            ...doc.data(),
-            firestoreId: doc.id
-        }));
-    } catch (error) {
-        return [];
-    }
-};
+initializeModal("edit-account-form-modal", {
+    closeButtonSelector: "#close-edit-account-form"
+});
 
-// Add a new event to Firebase
-const addEvent = async (event) => {
-    const user = getCurrentUser();
-    if (!user) return;
-    
-    try {
-        const eventsRef = collection(db, "users", user.uid, "events");
-        await addDoc(eventsRef, event);
-        await renderUpcomingDates();
-        if (calendarCurrentMonth) await renderCalendar(calendarCurrentMonth);
-    } catch (error) {
-        // Silent error handling
-    }
-};
+initializeModal("favorites-modal", {
+    openButtonSelector: ".open-favorites",
+    closeButtonSelector: "#close-favorites"
+});
 
-// Update an existing event in Firebase
-const updateEvent = async (eventToUpdate, updatedData) => {
-    const user = getCurrentUser();
-    if (!user || !eventToUpdate.firestoreId) return;
-    
-    try {
-        const eventRef = doc(db, "users", user.uid, "events", eventToUpdate.firestoreId);
-        await updateDoc(eventRef, updatedData);
-        await renderUpcomingDates();
-        if (calendarCurrentMonth) await renderCalendar(calendarCurrentMonth);
-    } catch (error) {
-        // Silent error handling
-    }
-};
+initializeModal("delete-confirm-modal", {
+    closeButtonSelector: "#close-delete-confirm"
+});
 
-// Remove event by firestoreId from Firebase
-const removeEventById = async (eventToRemove) => {
-    const user = getCurrentUser();
-    if (!user || !eventToRemove.firestoreId) return;
-    
-    try {
-        const eventRef = doc(db, "users", user.uid, "events", eventToRemove.firestoreId);
-        await deleteDoc(eventRef);
-        await renderUpcomingDates();
-        if (calendarCurrentMonth) await renderCalendar(calendarCurrentMonth);
-    } catch (error) {
-        // Silent error handling
-    }
-};
+const openEditAccountButton = document.querySelector(".open-edit-account");
+const backEditAccountButton = document.getElementById("back-edit-account");
+const openEditAccountFormButton = document.getElementById("open-edit-account-form");
+const backEditAccountFormButton = document.getElementById("back-edit-account-form");
+const cancelEditAccountFormButton = document.getElementById("cancel-edit-account-form");
 
-// ============================== UTILITY FUNCTIONS ==============================
+const cancelDeleteConfirmButton = document.getElementById("cancel-delete-confirm");
+const confirmDeleteEventButton = document.getElementById("confirm-delete-event");
+const deleteConfirmMessage = document.getElementById("delete-confirm-message");
 
-const formatMonthTitle = (date) =>
-    date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+if (openEditAccountButton) {
+    openEditAccountButton.addEventListener("click", () => {
+        closeModal(document.getElementById("user-settings-modal"));
+        openModal(document.getElementById("edit-account-modal"));
+    });
+}
 
-const formatEventDate = (dateString, time) => {
-    const date = new Date(`${dateString}T00:00:00`);
-    const formatted = date.toLocaleDateString("en-US", {
-        month: "short",
+if (backEditAccountButton) {
+    backEditAccountButton.addEventListener("click", () => {
+        closeModal(document.getElementById("edit-account-modal"));
+        openModal(document.getElementById("user-settings-modal"));
+    });
+}
+
+if (openEditAccountFormButton) {
+    openEditAccountFormButton.addEventListener("click", () => {
+        closeModal(document.getElementById("edit-account-modal"));
+        openModal(document.getElementById("edit-account-form-modal"));
+    });
+}
+
+if (backEditAccountFormButton) {
+    backEditAccountFormButton.addEventListener("click", () => {
+        closeModal(document.getElementById("edit-account-form-modal"));
+        openModal(document.getElementById("edit-account-modal"));
+    });
+}
+
+if (cancelEditAccountFormButton) {
+    cancelEditAccountFormButton.addEventListener("click", () => {
+        closeModal(document.getElementById("edit-account-form-modal"));
+        openModal(document.getElementById("edit-account-modal"));
+    });
+}
+
+// ============================== CALENDAR MODALS ==============================
+const addEventModalEl = document.getElementById("add-event-modal");
+const editEventModalEl = document.getElementById("edit-event-modal");
+const viewEventModalEl = document.getElementById("view-event-modal");
+const dayEventsModalEl = document.getElementById("day-events-modal");
+const deleteConfirmModalEl = document.getElementById("delete-confirm-modal");
+
+initializeModal("add-event-modal", {
+    openButtonSelector: "#open-add-event",
+    closeButtonSelector: "#close-add-event"
+});
+
+initializeModal("edit-event-modal", {
+    closeButtonSelector: "#close-edit-event"
+});
+
+initializeModal("view-event-modal", {
+    closeButtonSelector: "#close-view-event"
+});
+
+initializeModal("day-events-modal", {
+    closeButtonSelector: "#close-day-events"
+});
+
+// ============================== CALENDAR STATE ==============================
+const calendarGrid = document.getElementById("calendar-grid");
+const monthTitle = document.getElementById("calendar-month-title");
+const prevButton = document.getElementById("calendar-prev");
+const nextButton = document.getElementById("calendar-next");
+const upcomingDatesList = document.getElementById("upcoming-dates-list");
+const pastDatesList = document.getElementById("past-dates-list");
+
+const addEventForm = document.getElementById("add-event-form");
+const cancelAddEventButton = document.getElementById("cancel-add-event");
+
+const editEventForm = document.getElementById("edit-event-form");
+const deleteEditEventButton = document.getElementById("delete-edit-event");
+const deleteViewEventButton = document.getElementById("delete-view-event");
+const viewEditEventButton = document.getElementById("view-edit-event");
+
+const dayEventsTitle = document.getElementById("day-events-title");
+const dayEventsList = document.getElementById("day-events-list");
+const dayEventsAddDateButton = document.getElementById("day-events-add-date");
+
+let currentMonth = new Date();
+currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+
+let allEvents = [];
+let selectedEventId = null;
+let selectedDayDate = null;
+
+const dayNamesHTML = `
+    <div class="day-name">Sun</div>
+    <div class="day-name">Mon</div>
+    <div class="day-name">Tue</div>
+    <div class="day-name">Wed</div>
+    <div class="day-name">Thu</div>
+    <div class="day-name">Fri</div>
+    <div class="day-name">Sat</div>
+`;
+
+function formatDateKey(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+}
+
+function parseEventDate(value) {
+    if (!value) return null;
+    const [year, month, day] = value.split("-").map(Number);
+    if (!year || !month || !day) return null;
+    return new Date(year, month - 1, day);
+}
+
+function formatDisplayDate(value) {
+    const date = parseEventDate(value);
+    if (!date) return "";
+    return date.toLocaleDateString(undefined, {
+        weekday: "long",
+        month: "long",
         day: "numeric",
         year: "numeric"
     });
-    
-    // Convert 24-hour time to 12-hour with AM/PM
-    if (time) {
-        const [hours, minutes] = time.split(':');
-        const hour = parseInt(hours);
-        const ampm = hour >= 12 ? 'PM' : 'AM';
-        const hour12 = hour % 12 || 12; // Convert 0 to 12 for midnight
-        const formattedTime = `${hour12}:${minutes} ${ampm}`;
-        return `${formatted} at ${formattedTime}`;
-    }
-    
-    return formatted;
-};
+}
 
-const normalizeDateInput = (value) => {
+function formatShortDisplayDate(value) {
+    const date = parseEventDate(value);
+    if (!date) return "";
+    return date.toLocaleDateString(undefined, {
+        month: "long",
+        day: "numeric",
+        year: "numeric"
+    });
+}
+
+function formatDisplayTime(value) {
     if (!value) return "";
-    const parsed = new Date(value);
-    if (Number.isNaN(parsed.getTime())) return value;
-    const year = parsed.getFullYear();
-    const month = String(parsed.getMonth() + 1).padStart(2, "0");
-    const day = String(parsed.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-};
+    const [hours, minutes] = value.split(":").map(Number);
+    if (Number.isNaN(hours) || Number.isNaN(minutes)) return value;
 
-// Create dollar icons HTML
-const createDollarHTML = (count) => {
-    if (count <= 0) return "";
-    return `<div>${renderDollarSigns(count)}</div>`;
-};
+    const temp = new Date();
+    temp.setHours(hours, minutes, 0, 0);
 
-// Create event card HTML template
-const createEventCardHTML = (event) => {
-    const dollarsHTML = event.dollars > 0 ? createDollarHTML(event.dollars) : "";
-    
-    return `
-        <div class="card event-card" data-firestore-id="${event.firestoreId}">
-            <div class="card-header">
-                <div class="event-title">
-                    <h3>${event.title}</h3>
-                    ${dollarsHTML}
+    return temp.toLocaleTimeString(undefined, {
+        hour: "numeric",
+        minute: "2-digit"
+    });
+}
+
+function getMonthEvents(year, monthIndex) {
+    return allEvents.filter((event) => {
+        const date = parseEventDate(event.date);
+        return date && date.getFullYear() === year && date.getMonth() === monthIndex;
+    });
+}
+
+function getEventsByDate(year, monthIndex) {
+    const map = new Map();
+    const monthEvents = getMonthEvents(year, monthIndex);
+
+    monthEvents.forEach((event) => {
+        if (!map.has(event.date)) {
+            map.set(event.date, []);
+        }
+        map.get(event.date).push(event);
+    });
+
+    map.forEach((events) => {
+        events.sort((a, b) => {
+            const aTime = a.time || "00:00";
+            const bTime = b.time || "00:00";
+            return aTime.localeCompare(bTime);
+        });
+    });
+
+    return map;
+}
+
+function createEventPillsHTML(events) {
+    if (!events || events.length === 0) return "";
+
+    const firstEvent = events[0];
+    const extraCount = events.length - 1;
+    const isMobile = window.matchMedia("(max-width: 799px)").matches;
+
+    if (isMobile) {
+        if (events.length <= 3) {
+            return `
+                <div class="calendar-event-dots">
+                    ${events.map(() => `<div class="calendar-event-dot"></div>`).join("")}
                 </div>
-                <button type="button" class="edit-icon" data-firestore-id="${event.firestoreId}">
+            `;
+        }
+
+        return `
+            <div class="calendar-event-count" title="${events.length} events">
+                +${events.length}
+            </div>
+        `;
+    }
+
+    return `
+        <div class="event-pill" data-event-id="${firstEvent.id}" title="${firstEvent.title}">
+            ${firstEvent.title}
+        </div>
+        ${
+            extraCount > 0
+                ? `<div class="event-pill event-pill-more" data-open-day-events="true">+${extraCount} more</div>`
+                : ""
+        }
+    `;
+}
+
+function buildCalendarGrid(eventsByDate = new Map()) {
+    if (!calendarGrid) return;
+
+    const year = currentMonth.getFullYear();
+    const monthIndex = currentMonth.getMonth();
+
+    const firstDay = new Date(year, monthIndex, 1);
+    const lastDay = new Date(year, monthIndex + 1, 0);
+    const startWeekday = firstDay.getDay();
+    const totalDays = lastDay.getDate();
+
+    monthTitle.textContent = currentMonth.toLocaleDateString(undefined, {
+        month: "long",
+        year: "numeric"
+    });
+
+    let html = dayNamesHTML;
+
+    for (let i = 0; i < startWeekday; i++) {
+        html += `<div class="calendar-day empty"></div>`;
+    }
+
+    const todayKey = formatDateKey(new Date());
+
+    for (let day = 1; day <= totalDays; day++) {
+        const date = new Date(year, monthIndex, day);
+        const dateKey = formatDateKey(date);
+        const events = eventsByDate.get(dateKey) || [];
+
+        html += `
+            <div class="calendar-day" data-date="${dateKey}">
+                <div class="${dateKey === todayKey ? "circle-highlight" : ""}">${day}</div>
+                ${createEventPillsHTML(events)}
+            </div>
+        `;
+    }
+
+    calendarGrid.innerHTML = html;
+
+    calendarGrid.querySelectorAll(".calendar-day[data-date]").forEach((dayCell) => {
+        dayCell.addEventListener("click", () => {
+            const selectedDate = dayCell.dataset.date;
+            const dayEvents = eventsByDate.get(selectedDate) || [];
+            openDayEvents(selectedDate, dayEvents);
+        });
+    });
+}
+
+function getStartOfToday() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+}
+
+function sortEventsByDateTime(events) {
+    return [...events].sort((a, b) => {
+        const aDate = `${a.date}T${a.time || "00:00"}`;
+        const bDate = `${b.date}T${b.time || "00:00"}`;
+        return new Date(aDate) - new Date(bDate);
+    });
+}
+
+function attachEventCardListeners(container) {
+    if (!container) return;
+
+    container.querySelectorAll(".event-card").forEach((card) => {
+        card.addEventListener("click", (event) => {
+            const editButton = event.target.closest(".edit-icon");
+            const eventId = card.dataset.eventId;
+            const eventData = allEvents.find((item) => item.id === eventId);
+
+            if (!eventData) return;
+
+            if (editButton) {
+                openEditEvent(eventData);
+                return;
+            }
+
+            openViewEvent(eventData);
+        });
+    });
+}
+
+function renderUpcomingDates() {
+    if (!upcomingDatesList) return;
+
+    const today = getStartOfToday();
+
+    const upcoming = sortEventsByDateTime(
+        allEvents.filter((event) => {
+            const date = parseEventDate(event.date);
+            return date && date >= today;
+        })
+    );
+
+    if (upcoming.length === 0) {
+        upcomingDatesList.innerHTML = `<p class="no-dates">No upcoming dates yet.</p>`;
+        return;
+    }
+
+    upcomingDatesList.innerHTML = upcoming.map((event) => `
+        <div class="card event-card" data-event-id="${event.id}">
+            <div class="card-header">
+                <h3>${event.title || "Untitled Event"}</h3>
+                <button type="button" class="edit-icon" data-event-id="${event.id}">
                     <img src="images/Edit.svg" alt="Edit">
                 </button>
             </div>
             <div class="event-details">
                 <div>
-                    <p class="event-time">${formatEventDate(event.date, event.time)}</p>
-                    <p class="event-location">${event.location || ""}</p>
+                    <p>${formatDisplayDate(event.date)}</p>
+                    <p>${formatDisplayTime(event.time)}</p>
                 </div>
-                <span class="tag">${event.category || ""}</span>
+                <div>
+                    <p>${event.location || "No location"}</p>
+                    <p>${event.category || ""}</p>
+                </div>
             </div>
         </div>
-    `;
-};
+    `).join("");
 
-// ============================== UPCOMING DATES LIST ==============================
+    attachEventCardListeners(upcomingDatesList);
+}
 
-const upcomingDatesList = document.getElementById("upcoming-dates-list");
+function renderPastDates() {
+    if (!pastDatesList) return;
 
-const renderUpcomingDates = async () => {
-    if (!upcomingDatesList) return;
-    
-    const dates = await getUpcomingDates();
+    const today = getStartOfToday();
 
-    if (dates.length === 0) {
-        upcomingDatesList.innerHTML = `
-             <div class="card event-card">
-                <p class="no-dates">No upcoming dates yet. Add one to get started!</p>
-             </div>
-        `;
+    const past = sortEventsByDateTime(
+        allEvents.filter((event) => {
+            const date = parseEventDate(event.date);
+            return date && date < today;
+        })
+    ).reverse();
+
+    if (past.length === 0) {
+        pastDatesList.innerHTML = `<p class="no-dates">No past dates yet.</p>`;
         return;
     }
 
-    const cardsHTML = dates.map(event => createEventCardHTML(event)).join("");
-    upcomingDatesList.innerHTML = cardsHTML;
-};
+    pastDatesList.innerHTML = past.map((event) => `
+        <div class="card event-card past-event-card" data-event-id="${event.id}">
+            <div class="card-header">
+                <h3>${event.title || "Untitled Event"}</h3>
+                <button type="button" class="edit-icon" data-event-id="${event.id}">
+                    <img src="images/Edit.svg" alt="Edit">
+                </button>
+            </div>
+            <div class="event-details">
+                <div>
+                    <p>${formatDisplayDate(event.date)}</p>
+                    <p>${formatDisplayTime(event.time)}</p>
+                </div>
+                <div>
+                    <p>${event.location || "No location"}</p>
+                    <p>${event.category || ""}</p>
+                </div>
+            </div>
+        </div>
+    `).join("");
 
-// ============================== CALENDAR GRID ==============================
+    attachEventCardListeners(pastDatesList);
+}
 
-const calendarGrid = document.getElementById("calendar-grid");
-const calendarMonthTitle = document.getElementById("calendar-month-title");
-const calendarPrevButton = document.getElementById("calendar-prev");
-const calendarNextButton = document.getElementById("calendar-next");
-
-const renderCalendar = async (date) => {
-    if (!calendarGrid || !calendarMonthTitle) return;
-    
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const startWeekday = firstDay.getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-    calendarMonthTitle.textContent = formatMonthTitle(date);
-
-    // Save header cells and clear grid
-    const headerCells = Array.from(calendarGrid.querySelectorAll(".day-name"));
-    calendarGrid.innerHTML = "";
-    headerCells.forEach((cell) => calendarGrid.appendChild(cell));
-
-    // Add empty cells for days before month starts
-    for (let i = 0; i < startWeekday; i++) {
-        const emptyCell = document.createElement("div");
-        emptyCell.className = "calendar-day empty";
-        calendarGrid.appendChild(emptyCell);
+async function loadEvents() {
+    const user = getCurrentUser();
+    if (!user) {
+        allEvents = [];
+        renderUpcomingDates();
+        renderPastDates();
+        buildCalendarGrid(new Map());
+        return;
     }
 
-    // Create event map for quick lookup
-    const events = await getUpcomingDates();
-    const eventMap = new Map();
-    events.forEach((event) => eventMap.set(event.date, event));
+    try {
+        const eventsRef = collection(db, "users", user.uid, "events");
+        const snapshot = await getDocs(eventsRef);
 
-    const today = new Date();
-    for (let day = 1; day <= daysInMonth; day++) {
-        const cell = document.createElement("div");
-        cell.className = "calendar-day";
-        
-        const dayLabel = document.createElement("span");
-        dayLabel.textContent = String(day);
-        cell.appendChild(dayLabel);
+        allEvents = snapshot.docs.map((docSnap) => ({
+            id: docSnap.id,
+            ...docSnap.data()
+        }));
 
-        const dateKey = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-
-        // Highlight today
-        if (
-            year === today.getFullYear() &&
-            month === today.getMonth() &&
-            day === today.getDate()
-        ) {
-            dayLabel.classList.add("circle-highlight");
-        }
-
-        // Add event pill if there's an event on this day
-        if (eventMap.has(dateKey)) {
-            const pill = document.createElement("button");
-            pill.type = "button";
-            pill.className = "event-pill";
-            pill.textContent = `${eventMap.get(dateKey).title}`;
-            pill.dataset.firestoreId = eventMap.get(dateKey).firestoreId;
-            cell.appendChild(pill);
-        }
-        
-        cell.addEventListener("click", (e) => {
-            // Don't open add modal if clicking on an event pill
-            if (e.target.classList.contains("event-pill")) return;
-            
-            // Open add event modal with this date prefilled
-            const addEventDateInput = document.getElementById("event-date");
-            if (addEventDateInput) {
-                addEventDateInput.value = dateKey;
-            }
-            
-            const addEventModalElement = document.getElementById("add-event-modal");
-            if (addEventModalElement) {
-                openModal(addEventModalElement);
-            }
-        });
-
-        calendarGrid.appendChild(cell);
-    }
-};
-
-// Calendar navigation
-let calendarCurrentMonth = null;
-
-// Wait for authentication before rendering calendar
-onAuthStateChanged(auth, async (user) => {
-    if (user && calendarGrid && calendarMonthTitle) {
-        let currentMonth = new Date();
-        calendarCurrentMonth = currentMonth;
-        await renderCalendar(currentMonth);
-        await renderUpcomingDates();
-    }
-});
-
-if (calendarGrid && calendarMonthTitle) {
-    let currentMonth = new Date();
-    calendarCurrentMonth = currentMonth;
-
-    if (calendarPrevButton) {
-        calendarPrevButton.addEventListener("click", async () => {
-            currentMonth = new Date(
-                currentMonth.getFullYear(),
-                currentMonth.getMonth() - 1,
-                1
-            );
-            calendarCurrentMonth = currentMonth;
-            await renderCalendar(currentMonth);
-        });
-    }
-
-    if (calendarNextButton) {
-        calendarNextButton.addEventListener("click", async () => {
-            currentMonth = new Date(
-                currentMonth.getFullYear(),
-                currentMonth.getMonth() + 1,
-                1
-            );
-            calendarCurrentMonth = currentMonth;
-            await renderCalendar(currentMonth);
-        });
+        renderUpcomingDates();
+        renderPastDates();
+        buildCalendarGrid(getEventsByDate(currentMonth.getFullYear(), currentMonth.getMonth()));
+    } catch (error) {
+        console.error("Error loading events:", error);
     }
 }
 
-// ============================== ADD EVENT MODAL ==============================
+function openAddEventForDate(dateString) {
+    const dateInput = document.getElementById("event-date");
+    if (dateInput) {
+        dateInput.value = dateString;
+    }
+    openModal(addEventModalEl);
+}
 
-const addEventForm = document.getElementById("add-event-form");
-const addEventTitle = document.getElementById("event-title");
-const addEventDate = document.getElementById("event-date");
-const addEventTime = document.getElementById("event-time");
-const addEventLocation = document.getElementById("event-location");
-const addEventCategory = document.getElementById("event-category");
-const addEventPartner = document.getElementById("your-date");
-const addEventNotes = document.getElementById("event-notes");
+function openViewEvent(eventData) {
+    selectedEventId = eventData.id;
 
-// Initialize Add Event Modal
-const addEventModal = initializeModal("add-event-modal", {
-    openButtonSelector: "#open-add-event",
-    closeButtonSelector: "#close-add-event"
-});
+    document.getElementById("view-event-title").textContent = eventData.title || "Untitled Event";
+    document.getElementById("view-event-category").textContent = eventData.category || "";
+    document.getElementById("view-event-date").textContent = formatDisplayDate(eventData.date);
+    document.getElementById("view-event-time").textContent = formatDisplayTime(eventData.time);
+    document.getElementById("view-event-location").textContent = eventData.location || "No location";
+    document.getElementById("view-event-notes").textContent = eventData.notes || "No notes";
+    document.getElementById("view-event-partner").textContent = eventData.partner || "Not set";
 
-const cancelAddEventButton = document.getElementById("cancel-add-event");
+    openModal(viewEventModalEl);
+}
+
+function openEditEvent(eventData) {
+    selectedEventId = eventData.id;
+
+    document.getElementById("edit-event-title").value = eventData.title || "";
+    document.getElementById("edit-event-date").value = eventData.date || "";
+    document.getElementById("edit-event-time").value = eventData.time || "";
+    document.getElementById("edit-event-location").value = eventData.location || "";
+    document.getElementById("edit-event-category").value = eventData.category || "Active";
+    document.getElementById("edit-your-date").value = eventData.partner || "";
+    document.getElementById("edit-event-notes").value = eventData.notes || "";
+
+    openModal(editEventModalEl);
+}
+
+function openDayEvents(dateString, events) {
+    if (!dayEventsTitle || !dayEventsList) return;
+
+    selectedDayDate = dateString;
+    dayEventsTitle.textContent = formatShortDisplayDate(dateString);
+
+    const sortedEvents = [...events].sort((a, b) => {
+        const aTime = a.time || "00:00";
+        const bTime = b.time || "00:00";
+        return aTime.localeCompare(bTime);
+    });
+
+    if (sortedEvents.length === 0) {
+        dayEventsList.innerHTML = `
+            <p class="no-dates" style="margin-top: 8px;">
+                No dates planned for this day yet.
+            </p>
+        `;
+    } else {
+        dayEventsList.innerHTML = `
+            <div class="explore-card-list">
+                ${sortedEvents.map((event) => `
+                    <div class="card event-card day-event-card" data-event-id="${event.id}">
+                        <div class="card-header">
+                            <h3>${event.title || "Untitled Event"}</h3>
+                            <button type="button" class="edit-icon" data-edit-event-id="${event.id}">
+                                <img src="images/Edit.svg" alt="Edit">
+                            </button>
+                        </div>
+                        <div class="event-details">
+                            <div>
+                                <p>${formatDisplayTime(event.time) || "No time"}</p>
+                                <p>${event.category || ""}</p>
+                            </div>
+                            <div>
+                                <p>${event.location || "No location"}</p>
+                                <p>${event.partner || ""}</p>
+                            </div>
+                        </div>
+                    </div>
+                `).join("")}
+            </div>
+        `;
+
+        dayEventsList.querySelectorAll(".day-event-card").forEach((card) => {
+            card.addEventListener("click", (event) => {
+                const editButton = event.target.closest("[data-edit-event-id]");
+                const eventId = card.dataset.eventId;
+                const eventData = allEvents.find((item) => item.id === eventId);
+
+                if (!eventData) return;
+
+                closeModal(dayEventsModalEl);
+
+                if (editButton) {
+                    openEditEvent(eventData);
+                    return;
+                }
+
+                openViewEvent(eventData);
+            });
+        });
+    }
+
+    openModal(dayEventsModalEl);
+}
+
+function openDeleteConfirmModal() {
+    if (!selectedEventId) return;
+
+    const eventData = allEvents.find((item) => item.id === selectedEventId);
+    const eventTitle = eventData?.title?.trim() || "this event";
+
+    if (deleteConfirmMessage) {
+        deleteConfirmMessage.textContent = `Are you sure you want to delete "${eventTitle}"? This cannot be undone.`;
+    }
+
+    openModal(deleteConfirmModalEl);
+}
+
+async function deleteSelectedEvent() {
+    const user = getCurrentUser();
+    if (!user || !selectedEventId) return;
+
+    try {
+        await deleteDoc(doc(db, "users", user.uid, "events", selectedEventId));
+        closeModal(deleteConfirmModalEl);
+        closeModal(viewEventModalEl);
+        closeModal(editEventModalEl);
+        selectedEventId = null;
+        await loadEvents();
+    } catch (error) {
+        console.error("Error deleting event:", error);
+    }
+}
+
+if (dayEventsAddDateButton) {
+    dayEventsAddDateButton.addEventListener("click", () => {
+        if (!selectedDayDate) return;
+        closeModal(dayEventsModalEl);
+        openAddEventForDate(selectedDayDate);
+    });
+}
+
+if (prevButton) {
+    prevButton.addEventListener("click", () => {
+        currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1);
+        buildCalendarGrid(getEventsByDate(currentMonth.getFullYear(), currentMonth.getMonth()));
+    });
+}
+
+if (nextButton) {
+    nextButton.addEventListener("click", () => {
+        currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1);
+        buildCalendarGrid(getEventsByDate(currentMonth.getFullYear(), currentMonth.getMonth()));
+    });
+}
+
 if (cancelAddEventButton) {
-    cancelAddEventButton.addEventListener("click", () => closeModal(addEventModal));
+    cancelAddEventButton.addEventListener("click", () => {
+        closeModal(addEventModalEl);
+        addEventForm?.reset();
+    });
 }
 
-// Setup form submission - creates new event
 if (addEventForm) {
     addEventForm.addEventListener("submit", async (event) => {
         event.preventDefault();
 
-        const title = (addEventTitle?.value || "").trim();
-        const rawDate = (addEventDate?.value || "").trim();
-        const date = normalizeDateInput(rawDate);
-        if (!title || !date) return;
+        const user = getCurrentUser();
+        if (!user) return;
 
         const newEvent = {
-            title,
-            date,
-            time: (addEventTime?.value || "").trim(),
-            location: (addEventLocation?.value || "").trim(),
-            category: (addEventCategory?.value || "").trim(),
-            partner: (addEventPartner?.value || "").trim(),
-            notes: (addEventNotes?.value || "").trim(),
-            dollars: 0
+            title: document.getElementById("event-title").value.trim(),
+            date: document.getElementById("event-date").value.trim(),
+            time: document.getElementById("event-time").value.trim(),
+            location: document.getElementById("event-location").value.trim(),
+            category: document.getElementById("event-category").value.trim(),
+            partner: document.getElementById("your-date").value.trim(),
+            notes: document.getElementById("event-notes").value.trim()
         };
 
-        await addEvent(newEvent);
-        await renderUpcomingDates();
-        if (calendarCurrentMonth) await renderCalendar(calendarCurrentMonth);
-        
-        closeModal(addEventModal);
-        addEventForm.reset();
+        if (!newEvent.title || !newEvent.date) return;
+
+        try {
+            await addDoc(collection(db, "users", user.uid, "events"), newEvent);
+            closeModal(addEventModalEl);
+            addEventForm.reset();
+            await loadEvents();
+        } catch (error) {
+            console.error("Error adding event:", error);
+        }
     });
 }
 
-// ============================== EDIT EVENT MODAL ==============================
+if (viewEditEventButton) {
+    viewEditEventButton.addEventListener("click", () => {
+        const eventData = allEvents.find((item) => item.id === selectedEventId);
+        if (!eventData) return;
 
-const editEventForm = document.getElementById("edit-event-form");
-const editEventTitle = document.getElementById("edit-event-title");
-const editEventDate = document.getElementById("edit-event-date");
-const editEventTime = document.getElementById("edit-event-time");
-const editEventLocation = document.getElementById("edit-event-location");
-const editEventCategory = document.getElementById("edit-event-category");
-const editEventPartner = document.getElementById("edit-your-date");
-const editEventNotes = document.getElementById("edit-event-notes");
+        closeModal(viewEventModalEl);
+        openEditEvent(eventData);
+    });
+}
 
-// Initialize Edit Event Modal
-const editEventModal = initializeModal("edit-event-modal", {
-    closeButtonSelector: "#close-edit-event"
-});
-
-// Function to open edit modal with event data pre-filled
-const openEditEvent = (event) => {
-    if (!event) return;
-    activeEvent = event;
-    // Pre-fill form fields with event data
-    if (editEventTitle) editEventTitle.value = event.title;
-    if (editEventDate) editEventDate.value = event.date;
-    if (editEventTime) editEventTime.value = event.time || "";
-    if (editEventLocation) editEventLocation.value = event.location || "";
-    if (editEventCategory) {
-        editEventCategory.value = (event.category || "").toLowerCase();
-    }
-    if (editEventPartner) editEventPartner.value = event.partner || "";
-    if (editEventNotes) editEventNotes.value = event.notes || "";
-    openModal(editEventModal);
-};
-
-// Setup form submission - updates event
 if (editEventForm) {
     editEventForm.addEventListener("submit", async (event) => {
         event.preventDefault();
-        if (!activeEvent) return;
 
-        const title = (editEventTitle?.value || "").trim();
-        const rawDate = (editEventDate?.value || "").trim();
-        const date = normalizeDateInput(rawDate);
-        if (!title || !date) return;
+        const user = getCurrentUser();
+        if (!user || !selectedEventId) return;
 
-        const updatedData = {
-            title,
-            date,
-            time: (editEventTime?.value || "").trim(),
-            location: (editEventLocation?.value || "").trim(),
-            category: (editEventCategory?.value || "").trim(),
-            partner: (editEventPartner?.value || "").trim(),
-            notes: (editEventNotes?.value || "").trim()
+        const updatedEvent = {
+            title: document.getElementById("edit-event-title").value.trim(),
+            date: document.getElementById("edit-event-date").value.trim(),
+            time: document.getElementById("edit-event-time").value.trim(),
+            location: document.getElementById("edit-event-location").value.trim(),
+            category: document.getElementById("edit-event-category").value.trim(),
+            partner: document.getElementById("edit-your-date").value.trim(),
+            notes: document.getElementById("edit-event-notes").value.trim()
         };
 
-        await updateEvent(activeEvent, updatedData);
-        await renderUpcomingDates();
-        if (calendarCurrentMonth) await renderCalendar(calendarCurrentMonth);
-        
-        activeEvent = { ...activeEvent, ...updatedData };
-        closeModal(editEventModal);
+        try {
+            await updateDoc(doc(db, "users", user.uid, "events", selectedEventId), updatedEvent);
+            closeModal(editEventModalEl);
+            await loadEvents();
+        } catch (error) {
+            console.error("Error updating event:", error);
+        }
     });
 }
 
-// Setup delete button - removes event
-const deleteEditEventButton = document.getElementById("delete-edit-event");
 if (deleteEditEventButton) {
-    deleteEditEventButton.addEventListener("click", async () => {
-        if (!activeEvent) return;
-        await removeEventById(activeEvent);
-        activeEvent = null;
-        closeModal(editEventModal);
-    });
+    deleteEditEventButton.addEventListener("click", openDeleteConfirmModal);
 }
 
-// ============================== VIEW EVENT MODAL ==============================
-
-const viewEventTitle = document.getElementById("view-event-title");
-const viewEventCategory = document.getElementById("view-event-category");
-const viewEventDate = document.getElementById("view-event-date");
-const viewEventTime = document.getElementById("view-event-time");
-const viewEventLocation = document.getElementById("view-event-location");
-const viewEventNotes = document.getElementById("view-event-notes");
-const viewEventPartner = document.getElementById("view-event-partner");
-
-// Initialize View Event Modal
-const viewEventModal = initializeModal("view-event-modal", {
-    closeButtonSelector: "#close-view-event"
-});
-
-// Function to open view modal with event data
-const openViewEvent = (event) => {
-    if (!event) return;
-    activeEvent = event;
-    // Display event data 
-    if (viewEventTitle) viewEventTitle.textContent = event.title;
-    if (viewEventCategory) viewEventCategory.textContent = event.category || "";
-    if (viewEventDate) viewEventDate.textContent = formatEventDate(event.date);
-    if (viewEventTime) viewEventTime.textContent = event.time || "";
-    if (viewEventLocation) viewEventLocation.textContent = event.location || "";
-    if (viewEventNotes) viewEventNotes.textContent = event.notes || "";
-    if (viewEventPartner) viewEventPartner.textContent = event.partner || "";
-    openModal(viewEventModal);
-};
-
-// Setup delete button - removes event from view modal
-const deleteViewEventButton = document.getElementById("delete-view-event");
 if (deleteViewEventButton) {
-    deleteViewEventButton.addEventListener("click", async () => {
-        if (!activeEvent) return;
-        await removeEventById(activeEvent);
-        activeEvent = null;
-        closeModal(viewEventModal);
+    deleteViewEventButton.addEventListener("click", openDeleteConfirmModal);
+}
+
+if (cancelDeleteConfirmButton) {
+    cancelDeleteConfirmButton.addEventListener("click", () => {
+        closeModal(deleteConfirmModalEl);
     });
 }
 
-// Setup edit button - switches from view to edit modal
-const viewEditEventButton = document.getElementById("view-edit-event");
-if (viewEditEventButton) {
-    viewEditEventButton.addEventListener("click", () => {
-        closeModal(viewEventModal);
-        openEditEvent(activeEvent);
-    });
+if (confirmDeleteEventButton) {
+    confirmDeleteEventButton.addEventListener("click", deleteSelectedEvent);
 }
 
-// ============================== EVENT INTERACTIONS ==============================
+// Render shell immediately
+buildCalendarGrid(new Map());
 
-// Edit button clicks from upcoming dates list
-if (upcomingDatesList) {
-    upcomingDatesList.addEventListener("click", async (event) => {
-        // Check if edit icon was clicked
-        const editButton = event.target.closest(".edit-icon");
-        if (editButton) {
-            const firestoreId = editButton.dataset.firestoreId;
-            const events = await getUpcomingDates();
-            const match = events.find((item) => item.firestoreId === firestoreId);
-            if (match) openEditEvent(match);
-            return;
-        }
-        
-        // Otherwise, check if event card was clicked
-        const eventCard = event.target.closest(".event-card");
-        if (eventCard) {
-            const firestoreId = eventCard.dataset.firestoreId;
-            const events = await getUpcomingDates();
-            const match = events.find((item) => item.firestoreId === firestoreId);
-            if (match) openViewEvent(match);
-        }
-    });
-}
+onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+        allEvents = [];
+        renderUpcomingDates();
+        renderPastDates();
+        buildCalendarGrid(new Map());
+        return;
+    }
 
-// Event pill clicks from calendar grid
-if (calendarGrid) {
-    calendarGrid.addEventListener("click", async (event) => {
-        const pill = event.target.closest(".event-pill");
-        if (!pill) return;
-        const firestoreId = pill.dataset.firestoreId;
-        const events = await getUpcomingDates();
-        const match = events.find((item) => item.firestoreId === firestoreId);
-        if (match) openViewEvent(match);
-    });
-}
+    await loadEvents();
+});

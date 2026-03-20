@@ -4,6 +4,66 @@ import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/fir
 import { db, getCurrentUser } from "./script.js";
 import "./auth.js";
 
+// ============================== SHARED ACCOUNT / FAVORITES MODALS ==============================
+const userSettingsModal = initializeModal("user-settings-modal", {
+    openButtonSelector: ".open-user-settings",
+    closeButtonSelector: "#close-user-settings"
+});
+
+const editAccountModal = initializeModal("edit-account-modal", {
+    closeButtonSelector: "#close-edit-account"
+});
+
+const editAccountFormModal = initializeModal("edit-account-form-modal", {
+    closeButtonSelector: "#close-edit-account-form"
+});
+
+initializeModal("favorites-modal", {
+    openButtonSelector: ".open-favorites",
+    closeButtonSelector: "#close-favorites"
+});
+
+const openEditAccountButton = document.querySelector(".open-edit-account");
+const backEditAccountButton = document.getElementById("back-edit-account");
+const openEditAccountFormButton = document.getElementById("open-edit-account-form");
+const backEditAccountFormButton = document.getElementById("back-edit-account-form");
+const cancelEditAccountFormButton = document.getElementById("cancel-edit-account-form");
+
+if (openEditAccountButton) {
+    openEditAccountButton.addEventListener("click", () => {
+        closeModal(document.getElementById("user-settings-modal"));
+        openModal(document.getElementById("edit-account-modal"));
+    });
+}
+
+if (backEditAccountButton) {
+    backEditAccountButton.addEventListener("click", () => {
+        closeModal(document.getElementById("edit-account-modal"));
+        openModal(document.getElementById("user-settings-modal"));
+    });
+}
+
+if (openEditAccountFormButton) {
+    openEditAccountFormButton.addEventListener("click", () => {
+        closeModal(document.getElementById("edit-account-modal"));
+        openModal(document.getElementById("edit-account-form-modal"));
+    });
+}
+
+if (backEditAccountFormButton) {
+    backEditAccountFormButton.addEventListener("click", () => {
+        closeModal(document.getElementById("edit-account-form-modal"));
+        openModal(document.getElementById("edit-account-modal"));
+    });
+}
+
+if (cancelEditAccountFormButton) {
+    cancelEditAccountFormButton.addEventListener("click", () => {
+        closeModal(document.getElementById("edit-account-form-modal"));
+        openModal(document.getElementById("edit-account-modal"));
+    });
+}
+
 // ============================== RANDOMIZE FEATURE ==============================
 const randomizeModal = initializeModal("randomize-modal", {
     closeButtonSelector: "#close-randomize"
@@ -242,7 +302,6 @@ const initializeSwipeableCard = (idea) => {
     randomizeCard.ontouchcancel = onTouchEnd;
 };
 
-// Use a random idea
 const renderRandomizeIdea = (idea) => {
     if (!idea || !randomizeCard) return;
 
@@ -259,7 +318,6 @@ const renderRandomizeIdea = (idea) => {
     animateCardEntrance();
 };
 
-// Add Idea to favorites
 const addIdeaToFavorites = async (idea) => {
     if (!idea) return;
 
@@ -270,7 +328,6 @@ const addIdeaToFavorites = async (idea) => {
     await saveLikedIdeas(likedIds);
 };
 
-// Process preferences entered into modal
 const getSelectedPreferences = () => {
     const selectedCategories = Array.from(
         preferencesModal.querySelectorAll(".tag-button.is-active")
@@ -308,7 +365,6 @@ const getSelectedPreferences = () => {
     };
 };
 
-// Filters ideas from preferences
 const getFilteredIdeas = (preferences) => {
     let filtered = allIdeas;
 
@@ -340,7 +396,6 @@ const getFilteredIdeas = (preferences) => {
     return filtered;
 };
 
-// Functions to toggle between empty state and idea display
 const showEmptyState = (message) => {
     resetCardPosition();
 
@@ -424,7 +479,6 @@ const showNextIdea = async () => {
     renderRandomizeIdea(currentRandomIdea);
 };
 
-// Randomize Modal Event Listeners
 openRandomizeButton.addEventListener("click", async () => {
     currentPreferences = null;
     remainingIdeaIds = [];
@@ -489,7 +543,6 @@ randomizeAddCalendarButton.addEventListener("click", () => {
     }
 });
 
-// Handle add event modal
 if (cancelAddEventButton) {
     cancelAddEventButton.addEventListener("click", () => {
         closeModal(addEventModal);
@@ -530,7 +583,6 @@ if (addEventForm) {
     });
 }
 
-// Preferences Modal
 openPreferencesButton.addEventListener("click", () => {
     openModal(preferencesModal);
 });
@@ -547,7 +599,6 @@ applyPreferencesButton.addEventListener("click", async () => {
     await showNextIdea();
 });
 
-// Toggle tag buttons active state in preferences modal
 preferencesModal.addEventListener("click", (event) => {
     const tagButton = event.target.closest(".tag-button");
     if (tagButton) {
@@ -555,7 +606,6 @@ preferencesModal.addEventListener("click", (event) => {
     }
 });
 
-// Adjust preferences button opens preferences modal
 if (adjustPreferencesButton) {
     adjustPreferencesButton.addEventListener("click", () => {
         closeModal(randomizeModal);
