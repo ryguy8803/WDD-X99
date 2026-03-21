@@ -431,9 +431,10 @@ select {
     width: clamp(280px, 30vw, 350px);
     cursor: pointer;
     transition: transform 0.2s ease-in-out;
+    height: 300px;
     &:hover {
     transform: scale(1.05);
-}
+    }
     .hero {
         display: block;
         width: 100%;
@@ -446,7 +447,9 @@ select {
         padding: var(--medium-spacing) var(--medium-spacing) var(--medium-large-spacing) var(--medium-spacing);
         display: flex;
         flex-direction: column;
+        justify-content: space-between;
         gap: var(--large-spacing);
+        height: 100%;
         .top-half {
             display: flex;
             flex-direction: column;
@@ -610,6 +613,11 @@ select {
     }
 }
 
+/* Add Event Modal (layer above idea detail overlay) */
+#add-event-modal {
+    z-index: 3;
+}
+
 /* Detail card */ 
 .detail-card {
     cursor: default;
@@ -631,7 +639,11 @@ select {
     align-items: center;
     justify-content: center;
     z-index: 2;
-    height: 100vh;
+    max-height: 100dvh;
+    max-height: 100vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 20px;
 
     opacity: 0;
     visibility: hidden;
@@ -670,7 +682,9 @@ select {
 .favorites-overlay-card {
     width: 100%;
     max-width: none;
-    height: 100%;
+    max-height: calc(100dvh - 40px);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
     margin: var(--medium-spacing);
 }
 .favorites-overlay-card .favorites-list {
@@ -688,7 +702,9 @@ select {
 }
 .user-settings-panel {
     width: clamp(330px, 30%, 500px);
-    height: 100%;
+    max-height: 100dvh;
+    max-height: 100vh;
+    overflow-y: auto;
     background-color: var(--gray-10);
     display: flex;
     flex-direction: column;
@@ -714,7 +730,8 @@ select {
     flex-direction: column;
     gap: var(--large-spacing);
     margin: var(--large-spacing);
-    height: 100%;
+    max-height: calc(100vh - 160px);
+    overflow-y: auto;
     form {
         display: flex;
         flex-direction: column;
@@ -969,6 +986,12 @@ select {
     .idea-card {
         width: 100%;
     }
+}
+
+.search-bar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--medium-spacing);
 }
 
 /* Calendar ---------------------------------------------------------- */

@@ -1,6 +1,6 @@
 // Firebase imports and setup
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, addDoc, query, where } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { app } from './auth.js';
 
 export const db = getFirestore(app);
@@ -175,6 +175,15 @@ export async function showIdeaDetail(idea) {
                 await toggleLike(idea.id);
                 // Refresh the overlay and re-setup listeners
                 await renderContent();
+            });
+        }
+
+        // Setup Add to Calendar button
+        const addToCalBtn = content.querySelector('#idea-detail-add-event');
+        if (addToCalBtn) {
+            addToCalBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openAddEventFromIdea(idea);
             });
         }
     };
@@ -358,6 +367,7 @@ export async function createIdeaOverlayHTML(idea) {
             </div>
             <section class="bottom3rd">
                 <span class="tag">${idea.category || ''}</span>
+                <button type="button" class="button high" id="idea-detail-add-event">Add to Calendar</button>
                 <img 
                     src="${heartSrc}" 
                     alt="Heart Icon" 
@@ -487,3 +497,75 @@ window.addEventListener('favoritesChanged', (event) => {
         }
     });
 });
+
+// Add Event to Calendar (shared across all pages) ----------------------------------------------------------------
+
+const addEventModal = initializeModal("add-event-modal", {
+    closeButtonSelector: "#close-add-event",
+    closeOnOverlay: true
+});
+
+const addEventForm = document.getElementById("add-event-form");
+const addEventTitle = document.getElementById("event-title");
+const addEventDate = document.getElementById("event-date");
+const addEventTime = document.getElementById("event-time");
+const addEventLocation = document.getElementById("event-location");
+const addEventCategory = document.getElementById("event-category");
+const addEventPartner = document.getElementById("your-date");
+const addEventNotes = document.getElementById("event-notes");
+const cancelAddEventButton = document.getElementById("cancel-add-event");
+
+if (cancelAddEventButton) {
+    cancelAddEventButton.addEventListener("click", () => {
+        closeModal(addEventModal);
+        if (addEventForm) addEventForm.reset();
+    });
+}
+
+if (addEventForm) {
+    addEventForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const user = getCurrentUser();
+        if (!user) return;
+
+        const title = (addEventTitle?.value || "").trim();
+        const date = (addEventDate?.value || "").trim();
+        if (!title || !date) return;
+
+        const newEvent = {
+            title,
+            date,
+            time: (addEventTime?.value || "").trim(),
+            location: (addEventLocation?.value || "").trim(),
+            category: (addEventCategory?.value || "").trim(),
+            partner: (addEventPartner?.value || "").trim(),
+            notes: (addEventNotes?.value || "").trim(),
+            dollars: 0
+        };
+
+        try {
+            const eventsRef = collection(db, "users", user.uid, "events");
+            await addDoc(eventsRef, newEvent);
+            closeModal(addEventModal);
+            if (addEventForm) addEventForm.reset();
+        } catch (error) {
+            console.error("Error adding event:", error);
+        }
+    });
+}
+
+// Prefill and open the add-event modal from an idea
+function openAddEventFromIdea(idea) {
+    if (!idea || !addEventModal) return;
+
+    if (addEventTitle) addEventTitle.value = idea.title || idea.name || '';
+    if (addEventLocation) addEventLocation.value = idea.location || idea.address || '';
+    if (addEventCategory) addEventCategory.value = idea.category || '';
+    if (addEventNotes) addEventNotes.value = idea.description || idea.details || '';
+    if (addEventDate) addEventDate.value = '';
+    if (addEventTime) addEventTime.value = '';
+    if (addEventPartner) addEventPartner.value = '';
+
+    openModal(addEventModal);
+}
