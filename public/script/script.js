@@ -51,7 +51,7 @@ export async function getAllIdeas(filters = {}) {
             website: doc.data().website || "",
             category: doc.data().category || "",
             location: doc.data().location || 0,
-            image: doc.data().image || "",
+            image: doc.data().image || "images/Logo_wide.jpg",
             dollars: doc.data().dollars || 0,
             tags: doc.data().tags || []
         }));

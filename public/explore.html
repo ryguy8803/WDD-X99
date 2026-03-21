@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Explore</title>
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
-    <link rel="stylesheet" href="styles/styles.source.css">
+    <link rel="stylesheet" href="styles/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/@google/generative-ai/dist/main.min.js"></script>
     <script type="module" src="script/auth.js"></script>
 </head>
@@ -54,14 +54,33 @@
                 </div>
             </div>
             
+            <div class="search-filters">
+                <div class="tags">
+                    <button type="button" class="tag tag-button">Food & Drink</button>
+                    <button type="button" class="tag tag-button" >Active</button>
+                    <button type="button" class="tag tag-button" >Creative</button>
+                    <button type="button" class="tag tag-button" >Games</button>
+                    <button type="button" class="tag tag-button" >Learning & Culture</button>
+                    <button type="button" class="tag tag-button" >Nature</button>
+                </div>
 
-            <div class="tags">
-                <button type="button" class="tag tag-button">Food & Drink</button>
-                <button type="button" class="tag tag-button" >Active</button>
-                <button type="button" class="tag tag-button" >Creative</button>
-                <button type="button" class="tag tag-button" >Games</button>
-                <button type="button" class="tag tag-button" >Learning & Culture</button>
-                <button type="button" class="tag tag-button" >Nature</button>
+                <label for="filter-location">Location
+                    <select id="filter-location" name="location">
+                        <option value="">All Locations</option>
+                        <!-- Options populated dynamically from database -->
+                    </select>
+                </label>
+
+                <label for="filter-price">Price
+                    <select id="filter-price" name="price">
+                        <option value="">All Prices</option>
+                        <option value="0">Free</option>
+                        <option value="1">$</option>
+                        <option value="2">$$</option>
+                        <option value="3">$$$</option>
+                    </select>
+                </label>
+
             </div>
 
             <div class="explore-card-list" id="idea-list"></div>

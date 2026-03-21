@@ -7,6 +7,8 @@ const exploreSearchInput = document.querySelector("input[name='search']");
 const exploreIdeaList = document.getElementById("idea-list");
 const generateIdeasButton = document.getElementById('generate-ideas-button');
 const locationPromptMessage = document.getElementById('location-prompt-message');
+const filterLocationSelect = document.getElementById('filter-location');
+const filterPriceSelect = document.getElementById('filter-price');
 
 // ** IMPORTANT: Add your new, valid Gemini API key here, INSIDE the quotes **
 const API_KEY = "AIzaSyCKPnIjprdO4G-dtwJMFmBSQ-Kc53b6qgo";
@@ -58,14 +60,44 @@ const renderExploreIdeas = async (ideas, method = 'replace') => {
 };
 
 
-// Filter and display ideas based on search and tags
+// Populate location dropdown with unique locations from the database
+const populateLocationFilter = async () => {
+    if (!filterLocationSelect) return;
+    const allIdeas = await getAllIdeas();
+    const locations = [...new Set(allIdeas.map(i => i.location).filter(Boolean))];
+    locations.sort();
+
+    // Keep the "All Locations" default, clear the rest, then add options
+    filterLocationSelect.innerHTML = '<option value="">All Locations</option>';
+    locations.forEach(loc => {
+        const opt = document.createElement('option');
+        opt.value = loc;
+        opt.textContent = loc;
+        filterLocationSelect.appendChild(opt);
+    });
+};
+
+// Filter and display ideas based on search, tags, location, and price
 const filterExploreIdeas = async () => {
     const query = (exploreSearchInput?.value || "").trim().toLowerCase();
     const selectedTags = getSelectedTags();
 
-    const ideasFromDB = await getAllIdeas({ categories: selectedTags, query: query });
-    
-    await renderExploreIdeas(ideasFromDB);
+    let ideas = await getAllIdeas({ categories: selectedTags, query: query });
+
+    // Filter by location dropdown
+    const selectedLocation = filterLocationSelect?.value || '';
+    if (selectedLocation) {
+        ideas = ideas.filter(idea => idea.location === selectedLocation);
+    }
+
+    // Filter by price dropdown
+    const selectedPrice = filterPriceSelect?.value || '';
+    if (selectedPrice !== '') {
+        const priceNum = Number(selectedPrice);
+        ideas = ideas.filter(idea => idea.dollars === priceNum);
+    }
+
+    await renderExploreIdeas(ideas);
 };
 
 async function generateIdeas() {
@@ -181,7 +213,8 @@ async function generateIdeas() {
 
 // Init and Event Listeners
 
-// Initial render
+// Populate location filter then do initial render
+populateLocationFilter();
 filterExploreIdeas();
 
 // Search input listener
@@ -191,6 +224,14 @@ if (exploreSearchInput) {
 
 if (generateIdeasButton) {
     generateIdeasButton.addEventListener('click', generateIdeas);
+}
+
+// Dropdown filter listeners
+if (filterLocationSelect) {
+    filterLocationSelect.addEventListener('change', filterExploreIdeas);
+}
+if (filterPriceSelect) {
+    filterPriceSelect.addEventListener('change', filterExploreIdeas);
 }
 
 // Tag button and heart icon click listener
