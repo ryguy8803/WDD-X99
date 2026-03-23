@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,7 +7,7 @@
     <title>Calendar</title>
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
     <link rel="stylesheet" href="styles/styles.css">
-    <script type="module" src="./firebase.js"></script>
+    <script type="module" src="script/auth.js"></script>
 </head>
 <body>
     
@@ -16,7 +16,7 @@
             <section>          
                 <a href="home.html" class="logo-wrapper"><h1>PerfectDate</h1>
                 <img src="images/logo.svg" alt="PerfectDate Logo"></a> 
-            </section>   
+            </section>  
             <div class="nav-and-profile">
                 <div class="nav">
                     <a href="home.html"><img src="images/Home.svg" alt="Home"></a>
@@ -61,8 +61,15 @@
         </div>
 
         <div class="upcoming-dates-section">
-            <h2>Upcoming Dates</h2>
-            <div id="upcoming-dates-list"></div>
+            <div class="dates-section-block">
+                <h2>Upcoming Dates</h2>
+                <div id="upcoming-dates-list"></div>
+            </div>
+
+            <div class="dates-section-block">
+                <h2>Past Dates</h2>
+                <div id="past-dates-list"></div>
+            </div>
         </div>
 
     </main>
@@ -390,6 +397,53 @@
                     
                     <button type="button" id="view-edit-event" class="edit-icon">
                         <img src="images/Edit.svg" alt="Edit" width="24" height="24">
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div class="modal-overlay" id="delete-confirm-modal">
+            <div class="card overlay-card">
+                <div class="header">
+                    <h2>Delete Event</h2>
+                    <button type="button" class="close-overlay" id="close-delete-confirm">
+                        <img src="images/X.svg" alt="Close" width="24" height="24">
+                    </button>
+                </div>
+
+                <hr>
+
+                <div class="event-details">
+                    <p id="delete-confirm-message">
+                        Are you sure you want to delete this event?
+                    </p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="button medium" id="cancel-delete-confirm">Cancel</button>
+                    <button type="button" class="button red medium" id="confirm-delete-event">Delete</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Day Events Overlay -->
+        <div class="modal-overlay" id="day-events-modal">
+            <div class="card overlay-card">
+                <div class="header">
+                    <h2 id="day-events-title">Events</h2>
+                    <button type="button" class="close-overlay" id="close-day-events">
+                        <img src="images/X.svg" alt="Close" width="24" height="24">
+                    </button>
+                </div>
+
+                <hr>
+
+                <div id="day-events-list"></div>
+
+                <div class="modal-footer">
+                    <button type="button" class="button high" id="day-events-add-date">
+                        Add Date
                     </button>
                 </div>
             </div>
