@@ -79,6 +79,12 @@ const addIdeaModal = initializeModal("add-idea-modal", {
     closeButtonSelector: "#close-add-idea"
 });
 
+const addIdeaConfirmModal = initializeModal("add-idea-confirm-modal", {
+    closeButtonSelector: "#close-add-idea-confirm"
+});
+const addIdeaConfirmModalEl = document.getElementById("add-idea-confirm-modal");
+const addIdeaModalEl = document.getElementById("add-idea-modal");
+
 // ✅ USER SETTINGS (FIXED BUG)
 const userSettingsModal = initializeModal("user-settings-modal", {
     openButtonSelector: ".open-user-settings",
@@ -181,59 +187,83 @@ document.addEventListener("click", async (event) => {
 // -------------------- ADD IDEA --------------------
 
 const addIdeaForm = document.getElementById("add-idea-form");
+const addIdeaConfirmMessage = document.getElementById("add-idea-confirm-message");
+const cancelAddIdeaConfirmButton = document.getElementById("cancel-add-idea-confirm");
+const confirmAddIdeaButton = document.getElementById("confirm-add-idea");
 
-addIdeaForm.addEventListener("submit", async (event) => {
+addIdeaForm.addEventListener("submit", (event) => {
     event.preventDefault();
 
     const formData = new FormData(addIdeaForm);
-
     const name = String(formData.get("name") || "").trim();
-    const description = String(formData.get("description") || "").trim();
-    const category = String(formData.get("category") || "");
-    const priceValue = Number(formData.get("price") || 0);
-    const location = String(formData.get("location") || "");
-    const energy = String(formData.get("energy") || "");
-    const duration = String(formData.get("duration") || "");
-    const imageFile = formData.get("image");
 
     if (!name) {
         alert("Please enter a name for your date idea.");
         return;
     }
 
-    const tags = [];
-    if (location) tags.push(location);
-    if (energy) tags.push(energy);
-    if (duration) tags.push(duration);
-
-    try {
-        let imageUrl = "";
-
-        if (imageFile && imageFile.size > 0) {
-            const fileName = `${Date.now()}_${imageFile.name}`;
-            const storageRef = ref(storage, `activity-images/${fileName}`);
-
-            await uploadBytes(storageRef, imageFile);
-            imageUrl = await getDownloadURL(storageRef);
-        }
-
-        const newActivity = {
-            title: name,
-            description,
-            dollars: priceValue,
-            category,
-            image: imageUrl,
-            tags
-        };
-
-        await addDoc(collection(db, "activities"), newActivity);
-
-        await renderHomeIdeas();
-
-        addIdeaForm.reset();
-        closeModal(addIdeaModal.element);
-
-    } catch (e) {
-        alert("There was an error adding your date idea.");
+    if (addIdeaConfirmMessage) {
+        addIdeaConfirmMessage.textContent = `Are you sure you want to add "${name}" as a new date idea?`;
     }
+
+    closeModal(addIdeaModalEl);
+    openModal(addIdeaConfirmModalEl);
 });
+
+if (cancelAddIdeaConfirmButton) {
+    cancelAddIdeaConfirmButton.addEventListener("click", () => {
+        closeModal(addIdeaConfirmModalEl);
+        openModal(addIdeaModalEl);
+    });
+}
+
+if (confirmAddIdeaButton) {
+    confirmAddIdeaButton.addEventListener("click", async () => {
+        const formData = new FormData(addIdeaForm);
+
+        const name = String(formData.get("name") || "").trim();
+        const description = String(formData.get("description") || "").trim();
+        const category = String(formData.get("category") || "");
+        const priceValue = Number(formData.get("price") || 0);
+        const location = String(formData.get("location") || "");
+        const energy = String(formData.get("energy") || "");
+        const duration = String(formData.get("duration") || "");
+        const imageFile = formData.get("image");
+
+        const tags = [];
+        if (location) tags.push(location);
+        if (energy) tags.push(energy);
+        if (duration) tags.push(duration);
+
+        try {
+            let imageUrl = "";
+
+            if (imageFile && imageFile.size > 0) {
+                const fileName = `${Date.now()}_${imageFile.name}`;
+                const storageRef = ref(storage, `activity-images/${fileName}`);
+
+                await uploadBytes(storageRef, imageFile);
+                imageUrl = await getDownloadURL(storageRef);
+            }
+
+            const newActivity = {
+                title: name,
+                description,
+                dollars: priceValue,
+                category,
+                image: imageUrl,
+                tags
+            };
+
+            await addDoc(collection(db, "activities"), newActivity);
+
+            await renderHomeIdeas();
+
+            addIdeaForm.reset();
+            closeModal(addIdeaConfirmModalEl);
+
+        } catch (e) {
+            alert("There was an error adding your date idea.");
+        }
+    });
+}

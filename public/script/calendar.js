@@ -33,6 +33,14 @@ initializeModal("delete-confirm-modal", {
     closeButtonSelector: "#close-delete-confirm"
 });
 
+initializeModal("add-event-confirm-modal", {
+    closeButtonSelector: "#close-add-event-confirm"
+});
+
+initializeModal("save-event-confirm-modal", {
+    closeButtonSelector: "#close-save-event-confirm"
+});
+
 const openEditAccountButton = document.querySelector(".open-edit-account");
 const backEditAccountButton = document.getElementById("back-edit-account");
 const openEditAccountFormButton = document.getElementById("open-edit-account-form");
@@ -42,6 +50,14 @@ const cancelEditAccountFormButton = document.getElementById("cancel-edit-account
 const cancelDeleteConfirmButton = document.getElementById("cancel-delete-confirm");
 const confirmDeleteEventButton = document.getElementById("confirm-delete-event");
 const deleteConfirmMessage = document.getElementById("delete-confirm-message");
+
+const cancelAddEventConfirmButton = document.getElementById("cancel-add-event-confirm");
+const confirmAddEventButton = document.getElementById("confirm-add-event");
+const addEventConfirmMessage = document.getElementById("add-event-confirm-message");
+
+const cancelSaveEventConfirmButton = document.getElementById("cancel-save-event-confirm");
+const confirmSaveEventButton = document.getElementById("confirm-save-event");
+const saveEventConfirmMessage = document.getElementById("save-event-confirm-message");
 
 if (openEditAccountButton) {
     openEditAccountButton.addEventListener("click", () => {
@@ -84,6 +100,8 @@ const editEventModalEl = document.getElementById("edit-event-modal");
 const viewEventModalEl = document.getElementById("view-event-modal");
 const dayEventsModalEl = document.getElementById("day-events-modal");
 const deleteConfirmModalEl = document.getElementById("delete-confirm-modal");
+const addEventConfirmModalEl = document.getElementById("add-event-confirm-modal");
+const saveEventConfirmModalEl = document.getElementById("save-event-confirm-modal");
 
 initializeModal("add-event-modal", {
     openButtonSelector: "#open-add-event",
@@ -612,6 +630,32 @@ if (addEventForm) {
         const user = getCurrentUser();
         if (!user) return;
 
+        const title = document.getElementById("event-title").value.trim();
+        const date = document.getElementById("event-date").value.trim();
+
+        if (!title || !date) return;
+
+        if (addEventConfirmMessage) {
+            addEventConfirmMessage.textContent = `Are you sure you want to add "${title}" to your calendar?`;
+        }
+
+        closeModal(addEventModalEl);
+        openModal(addEventConfirmModalEl);
+    });
+}
+
+if (cancelAddEventConfirmButton) {
+    cancelAddEventConfirmButton.addEventListener("click", () => {
+        closeModal(addEventConfirmModalEl);
+        openModal(addEventModalEl);
+    });
+}
+
+if (confirmAddEventButton) {
+    confirmAddEventButton.addEventListener("click", async () => {
+        const user = getCurrentUser();
+        if (!user) return;
+
         const newEvent = {
             title: document.getElementById("event-title").value.trim(),
             date: document.getElementById("event-date").value.trim(),
@@ -622,11 +666,9 @@ if (addEventForm) {
             notes: document.getElementById("event-notes").value.trim()
         };
 
-        if (!newEvent.title || !newEvent.date) return;
-
         try {
             await addDoc(collection(db, "users", user.uid, "events"), newEvent);
-            closeModal(addEventModalEl);
+            closeModal(addEventConfirmModalEl);
             addEventForm.reset();
             await loadEvents();
         } catch (error) {
@@ -652,6 +694,29 @@ if (editEventForm) {
         const user = getCurrentUser();
         if (!user || !selectedEventId) return;
 
+        const title = document.getElementById("edit-event-title").value.trim();
+
+        if (saveEventConfirmMessage) {
+            saveEventConfirmMessage.textContent = `Are you sure you want to save your changes to "${title || "this event"}"?`;
+        }
+
+        closeModal(editEventModalEl);
+        openModal(saveEventConfirmModalEl);
+    });
+}
+
+if (cancelSaveEventConfirmButton) {
+    cancelSaveEventConfirmButton.addEventListener("click", () => {
+        closeModal(saveEventConfirmModalEl);
+        openModal(editEventModalEl);
+    });
+}
+
+if (confirmSaveEventButton) {
+    confirmSaveEventButton.addEventListener("click", async () => {
+        const user = getCurrentUser();
+        if (!user || !selectedEventId) return;
+
         const updatedEvent = {
             title: document.getElementById("edit-event-title").value.trim(),
             date: document.getElementById("edit-event-date").value.trim(),
@@ -664,7 +729,7 @@ if (editEventForm) {
 
         try {
             await updateDoc(doc(db, "users", user.uid, "events", selectedEventId), updatedEvent);
-            closeModal(editEventModalEl);
+            closeModal(saveEventConfirmModalEl);
             await loadEvents();
         } catch (error) {
             console.error("Error updating event:", error);

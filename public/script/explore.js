@@ -22,6 +22,11 @@ initializeModal("favorites-modal", {
     closeButtonSelector: "#close-favorites"
 });
 
+const generateIdeasConfirmModal = initializeModal("generate-ideas-confirm-modal", {
+    closeButtonSelector: "#close-generate-ideas-confirm"
+});
+const generateIdeasConfirmModalEl = document.getElementById("generate-ideas-confirm-modal");
+
 const openEditAccountButton = document.querySelector(".open-edit-account");
 const backEditAccountButton = document.getElementById("back-edit-account");
 const openEditAccountFormButton = document.getElementById("open-edit-account-form");
@@ -229,7 +234,25 @@ if (exploreSearchInput) {
 }
 
 if (generateIdeasButton) {
-    generateIdeasButton.addEventListener("click", generateIdeas);
+    generateIdeasButton.addEventListener("click", () => {
+        openModal(generateIdeasConfirmModalEl);
+    });
+}
+
+const cancelGenerateIdeasConfirmButton = document.getElementById("cancel-generate-ideas-confirm");
+const confirmGenerateIdeasButton = document.getElementById("confirm-generate-ideas");
+
+if (cancelGenerateIdeasConfirmButton) {
+    cancelGenerateIdeasConfirmButton.addEventListener("click", () => {
+        closeModal(generateIdeasConfirmModalEl);
+    });
+}
+
+if (confirmGenerateIdeasButton) {
+    confirmGenerateIdeasButton.addEventListener("click", () => {
+        closeModal(generateIdeasConfirmModalEl);
+        generateIdeas();
+    });
 }
 
 document.addEventListener("click", async (event) => {

@@ -132,6 +132,26 @@
         </div>
     </div>
 
+    <!-- Log Out Confirmation -->
+    <div class="modal-overlay" id="logout-confirm-modal">
+        <div class="card overlay-card">
+            <div class="header">
+                <h2>Log Out</h2>
+                <button type="button" class="close-overlay" id="close-logout-confirm">
+                    <img src="images/X.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+            <hr>
+            <div class="event-details">
+                <p>Are you sure you want to log out?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="button medium" id="cancel-logout-confirm">Cancel</button>
+                <button type="button" class="button high" id="confirm-logout">Log Out</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Edit Account View -->
     <div class="modal-overlay user-settings-overlay" id="edit-account-modal">
         <div class="user-settings-panel">
@@ -179,8 +199,9 @@
             <div class="settings-menu">
                 <form id="edit-account-form">
                     <div class="form-group">
-                        <label for="edit-username">Username</label>
-                        <input type="text" id="edit-username" name="username" value="">
+                        <label for="edit-username">Username
+                            <input type="text" id="edit-username" name="username" value="">
+                        </label>
                     </div>
                     
                     <div class="form-actions">
@@ -197,6 +218,46 @@
         </div>
     </div>
     
+    <!-- Delete Account Confirmation -->
+    <div class="modal-overlay" id="delete-account-confirm-modal">
+        <div class="card overlay-card">
+            <div class="header">
+                <h2>Delete Account</h2>
+                <button type="button" class="close-overlay" id="close-delete-account-confirm">
+                    <img src="images/X.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+            <hr>
+            <div class="event-details">
+                <p>Are you sure you want to permanently delete your account? This cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="button high" id="cancel-delete-account-confirm">Cancel</button>
+                <button type="button" class="button red medium" id="confirm-delete-account">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Account Confirmation -->
+    <div class="modal-overlay" id="save-account-confirm-modal">
+        <div class="card overlay-card">
+            <div class="header">
+                <h2>Save Changes</h2>
+                <button type="button" class="close-overlay" id="close-save-account-confirm">
+                    <img src="images/X.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+            <hr>
+            <div class="event-details">
+                <p>Are you sure you want to save your account changes?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="button medium" id="cancel-save-account-confirm">Cancel</button>
+                <button type="button" class="button high" id="confirm-save-account">Save</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Add an Idea -->
     <div class="modal-overlay" id="add-idea-modal">
         <div class="card overlay-card">
@@ -298,6 +359,26 @@
                     <button type="submit" class="button high">Add Date Idea</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Add Idea Confirmation -->
+    <div class="modal-overlay" id="add-idea-confirm-modal">
+        <div class="card overlay-card">
+            <div class="header">
+                <h2>Add Date Idea</h2>
+                <button type="button" class="close-overlay" id="close-add-idea-confirm">
+                    <img src="images/X.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+            <hr>
+            <div class="event-details">
+                <p id="add-idea-confirm-message">Are you sure you want to add this date idea?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="button medium" id="cancel-add-idea-confirm">Cancel</button>
+                <button type="button" class="button high" id="confirm-add-idea">Add Idea</button>
+            </div>
         </div>
     </div>
 
