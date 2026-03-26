@@ -1,3 +1,4 @@
+import { GEMINI_API_KEY } from "./config.js";
 import { createIdeaCardHTML, toggleLike, getAllIdeas, showIdeaDetail, auth, db, openModal, closeModal, initializeModal } from "./script.js";
 import { updateDoc, addDoc, collection, serverTimestamp, doc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
@@ -76,7 +77,7 @@ const generateIdeasButton = document.getElementById("generate-ideas-button");
 const locationPromptMessage = document.getElementById("location-prompt-message");
 
 // ** IMPORTANT: Add your new, valid Gemini API key here, INSIDE the quotes **
-const API_KEY = "AIzaSyCqTqGfn6AjJ_7h_YSyiftsqD8qkzz-YHc";
+const API_KEY = GEMINI_API_KEY;
 
 const getSelectedTags = () => {
     return Array.from(
