@@ -3,28 +3,6 @@ import { auth, db, openModal, closeModal, initializeModal, closeOnOverlayClick }
 import { deleteUser, signOut, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 import { doc, getDoc, updateDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-// Login Form Handler
-const loginForm = document.getElementById('login-form');
-if (loginForm) {
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        
-        try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            if (!userCredential.user.emailVerified) {
-                alert('Please verify your email before logging in.');
-                return;
-            }
-            window.location.href = 'home.html';
-        } catch (error) {
-            alert('Login failed: ' + error.message);
-        }
-    });
-}
-
 // Account settings ---------------------------------------------------------------
 
 // Initialize User Settings Modal

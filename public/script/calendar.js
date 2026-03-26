@@ -623,17 +623,39 @@ if (cancelAddEventButton) {
     });
 }
 
+function showFormError(id, message) {
+    const el = document.getElementById(id);
+    if (el) {
+        el.textContent = message;
+        el.classList.add('visible');
+    }
+}
+
+function clearFormError(id) {
+    const el = document.getElementById(id);
+    if (el) {
+        el.textContent = '';
+        el.classList.remove('visible');
+    }
+}
+
 if (addEventForm) {
     addEventForm.addEventListener("submit", async (event) => {
         event.preventDefault();
+        clearFormError('add-event-error');
 
         const user = getCurrentUser();
         if (!user) return;
 
         const title = document.getElementById("event-title").value.trim();
         const date = document.getElementById("event-date").value.trim();
+        const time = document.getElementById("event-time").value.trim();
+        const category = document.getElementById("event-category").value.trim();
 
-        if (!title || !date) return;
+        if (!title) { showFormError('add-event-error', 'Please enter an event title.'); return; }
+        if (!date) { showFormError('add-event-error', 'Please select a date.'); return; }
+        if (!time) { showFormError('add-event-error', 'Please select a time.'); return; }
+        if (!category) { showFormError('add-event-error', 'Please select a category.'); return; }
 
         if (addEventConfirmMessage) {
             addEventConfirmMessage.textContent = `Are you sure you want to add "${title}" to your calendar?`;
@@ -690,14 +712,23 @@ if (viewEditEventButton) {
 if (editEventForm) {
     editEventForm.addEventListener("submit", async (event) => {
         event.preventDefault();
+        clearFormError('edit-event-error');
 
         const user = getCurrentUser();
         if (!user || !selectedEventId) return;
 
         const title = document.getElementById("edit-event-title").value.trim();
+        const date = document.getElementById("edit-event-date").value.trim();
+        const time = document.getElementById("edit-event-time").value.trim();
+        const category = document.getElementById("edit-event-category").value.trim();
+
+        if (!title) { showFormError('edit-event-error', 'Please enter an event title.'); return; }
+        if (!date) { showFormError('edit-event-error', 'Please select a date.'); return; }
+        if (!time) { showFormError('edit-event-error', 'Please select a time.'); return; }
+        if (!category) { showFormError('edit-event-error', 'Please select a category.'); return; }
 
         if (saveEventConfirmMessage) {
-            saveEventConfirmMessage.textContent = `Are you sure you want to save your changes to "${title || "this event"}"?`;
+            saveEventConfirmMessage.textContent = `Are you sure you want to save your changes to "${title}"?`;
         }
 
         closeModal(editEventModalEl);
