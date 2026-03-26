@@ -86,45 +86,67 @@ backEditAccountFormButton.addEventListener("click", () => {
 });
 
 
-// Setup delete account button
+// Delete Account Confirmation Modal
+const deleteAccountConfirmModal = initializeModal("delete-account-confirm-modal", {
+    closeButtonSelector: "#close-delete-account-confirm"
+});
+const deleteAccountConfirmModalEl = document.getElementById("delete-account-confirm-modal");
+const cancelDeleteAccountConfirmButton = document.getElementById("cancel-delete-account-confirm");
+const confirmDeleteAccountButton = document.getElementById("confirm-delete-account");
+
+// Setup delete account button — opens confirmation modal
 const deleteAccountButton = document.getElementById("delete-account");
-deleteAccountButton.addEventListener("click", async () => {
+deleteAccountButton.addEventListener("click", () => {
     const user = auth.currentUser;
     if (!user) {
         alert("No signed-in user found.");
         return;
     }
-
-    const confirmed = window.confirm("Are you sure you want to permanently delete your account?");
-    if (!confirmed) return;
-
-    try {
-        // Delete all event docs in the user's events subcollection
-        const eventsRef = collection(db, "users", user.uid, "events");
-        const eventsSnap = await getDocs(eventsRef);
-
-        for (const eventDoc of eventsSnap.docs) {
-            await deleteDoc(doc(db, "users", user.uid, "events", eventDoc.id));
-        }
-
-        // Delete the main user document
-        await deleteDoc(doc(db, "users", user.uid));
-
-        // Delete the Firebase Auth account
-        await deleteUser(user);
-
-
-        window.location.href = "index.html";
-    } catch (error) {
-        if (error.code === "auth/requires-recent-login") {
-            alert("For security, please log out, log back in, and then try deleting your account again.");
-            return;
-        }
-
-        alert("Failed to delete account: " + error.message);
-    }
+    openModal(deleteAccountConfirmModalEl);
 });
 
+if (cancelDeleteAccountConfirmButton) {
+    cancelDeleteAccountConfirmButton.addEventListener("click", () => {
+        closeModal(deleteAccountConfirmModalEl);
+    });
+}
+
+if (confirmDeleteAccountButton) {
+    confirmDeleteAccountButton.addEventListener("click", async () => {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        try {
+            const eventsRef = collection(db, "users", user.uid, "events");
+            const eventsSnap = await getDocs(eventsRef);
+
+            for (const eventDoc of eventsSnap.docs) {
+                await deleteDoc(doc(db, "users", user.uid, "events", eventDoc.id));
+            }
+
+            await deleteDoc(doc(db, "users", user.uid));
+            await deleteUser(user);
+
+            window.location.href = "index.html";
+        } catch (error) {
+            closeModal(deleteAccountConfirmModalEl);
+            if (error.code === "auth/requires-recent-login") {
+                alert("For security, please log out, log back in, and then try deleting your account again.");
+                return;
+            }
+            alert("Failed to delete account: " + error.message);
+        }
+    });
+}
+
+
+// Save Account Confirmation Modal
+const saveAccountConfirmModal = initializeModal("save-account-confirm-modal", {
+    closeButtonSelector: "#close-save-account-confirm"
+});
+const saveAccountConfirmModalEl = document.getElementById("save-account-confirm-modal");
+const cancelSaveAccountConfirmButton = document.getElementById("cancel-save-account-confirm");
+const confirmSaveAccountButton = document.getElementById("confirm-save-account");
 
 // Get form and input references
 const userSettingsTitle = document.getElementById("user-settings-title");
@@ -132,16 +154,29 @@ const editAccountUsernameValue = document.getElementById("edit-account-username"
 const editAccountForm = document.getElementById("edit-account-form");
 const editUsernameInput = document.getElementById("edit-username");
 
-// Setup form submission
-editAccountForm.addEventListener("submit", async (event) => {
+// Setup form submission — show confirmation first
+editAccountForm.addEventListener("submit", (event) => {
     event.preventDefault();
-    const current = await readProfile();
-    const username = (editUsernameInput?.value || "").trim() || current.username;
-
-    await saveProfile({ username });
-    closeModal(editAccountFormModal);
-    openModal(editAccountModal);
+    openModal(saveAccountConfirmModalEl);
 });
+
+if (cancelSaveAccountConfirmButton) {
+    cancelSaveAccountConfirmButton.addEventListener("click", () => {
+        closeModal(saveAccountConfirmModalEl);
+    });
+}
+
+if (confirmSaveAccountButton) {
+    confirmSaveAccountButton.addEventListener("click", async () => {
+        const current = await readProfile();
+        const username = (editUsernameInput?.value || "").trim() || current.username;
+
+        await saveProfile({ username });
+        closeModal(saveAccountConfirmModalEl);
+        closeModal(editAccountFormModal);
+        openModal(editAccountModal);
+    });
+}
 
 
 // Profile Helpers -----------------------------------------------------------
@@ -194,9 +229,29 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
+// Logout Confirmation Modal
+const logoutConfirmModal = initializeModal("logout-confirm-modal", {
+    closeButtonSelector: "#close-logout-confirm"
+});
+const logoutConfirmModalEl = document.getElementById("logout-confirm-modal");
+const cancelLogoutConfirmButton = document.getElementById("cancel-logout-confirm");
+const confirmLogoutButton = document.getElementById("confirm-logout");
+
 const logoutButton = document.getElementById("logout-button");
 if (logoutButton) {
-    logoutButton.addEventListener("click", async () => {
+    logoutButton.addEventListener("click", () => {
+        openModal(logoutConfirmModalEl);
+    });
+}
+
+if (cancelLogoutConfirmButton) {
+    cancelLogoutConfirmButton.addEventListener("click", () => {
+        closeModal(logoutConfirmModalEl);
+    });
+}
+
+if (confirmLogoutButton) {
+    confirmLogoutButton.addEventListener("click", async () => {
         try {
             await signOut(auth);
             window.location.href = "login.html";

@@ -536,7 +536,7 @@ randomizeAddCalendarButton.addEventListener("click", () => {
 
     if (addEventTitle) addEventTitle.value = currentRandomIdea.title;
     if (addEventCategory) addEventCategory.value = currentRandomIdea.category || "";
-    if (addEventLocation) addEventLocation.value = currentRandomIdea.address || "";
+    if (addEventLocation) addEventLocation.value = currentRandomIdea.location || currentRandomIdea.address || "";
 
     if (addEventModal) {
         openModal(addEventModal);
@@ -550,8 +550,17 @@ if (cancelAddEventButton) {
     });
 }
 
+const addEventConfirmModalEl = document.getElementById("add-event-confirm-modal");
+const addEventConfirmMessage = document.getElementById("add-event-confirm-message");
+const cancelAddEventConfirmButton = document.getElementById("cancel-add-event-confirm");
+const confirmAddEventButton = document.getElementById("confirm-add-event");
+
+initializeModal("add-event-confirm-modal", {
+    closeButtonSelector: "#close-add-event-confirm"
+});
+
 if (addEventForm) {
-    addEventForm.addEventListener("submit", async (event) => {
+    addEventForm.addEventListener("submit", (event) => {
         event.preventDefault();
 
         const user = getCurrentUser();
@@ -561,9 +570,30 @@ if (addEventForm) {
         const date = (addEventDate?.value || "").trim();
         if (!title || !date) return;
 
+        if (addEventConfirmMessage) {
+            addEventConfirmMessage.textContent = `Are you sure you want to add "${title}" to your calendar?`;
+        }
+
+        closeModal(addEventModal);
+        openModal(addEventConfirmModalEl);
+    });
+}
+
+if (cancelAddEventConfirmButton) {
+    cancelAddEventConfirmButton.addEventListener("click", () => {
+        closeModal(addEventConfirmModalEl);
+        openModal(addEventModal);
+    });
+}
+
+if (confirmAddEventButton) {
+    confirmAddEventButton.addEventListener("click", async () => {
+        const user = getCurrentUser();
+        if (!user) return;
+
         const newEvent = {
-            title,
-            date,
+            title: (addEventTitle?.value || "").trim(),
+            date: (addEventDate?.value || "").trim(),
             time: (addEventTime?.value || "").trim(),
             location: (addEventLocation?.value || "").trim(),
             category: (addEventCategory?.value || "").trim(),
@@ -575,7 +605,7 @@ if (addEventForm) {
         try {
             const eventsRef = collection(db, "users", user.uid, "events");
             await addDoc(eventsRef, newEvent);
-            closeModal(addEventModal);
+            closeModal(addEventConfirmModalEl);
             if (addEventForm) addEventForm.reset();
         } catch (error) {
             console.error("Error adding event:", error);

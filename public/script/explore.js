@@ -1,3 +1,4 @@
+import { GEMINI_API_KEY } from "./config.js";
 import { createIdeaCardHTML, toggleLike, getAllIdeas, showIdeaDetail, auth, db, openModal, closeModal, initializeModal } from "./script.js";
 import { updateDoc, addDoc, collection, serverTimestamp, doc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
@@ -21,6 +22,11 @@ initializeModal("favorites-modal", {
     openButtonSelector: ".open-favorites",
     closeButtonSelector: "#close-favorites"
 });
+
+const generateIdeasConfirmModal = initializeModal("generate-ideas-confirm-modal", {
+    closeButtonSelector: "#close-generate-ideas-confirm"
+});
+const generateIdeasConfirmModalEl = document.getElementById("generate-ideas-confirm-modal");
 
 const openEditAccountButton = document.querySelector(".open-edit-account");
 const backEditAccountButton = document.getElementById("back-edit-account");
@@ -71,7 +77,7 @@ const generateIdeasButton = document.getElementById("generate-ideas-button");
 const locationPromptMessage = document.getElementById("location-prompt-message");
 
 // ** IMPORTANT: Add your new, valid Gemini API key here, INSIDE the quotes **
-const API_KEY = "AIzaSyCqTqGfn6AjJ_7h_YSyiftsqD8qkzz-YHc";
+const API_KEY = GEMINI_API_KEY;
 
 const getSelectedTags = () => {
     return Array.from(
@@ -229,7 +235,25 @@ if (exploreSearchInput) {
 }
 
 if (generateIdeasButton) {
-    generateIdeasButton.addEventListener("click", generateIdeas);
+    generateIdeasButton.addEventListener("click", () => {
+        openModal(generateIdeasConfirmModalEl);
+    });
+}
+
+const cancelGenerateIdeasConfirmButton = document.getElementById("cancel-generate-ideas-confirm");
+const confirmGenerateIdeasButton = document.getElementById("confirm-generate-ideas");
+
+if (cancelGenerateIdeasConfirmButton) {
+    cancelGenerateIdeasConfirmButton.addEventListener("click", () => {
+        closeModal(generateIdeasConfirmModalEl);
+    });
+}
+
+if (confirmGenerateIdeasButton) {
+    confirmGenerateIdeasButton.addEventListener("click", () => {
+        closeModal(generateIdeasConfirmModalEl);
+        generateIdeas();
+    });
 }
 
 document.addEventListener("click", async (event) => {
