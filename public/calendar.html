@@ -270,9 +270,20 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="event-time">Time
-                            <input id="event-time" name="time" type="time" required>
-                        </label>
+                        <label for="event-hour">Time</label>
+                        <div class="time-input-row">
+                            <input type="tel" id="event-hour" inputmode="numeric" pattern="[0-9]*" placeholder="7" required>
+                            <span class="time-separator">:</span>
+                            <input type="tel" id="event-minute" inputmode="numeric" pattern="[0-9]*" placeholder="00" required>
+
+                            <div class="time-period-toggle" id="event-period-toggle">
+                                <button type="button" data-period="AM" class="active">AM</button>
+                                <button type="button" data-period="PM">PM</button>
+                            </div>
+
+                            <input id="event-period" type="hidden" value="AM">
+                            <input id="event-time" name="time" type="hidden">
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -343,9 +354,20 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="edit-event-time">Time
-                        <input type="time" id="edit-event-time" name="time" required>
-                    </label>
+                    <label for="edit-event-hour">Time</label>
+                    <div class="time-input-row">
+                        <input type="tel" id="edit-event-hour" inputmode="numeric" pattern="[0-9]*" placeholder="7" required>
+                        <span class="time-separator">:</span>
+                        <input type="tel" id="edit-event-minute" inputmode="numeric" pattern="[0-9]*" placeholder="00" required>
+
+                        <div class="time-period-toggle" id="edit-event-period-toggle">
+                            <button type="button" data-period="AM">AM</button>
+                            <button type="button" data-period="PM">PM</button>
+                        </div>
+
+                        <input type="hidden" id="edit-event-period" value="PM">
+                        <input type="hidden" id="edit-event-time" name="time">
+                    </div>
                 </div>
 
                 <div class="form-group">
