@@ -42,38 +42,46 @@ onAuthStateChanged(auth, (user) => {
 export async function getAllIdeas(filters = {}) {
     try {
         const activitiesRef = collection(db, "activities");
-        let q;
+        // We fetch all activities and filter client-side for privacy.
+        const snapshot = await getDocs(query(activitiesRef));
 
-        // If there are category filters, build a query
+        const allIdeasRaw = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        // Filter ideas to only include public ideas (no userId) or ideas owned by the current user.
+        const user = getCurrentUser();
+        const visibleIdeas = allIdeasRaw.filter(idea => {
+            return !idea.userId || (user && idea.userId === user.uid);
+        });
+
+        let ideasToDisplay = visibleIdeas;
+        // Apply category filters if provided
         if (filters.categories && filters.categories.length > 0) {
-            // Note: Firestore 'in' query is limited to 10 values.
-            // If you have more categories, you'll need to perform multiple queries.
-            q = query(activitiesRef, where("category", "in", filters.categories));
-        } else {
-            // Otherwise, create a query for all activities
-            q = query(activitiesRef);
+            const lowerCaseCategories = filters.categories.map(c => c.toLowerCase());
+            ideasToDisplay = visibleIdeas.filter(idea => 
+                lowerCaseCategories.includes((idea.category || "").toLowerCase())
+            );
         }
         
-        const snapshot = await getDocs(q);
-        
-        return snapshot.docs.map(doc => ({
-            id: doc.id,
-            title: doc.data().title || "",
-            description: doc.data().description || "",
-            details: doc.data().details || "",
-            address: doc.data().address || "",
-            website: doc.data().website || "",
-            category: doc.data().category || "",
-            location: doc.data().location || 0,
-            image: doc.data().image || "",
-            dollars: doc.data().dollars || 0,
-            tags: doc.data().tags || []
+        return ideasToDisplay.map(idea => ({
+            id: idea.id,
+            title: idea.title || "",
+            description: idea.description || "",
+            details: idea.details || "",
+            address: idea.address || "",
+            website: idea.website || "",
+            category: idea.category || "",
+            location: idea.location || 0,
+            image: idea.image || "",
+            dollars: idea.dollars || 0,
+            tags: idea.tags || []
         }));
 
     } catch (error) {
+        console.error("Error fetching ideas:", error);
         return [];
     }
 }
+
 
 // Modals ----------------------------------------------------------------------------------------------
 
