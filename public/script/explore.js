@@ -192,7 +192,7 @@ async function generateIdeas() {
                         description: idea.description,
                         dollars: idea.price.length,
                         category: idea.category,
-                        image: idea.image,
+                        image: idea.image || "images/Logo_wide.jpg",
                         website: idea.website,
                         location: idea.location,
                         tags: [],
