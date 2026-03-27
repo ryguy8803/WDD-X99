@@ -1226,6 +1226,12 @@ select::placeholder {
     transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
+@media screen and (max-width: 799px) {
+    .calendar-day {
+        aspect-ratio: auto;
+    }
+}
+
 .calendar-day:hover {
     background-color: rgb(252, 249, 254);
     border-color: rgba(62, 0, 84, 0.2);
@@ -1450,9 +1456,7 @@ select::placeholder {
         flex: 1;
     }
 
-    .calendar-grid {
-        gap: 3px;
-    }
+
 
     .day-name {
         font-size: 10px;
@@ -1460,16 +1464,32 @@ select::placeholder {
         letter-spacing: 0.01em;
     }
 
+
+    .calendar-grid {
+    gap: 3px;
+    grid-auto-rows: minmax(56px, auto);
+    }
+
     .calendar-day {
-        min-height: 50px;
-        padding: 3px;
+        aspect-ratio: auto;
+        min-height: 56px;
+        padding: 4px;
         gap: 3px;
         border-radius: 8px;
     }
 
     .empty {
-        min-height: 50px;
+        aspect-ratio: auto;
+        min-height: 56px;
     }
+
+    .calendar-event-dots {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    }     
 
     .calendar-day > div:first-child:not(.calendar-event-summary):not(.calendar-event-count):not(.calendar-event-dot):not(.calendar-event-dots):not(.event-pill):not(.event-pill-more) {
         font-size: 11px;
@@ -1747,7 +1767,7 @@ select::placeholder {
     
     .calendar {
         max-width: 100%;
-        max-height: 90vh;
+        min-height: calc(100vh - 140px);
         gap: var(--extra-large-spacing);
     }
     

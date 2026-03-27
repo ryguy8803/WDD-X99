@@ -214,6 +214,7 @@ const setSwipeVisual = (offsetX) => {
 const animateSwipeOut = async (direction) => {
     if (!randomizeCard || !currentRandomIdea) return;
 
+    const ideaToSave = currentRandomIdea;
     const isRight = direction === "right";
     const isDesktop = window.matchMedia("(min-width: 800px)").matches;
 
@@ -226,13 +227,15 @@ const animateSwipeOut = async (direction) => {
     randomizeCard.style.transform = `translateX(${endX}px) rotate(${isRight ? 24 : -24}deg) scale(1.06)`;
     randomizeCard.style.opacity = "0";
 
-    if (isRight) {
-        await addIdeaToFavorites(currentRandomIdea);
-    }
-
     window.setTimeout(async () => {
         await showNextIdea();
     }, duration);
+
+    if (isRight) {
+        addIdeaToFavorites(ideaToSave).catch((error) => {
+            console.error("Failed to save favorite:", error);
+        });
+    }
 };
 
 const initializeSwipeableCard = (idea) => {
