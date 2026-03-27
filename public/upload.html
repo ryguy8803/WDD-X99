@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Date Ideas</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 60px auto; padding: 0 20px; }
+        h1 { font-size: 1.5rem; }
+        #status { margin-top: 20px; white-space: pre-wrap; max-height: 400px; overflow-y: auto; background: #f5f5f5; padding: 12px; border-radius: 8px; font-size: 0.85rem; }
+        button { padding: 10px 24px; font-size: 1rem; cursor: pointer; border: none; border-radius: 6px; background: #4f46e5; color: #fff; margin-top: 12px; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        input[type="file"] { margin: 12px 0; }
+    </style>
+</head>
+<body>
+    <h1>Upload Date Ideas from CSV</h1>
+    <p>Sign in with your account, then click Upload.</p>
+    <div id="auth-section">
+        <input type="email" id="email" placeholder="Email" style="padding:8px;margin-right:8px;border:1px solid #ccc;border-radius:4px;">
+        <input type="password" id="password" placeholder="Password" style="padding:8px;margin-right:8px;border:1px solid #ccc;border-radius:4px;">
+        <button id="loginBtn">Sign In</button>
+    </div>
+    <p id="authStatus" style="color:#666;">Not signed in</p>
+    <button id="uploadBtn" disabled>Upload to Firestore</button>
+    <div id="status"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBrs8ZXvUypKfF1cRsqLYwgHEcQI6qrev0",
+            authDomain: "wdd-x99-86659873-cf284.firebaseapp.com",
+            databaseURL: "https://wdd-x99-86659873-cf284-default-rtdb.firebaseio.com",
+            projectId: "wdd-x99-86659873-cf284",
+            storageBucket: "wdd-x99-86659873-cf284.firebasestorage.app",
+            messagingSenderId: "43055830649",
+            appId: "1:43055830649:web:3c244e1d5bea6300dfe6a8"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        const uploadBtn = document.getElementById("uploadBtn");
+        const status = document.getElementById("status");
+        const loginBtn = document.getElementById("loginBtn");
+        const authStatus = document.getElementById("authStatus");
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                authStatus.textContent = `Signed in as ${user.email}`;
+                authStatus.style.color = "green";
+                uploadBtn.disabled = false;
+                document.getElementById("auth-section").style.display = "none";
+            }
+        });
+
+        loginBtn.addEventListener("click", async () => {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (err) {
+                authStatus.textContent = `Sign in failed: ${err.message}`;
+                authStatus.style.color = "red";
+            }
+        });
+
+        uploadBtn.addEventListener("click", async () => {
+            uploadBtn.disabled = true;
+            log("Fetching CSV...");
+
+            try {
+                const resp = await fetch("dateideas2.csv");
+                if (!resp.ok) throw new Error("Could not load dateideas2.csv");
+                const csvText = await resp.text();
+                log("CSV loaded. Parsing...");
+
+                const rows = parseCSV(csvText);
+                // First row is the header, second row is the explanation row — skip both
+                const header = rows[0];
+                const dataRows = rows.slice(2); // skip header + explanation row
+
+                const colIndex = {};
+                header.forEach((col, i) => colIndex[col.trim()] = i);
+
+                let count = 0;
+                for (const cols of dataRows) {
+                    const title = (cols[colIndex["Date Name"]] || "").trim();
+                    if (!title) continue;
+
+                    const idea = {
+                        title,
+                        description: cleanVal(cols[colIndex["Notes"]]),
+                        details: cleanVal(cols[colIndex["Details"]]),
+                        address: cleanVal(cols[colIndex["Address"]]),
+                        website: cleanVal(cols[colIndex["Link to their website"]]),
+                        image: (cols[colIndex["Link to Picture"]] || "").trim(),
+                        category: (cols[colIndex["Category"]] || "").trim(),
+                        location: extractLocation(cols[colIndex["Address"]]),
+                        dollars: parseDollars(cols[colIndex["Price (0, $, $$, or $$$)"]]),
+                        tags: parseTags(cols[colIndex["Tags"]])
+                    };
+
+                    await addDoc(collection(db, "activities"), idea);
+                    count++;
+                    log(`  Uploaded: ${title}`);
+                }
+
+                log(`\nDone! Uploaded ${count} ideas to the "activities" collection.`);
+            } catch (err) {
+                log(`Error: ${err.message}`);
+                console.error(err);
+            }
+        });
+
+        function log(msg) { status.textContent += msg + "\n"; status.scrollTop = status.scrollHeight; }
+
+        function cleanVal(val) {
+            if (!val || val.trim() === "" || val.trim().toLowerCase() === "n/a") return "";
+            return val.trim();
+        }
+
+        function parseDollars(price) {
+            if (!price) return 0;
+            const t = price.trim();
+            if (t === "$$$") return 3;
+            if (t === "$$") return 2;
+            if (t === "$") return 1;
+            return 0;
+        }
+
+        function parseTags(str) {
+            if (!str || str.trim() === "") return [];
+            return str.split(",").map(t => t.trim()).filter(t => t.length > 0);
+        }
+
+        function extractLocation(address) {
+            if (!address || address.trim() === "") return "";
+            const parts = address.split(",").map(p => p.trim());
+            for (let i = 0; i < parts.length; i++) {
+                if (/\b(ID|Idaho)\b/i.test(parts[i])) {
+                    if (i > 0) {
+                        const city = parts[i - 1].replace(/^(Suite|Ste|Unit|#)\s*.*/i, "").trim();
+                        if (/^\d/.test(city) || /\b(St|Ave|Rd|Dr|Pkwy|Hwy|Lane|Way)\b/i.test(city)) {
+                            const m = parts[i].match(/^([A-Za-z\s]+?)[\s,]*(ID|Idaho)/i);
+                            if (m && m[1].trim().length > 1) return `${m[1].trim()}, ID`;
+                            return `${city}, ID`;
+                        }
+                        return `${city}, ID`;
+                    }
+                }
+            }
+            return address;
+        }
+
+        // Simple CSV parser that handles quoted fields with commas
+        function parseCSV(text) {
+            const rows = [];
+            let row = [];
+            let field = "";
+            let inQuotes = false;
+
+            for (let i = 0; i < text.length; i++) {
+                const ch = text[i];
+                if (inQuotes) {
+                    if (ch === '"' && text[i + 1] === '"') {
+                        field += '"';
+                        i++;
+                    } else if (ch === '"') {
+                        inQuotes = false;
+                    } else {
+                        field += ch;
+                    }
+                } else {
+                    if (ch === '"') {
+                        inQuotes = true;
+                    } else if (ch === ',') {
+                        row.push(field);
+                        field = "";
+                    } else if (ch === '\n' || (ch === '\r' && text[i + 1] === '\n')) {
+                        row.push(field);
+                        field = "";
+                        rows.push(row);
+                        row = [];
+                        if (ch === '\r') i++;
+                    } else {
+                        field += ch;
+                    }
+                }
+            }
+            if (field || row.length) { row.push(field); rows.push(row); }
+            return rows;
+        }
+    </script>
+</body>
+</html>
