@@ -273,6 +273,12 @@ input[type="text"], input[type="password"], input[type="time"],  input[type="dat
     border: 1.5px solid var(--gray-30);
     border-radius: var(--small-spacing);
     width: 100%;
+    font-size: 16px;
+    font-family: var(--inter-font);
+    background-color: var(--gray-10);
+    color: var(--gray-70);
+    -webkit-appearance: none;
+    appearance: none;
     &:focus, &:focus-visible {
         outline: 2px solid var(--purple);
         outline-offset: 1px;
@@ -288,9 +294,14 @@ textarea {
 
 /* Drop Down Select */
 select {
-    padding: var(--small-spacing) var(--small-medium-spacing);
+    padding: var(--small-medium-spacing) var(--small-medium-spacing);
     border: 1.5px solid var(--gray-30);
     border-radius: var(--small-spacing);
+    width: 100%;
+    font-size: 16px;
+    font-family: var(--inter-font);
+    background-color: var(--gray-10);
+    color: var(--gray-70);
      &:focus, &:focus-visible {
         outline: 2px solid var(--purple);
         outline-offset: 1px;
@@ -717,6 +728,7 @@ select {
         flex-direction: column;
         gap: var(--medium-spacing);
         padding: var(--medium-spacing) 0;
+        padding-bottom: 50px;
     }
 }
 
@@ -1198,6 +1210,10 @@ select {
     .idea-card {
         width: 100%;
     }
+}
+
+.explore-actions {
+    padding-top: var(--small-medium-spacing);
 }
 
 /* Calendar ---------------------------------------------------------- */
