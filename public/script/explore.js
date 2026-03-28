@@ -1,6 +1,6 @@
 import { GEMINI_API_KEY } from "./config.js";
-import { createIdeaCardHTML, toggleLike, getAllIdeas, showIdeaDetail, auth, db, openModal, closeModal, initializeModal } from "./script.js";
-import { updateDoc, addDoc, collection, serverTimestamp, doc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { createIdeaCardHTML, toggleLike, getAllIdeas, showIdeaDetail, auth, db, openModal, closeModal, initializeModal, getCurrentUser } from "./script.js";
+import { updateDoc, addDoc, collection, getDocs, serverTimestamp, doc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 import "./auth.js";
 
@@ -75,6 +75,9 @@ const exploreSearchInput = document.querySelector("input[name='search']");
 const exploreIdeaList = document.getElementById("idea-list");
 const generateIdeasButton = document.getElementById("generate-ideas-button");
 const locationPromptMessage = document.getElementById("location-prompt-message");
+const locationFilter = document.getElementById("location-filter");
+const priceFilter = document.getElementById("price-filter");
+const clearFiltersButton = document.getElementById("clear-filters");
 
 // ** IMPORTANT: Add your new, valid Gemini API key here, INSIDE the quotes **
 const API_KEY = GEMINI_API_KEY;
@@ -123,12 +126,42 @@ const renderExploreIdeas = async (ideas, method = "replace") => {
     }
 };
 
+let filterRequestId = 0;
+
 const filterExploreIdeas = async () => {
+    const currentRequestId = ++filterRequestId;
     const query = (exploreSearchInput?.value || "").trim().toLowerCase();
     const selectedTags = getSelectedTags();
+    const selectedLocation = locationFilter?.value || "";
+    const selectedPrice = priceFilter?.value || "";
 
-    const ideasFromDB = await getAllIdeas({ categories: selectedTags, query });
+    const ideasFromDB = await getAllIdeas({
+        categories: selectedTags,
+        query,
+        location: selectedLocation,
+        price: selectedPrice
+    });
+    // Only render if this is still the latest request
+    if (currentRequestId !== filterRequestId) return;
     await renderExploreIdeas(ideasFromDB);
+};
+
+const populateLocationFilter = async () => {
+    const allIdeas = await getAllIdeas();
+    const locations = [...new Set(
+        allIdeas
+            .map(idea => idea.location)
+            .filter(loc => loc && typeof loc === "string" && loc.trim() !== "")
+    )].sort();
+
+    if (locationFilter) {
+        locations.forEach(loc => {
+            const option = document.createElement("option");
+            option.value = loc;
+            option.textContent = loc;
+            locationFilter.appendChild(option);
+        });
+    }
 };
 
 async function generateIdeas() {
@@ -228,10 +261,34 @@ async function generateIdeas() {
     );
 }
 
+populateLocationFilter();
 filterExploreIdeas();
 
+let searchDebounceTimer = null;
+
 if (exploreSearchInput) {
-    exploreSearchInput.addEventListener("input", filterExploreIdeas);
+    exploreSearchInput.addEventListener("input", () => {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(filterExploreIdeas, 250);
+    });
+}
+
+if (locationFilter) {
+    locationFilter.addEventListener("change", filterExploreIdeas);
+}
+
+if (priceFilter) {
+    priceFilter.addEventListener("change", filterExploreIdeas);
+}
+
+if (clearFiltersButton) {
+    clearFiltersButton.addEventListener("click", async () => {
+        if (exploreSearchInput) exploreSearchInput.value = "";
+        if (locationFilter) locationFilter.value = "";
+        if (priceFilter) priceFilter.value = "";
+        document.querySelectorAll(".tags .tag-button.is-active").forEach(btn => btn.classList.remove("is-active"));
+        await filterExploreIdeas();
+    });
 }
 
 if (generateIdeasButton) {
@@ -278,3 +335,79 @@ document.addEventListener("click", async (event) => {
         });
     }
 });
+
+// ============================== ADD EVENT TO CALENDAR ==============================
+const addEventModal = initializeModal("add-event-modal", {
+    closeButtonSelector: "#close-add-event"
+});
+const addEventModalEl = document.getElementById("add-event-modal");
+const addEventForm = document.getElementById("add-event-form");
+const cancelAddEventButton = document.getElementById("cancel-add-event");
+
+const addEventConfirmModalEl = document.getElementById("add-event-confirm-modal");
+const addEventConfirmMessage = document.getElementById("add-event-confirm-message");
+const cancelAddEventConfirmButton = document.getElementById("cancel-add-event-confirm");
+const confirmAddEventButton = document.getElementById("confirm-add-event");
+
+initializeModal("add-event-confirm-modal", {
+    closeButtonSelector: "#close-add-event-confirm"
+});
+
+if (cancelAddEventButton) {
+    cancelAddEventButton.addEventListener("click", () => {
+        closeModal(addEventModalEl);
+        if (addEventForm) addEventForm.reset();
+    });
+}
+
+if (addEventForm) {
+    addEventForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const title = (document.getElementById("event-title")?.value || "").trim();
+        const date = (document.getElementById("event-date")?.value || "").trim();
+        if (!title || !date) return;
+
+        if (addEventConfirmMessage) {
+            addEventConfirmMessage.textContent = `Are you sure you want to add "${title}" to your calendar?`;
+        }
+
+        closeModal(addEventModalEl);
+        openModal(addEventConfirmModalEl);
+    });
+}
+
+if (cancelAddEventConfirmButton) {
+    cancelAddEventConfirmButton.addEventListener("click", () => {
+        closeModal(addEventConfirmModalEl);
+        openModal(addEventModalEl);
+    });
+}
+
+if (confirmAddEventButton) {
+    confirmAddEventButton.addEventListener("click", async () => {
+        const user = getCurrentUser();
+        if (!user) return;
+
+        const newEvent = {
+            title: (document.getElementById("event-title")?.value || "").trim(),
+            date: (document.getElementById("event-date")?.value || "").trim(),
+            time: (document.getElementById("event-time")?.value || "").trim(),
+            location: (document.getElementById("event-location")?.value || "").trim(),
+            category: (document.getElementById("event-category")?.value || "").trim(),
+            partner: (document.getElementById("your-date")?.value || "").trim(),
+            notes: (document.getElementById("event-notes")?.value || "").trim()
+        };
+
+        const ideaId = (document.getElementById("event-idea-id")?.value || "").trim();
+        if (ideaId) newEvent.ideaId = ideaId;
+
+        try {
+            await addDoc(collection(db, "users", user.uid, "events"), newEvent);
+            closeModal(addEventConfirmModalEl);
+            if (addEventForm) addEventForm.reset();
+        } catch (error) {
+            console.error("Error adding event:", error);
+        }
+    });
+}

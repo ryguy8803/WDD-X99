@@ -482,6 +482,27 @@ select {
     }
 }
 
+.bottom3rd-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--small-medium-spacing);
+}
+
+.add-to-calendar-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.modal-footer-right {
+    display: flex;
+    align-items: center;
+    gap: var(--small-medium-spacing);
+}
+
 /* Event Card */
 .event-card {
     padding: var(--medium-spacing);
@@ -737,7 +758,7 @@ select {
     padding: var(--medium-spacing);
     transform: translateX(100%);
     transition: transform 0.3s ease;
-    padding-bottom: 50px;
+    padding-bottom: 100px;
 }
 .user-settings-overlay.is-open .user-settings-panel {
     transform: translateX(0);
@@ -787,7 +808,7 @@ select {
     display: flex;
     flex-direction: column;
     gap: var(--medium-spacing);
-    padding-bottom: 50px;
+    padding-bottom: 100px;
 }
 .radio-group {
     display: flex;
@@ -1142,13 +1163,29 @@ select {
 
 /* Explore ---------------------------------------------------------- */
 
+.explore-filters {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--small-medium-spacing);
+    align-items: center;
+    margin: var(--medium-spacing) 0;
+}
+
 .tags {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     row-gap: var(--small-spacing);
     column-gap: var(--small-spacing);
-    margin: var(--medium-spacing) 0;
+}
+
+.dropdown-filters {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--small-medium-spacing);
+    align-items: center;
 }
 
 .explore-card-list {
@@ -1645,6 +1682,17 @@ select {
 
     .swipe-hint {
         display: none;
+    }
+
+    /* Idea Detail */
+    .detail-card {
+        width: 70vw;
+        max-width: 900px;
+        height: 85vh;
+    }
+
+    .idea-card-hero .hero {
+        height: 350px;
     }
 }
 

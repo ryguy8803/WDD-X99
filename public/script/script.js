@@ -54,11 +54,43 @@ export async function getAllIdeas(filters = {}) {
         });
 
         let ideasToDisplay = visibleIdeas;
+
+        // Apply search query filter
+        if (filters.query) {
+            const q = filters.query.toLowerCase();
+            ideasToDisplay = ideasToDisplay.filter(idea => {
+                const searchable = [
+                    idea.title,
+                    idea.description,
+                    idea.details,
+                    idea.category,
+                    idea.location,
+                    idea.address
+                ].filter(Boolean).join(" ").toLowerCase();
+                return searchable.includes(q);
+            });
+        }
+
         // Apply category filters if provided
         if (filters.categories && filters.categories.length > 0) {
             const lowerCaseCategories = filters.categories.map(c => c.toLowerCase());
-            ideasToDisplay = visibleIdeas.filter(idea => 
+            ideasToDisplay = ideasToDisplay.filter(idea => 
                 lowerCaseCategories.includes((idea.category || "").toLowerCase())
+            );
+        }
+
+        // Apply location filter if provided
+        if (filters.location) {
+            ideasToDisplay = ideasToDisplay.filter(idea =>
+                (idea.location || "") === filters.location
+            );
+        }
+
+        // Apply price filter if provided
+        if (filters.price !== undefined && filters.price !== "") {
+            const priceValue = Number(filters.price);
+            ideasToDisplay = ideasToDisplay.filter(idea =>
+                (idea.dollars || 0) === priceValue
             );
         }
         
@@ -70,7 +102,7 @@ export async function getAllIdeas(filters = {}) {
             address: idea.address || "",
             website: idea.website || "",
             category: idea.category || "",
-            location: idea.location || 0,
+            location: idea.location || "",
             image: idea.image || "",
             dollars: idea.dollars || 0,
             tags: idea.tags || []
@@ -197,6 +229,31 @@ export async function showIdeaDetail(idea) {
                 await toggleLike(idea.id);
                 // Refresh the overlay and re-setup listeners
                 await renderContent();
+            });
+        }
+
+        // Setup add-to-calendar button
+        const calendarBtn = content.querySelector('.add-to-calendar-btn');
+        if (calendarBtn) {
+            calendarBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                
+                const addEventModal = document.getElementById('add-event-modal');
+                if (!addEventModal) return;
+
+                const titleInput = document.getElementById('event-title');
+                const locationInput = document.getElementById('event-location');
+                const categoryInput = document.getElementById('event-category');
+                const notesInput = document.getElementById('event-notes');
+                const ideaIdInput = document.getElementById('event-idea-id');
+
+                if (titleInput) titleInput.value = idea.title || idea.name || '';
+                if (locationInput) locationInput.value = idea.location || idea.address || '';
+                if (categoryInput) categoryInput.value = idea.category || '';
+                if (notesInput) notesInput.value = idea.description || '';
+                if (ideaIdInput) ideaIdInput.value = idea.id || '';
+
+                openModal(addEventModal);
             });
         }
     };
@@ -380,11 +437,16 @@ export async function createIdeaOverlayHTML(idea) {
             </div>
             <section class="bottom3rd">
                 <span class="tag">${idea.category || ''}</span>
-                <img 
-                    src="${heartSrc}" 
-                    alt="Heart Icon" 
-                    class="${heartClass}"
-                    data-idea-id="${ideaId}">
+                <div class="bottom3rd-actions">
+                    <button type="button" class="add-to-calendar-btn" data-idea-id="${ideaId}">
+                        <img src="images/Calendar.svg" alt="Add to Calendar" width="25" height="25">
+                    </button>
+                    <img 
+                        src="${heartSrc}" 
+                        alt="Heart Icon" 
+                        class="${heartClass}"
+                        data-idea-id="${ideaId}">
+                </div>
             </section>
         </div>
     `;

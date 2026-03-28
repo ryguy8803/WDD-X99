@@ -52,13 +52,31 @@
                 <p id="location-prompt-message" class="hidden-style"></p>
             </div>
 
-            <div class="tags">
-                <button type="button" class="tag tag-button">Food & Drink</button>
-                <button type="button" class="tag tag-button" >Active</button>
-                <button type="button" class="tag tag-button" >Creative</button>
-                <button type="button" class="tag tag-button" >Games</button>
-                <button type="button" class="tag tag-button" >Learning & Culture</button>
-                <button type="button" class="tag tag-button" >Nature</button>
+            <div class="explore-filters">
+                <div class="tags">
+                    <button type="button" class="tag tag-button">Food & Drink</button>
+                    <button type="button" class="tag tag-button" >Active</button>
+                    <button type="button" class="tag tag-button" >Creative</button>
+                    <button type="button" class="tag tag-button" >Games</button>
+                    <button type="button" class="tag tag-button" >Learning & Culture</button>
+                    <button type="button" class="tag tag-button" >Nature</button>
+                </div>
+
+                <div class="dropdown-filters">
+                    <select id="location-filter">
+                        <option value="">All Locations</option>
+                    </select>
+
+                    <select id="price-filter">
+                        <option value="">All Prices</option>
+                        <option value="0">Free</option>
+                        <option value="1">$</option>
+                        <option value="2">$$</option>
+                        <option value="3">$$$</option>
+                    </select>
+
+                    <button type="button" class="button" id="clear-filters">Clear Filters</button>
+                </div>
             </div>
 
             <div class="explore-card-list" id="idea-list"></div>
@@ -272,6 +290,99 @@
     <div class="modal-overlay" id="idea-detail-modal">
         <div class="card idea-card detail-card" id="idea-detail-content">
             <!-- Content will be inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Add Calendar Event -->
+    <div class="modal-overlay" id="add-event-modal">
+        <div class="card overlay-card">
+            <div class="header">
+                <h2>Add Event to Calendar</h2>
+                <button type="button" class="close-overlay" id="close-add-event">
+                    <img src="images/X.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+
+            <hr>
+
+            <form class="event-form" id="add-event-form">
+                <input type="hidden" id="event-idea-id" name="ideaId">
+
+                <div class="form-group">
+                    <label for="event-title">Event Title
+                        <input type="text" id="event-title" name="title">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-date">Date
+                        <input id="event-date" name="date" type="date">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-time">Time
+                        <input id="event-time" name="time" type="time">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-location">Location
+                        <input id="event-location" name="location" type="text">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-category">Category
+                        <select id="event-category" name="category">
+                            <option value="">Select one</option>
+                            <option value="Active">Active</option>
+                            <option value="Food & Drink">Food & Drink</option>
+                            <option value="Games">Games</option>
+                            <option value="Creative">Creative</option>
+                            <option value="Nature">Nature</option>
+                            <option value="Learning & Culture">Learning & Culture</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="your-date">Your Date
+                        <input id="your-date" name="partner" type="text">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-notes">Notes
+                        <textarea id="event-notes" name="notes"></textarea>
+                    </label>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="button medium" id="cancel-add-event">Cancel</button>
+                    <button type="submit" class="button high" id="save-add-event">Add Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Event Confirmation -->
+    <div class="modal-overlay" id="add-event-confirm-modal">
+        <div class="card overlay-card">
+            <div class="header">
+                <h2>Add Event</h2>
+                <button type="button" class="close-overlay" id="close-add-event-confirm">
+                    <img src="images/X.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+            <hr>
+            <div class="event-details">
+                <p id="add-event-confirm-message">Are you sure you want to add this event to your calendar?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="button medium" id="cancel-add-event-confirm">Cancel</button>
+                <button type="button" class="button high" id="confirm-add-event">Add Event</button>
+            </div>
         </div>
     </div>
 

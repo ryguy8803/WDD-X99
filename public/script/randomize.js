@@ -107,6 +107,7 @@ const addEventLocation = document.getElementById("event-location");
 const addEventCategory = document.getElementById("event-category");
 const addEventPartner = document.getElementById("your-date");
 const addEventNotes = document.getElementById("event-notes");
+const addEventIdeaId = document.getElementById("event-idea-id");
 const cancelAddEventButton = document.getElementById("cancel-add-event");
 
 let currentRandomIdea = null;
@@ -540,6 +541,7 @@ randomizeAddCalendarButton.addEventListener("click", () => {
     if (addEventTitle) addEventTitle.value = currentRandomIdea.title;
     if (addEventCategory) addEventCategory.value = currentRandomIdea.category || "";
     if (addEventLocation) addEventLocation.value = currentRandomIdea.location || currentRandomIdea.address || "";
+    if (addEventIdeaId) addEventIdeaId.value = currentRandomIdea.id || "";
 
     if (addEventModal) {
         openModal(addEventModal);
@@ -604,6 +606,9 @@ if (confirmAddEventButton) {
             notes: (addEventNotes?.value || "").trim(),
             dollars: 0
         };
+
+        const ideaId = (addEventIdeaId?.value || "").trim();
+        if (ideaId) newEvent.ideaId = ideaId;
 
         try {
             const eventsRef = collection(db, "users", user.uid, "events");

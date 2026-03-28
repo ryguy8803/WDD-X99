@@ -67,7 +67,7 @@
                     <h2>Your favorites</h2>
                     <div class="desktop">
                         <button class="button high open-favorites" type="button">View Favorites</button>
-                        <button class="button medium" id="open-add-idea" type="button">Add an Idea</button>
+                        <button class="button medium" id="open-add-idea" type="button">Suggest an Idea</button>
                     </div>
                 </div>
 
@@ -79,7 +79,7 @@
 
                 <div class="mobile">
                     <button class="button high open-favorites" type="button">View Favorites</button>
-                    <button class="button medium" id="open-add-idea" type="button">Add an Idea</button>
+                    <button class="button medium" id="open-add-idea" type="button">Suggest an Idea</button>
                 </div>
             </section>
         </div>
@@ -258,11 +258,11 @@
         </div>
     </div>
 
-    <!-- Add an Idea -->
+    <!-- Suggest a Date Idea -->
     <div class="modal-overlay" id="add-idea-modal">
         <div class="card overlay-card">
             <div class="header">
-                <h2 id="add-idea-title">Add a Date Idea</h2>
+                <h2 id="add-idea-title">Suggest a Date Idea</h2>
                 <button type="button" class="close-overlay" id="close-add-idea">
                     <img src="images/X.svg" alt="Close" width="24" height="24">
                 </button>
@@ -271,113 +271,43 @@
             <hr>
 
             <form id="add-idea-form">
-                <label for="name">Name
-                    <input name="name" type="text">
-                </label>
-            
-                <label for="description">Description
-                    <textarea name="description" id="description" rows="4"></textarea>
+                <p style="color: var(--gray-60); font-size: var(--p); margin-bottom: var(--small-medium-spacing);">Suggest a date idea for the Rexburg area. Submissions will be reviewed by an admin before being added. The more detail you provide, the better!</p>
+
+                <label for="name">Title
+                    <input name="name" type="text" required>
                 </label>
 
-                <div class="dropdowns">
-                    <label for="category">Category
-                        <select id="category" name="category">
-                            <option value="">Select a Category</option>
-                            <option value="food&drink">Food & Drink</option>
-                            <option value="active">Active</option>
-                            <option value="creative">Creative</option>
-                            <option value="games">Games</option>
-                            <option value="learning&culture">Learning & Culture</option>
-                            <option value="Nature">Nature</option>
-                        </select>
-                    </label>
-
-                    <label for="price">Price
-                        <select id="price" name="price">
-                            <option value="">Select a Price</option>
-                            <option value="0">Free</option> 
-                            <option value="1">$</option>
-                            <option value="2">$$</option>
-                            <option value="3">$$$</option>                       
-                        </select>
-                    </label>
-                </div>
-
-                <label for="idea-image">Image
-                    <input type="file" id="idea-image" name="image" accept="image/*">
+                <label for="website">Website
+                    <input name="website" type="text" placeholder="https://...">
                 </label>
 
-                <div class="preference-section">
-                        <h4>Where?</h4>
-                        <div class="radio-group">
-                            <label class="radio">
-                                <input type="radio" name="location" value="indoors">
-                                <span class="dot"></span>
-                                Indoors
-                            </label>
-                            <label class="radio">
-                                <input type="radio" name="location" value="outdoors">
-                                <span class="dot"></span>
-                                Outdoors
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="preference-section">
-                        <h4>Energy Level</h4>
-                        <div class="radio-group">
-                            <label class="radio">
-                                <input type="radio" name="energy" value="lazy">
-                                <span class="dot"></span>
-                                Lazy
-                            </label>
-                            <label class="radio">
-                                <input type="radio" name="energy" value="high-energy">
-                                <span class="dot"></span>
-                                High Energy
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="preference-section">
-                        <h4>How long?</h4>
-                        <div class="radio-group">
-                            <label class="radio">
-                                <input type="radio" name="duration" value="quick">
-                                <span class="dot"></span>
-                                Quick
-                            </label>
-                            <label class="radio">
-                                <input type="radio" name="duration" value="long">
-                                <span class="dot"></span>
-                                Long
-                            </label>
-                        </div>
-                    </div>
+                <label for="notes">Notes
+                    <textarea name="notes" id="notes" rows="4" placeholder="Any details that would help us add this idea (address, price, category, etc.)"></textarea>
+                </label>
 
                 <div class="footer">
-                    <button type="submit" class="button high">Add Date Idea</button>
+                    <button type="submit" class="button high">Submit Suggestion</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Add Idea Confirmation -->
+    <!-- Suggest Idea Confirmation -->
     <div class="modal-overlay" id="add-idea-confirm-modal">
         <div class="card overlay-card">
             <div class="header">
-                <h2>Add Date Idea</h2>
+                <h2>Suggest Date Idea</h2>
                 <button type="button" class="close-overlay" id="close-add-idea-confirm">
                     <img src="images/X.svg" alt="Close" width="24" height="24">
                 </button>
             </div>
             <hr>
             <div class="event-details">
-                <p id="add-idea-confirm-message">Are you sure you want to add this date idea?</p>
+                <p id="add-idea-confirm-message">Are you sure you want to submit this suggestion?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="button medium" id="cancel-add-idea-confirm">Cancel</button>
-                <button type="button" class="button high" id="confirm-add-idea">Add Idea</button>
+                <button type="button" class="button high" id="confirm-add-idea">Submit</button>
             </div>
         </div>
     </div>
@@ -442,6 +372,99 @@
     <div class="modal-overlay" id="idea-detail-modal">
         <div class="card idea-card detail-card" id="idea-detail-content">
             <!-- Content will be inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Add Calendar Event -->
+    <div class="modal-overlay" id="add-event-modal">
+        <div class="card overlay-card">
+            <div class="header">
+                <h2>Add Event to Calendar</h2>
+                <button type="button" class="close-overlay" id="close-add-event">
+                    <img src="images/X.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+
+            <hr>
+
+            <form class="event-form" id="add-event-form">
+                <input type="hidden" id="event-idea-id" name="ideaId">
+
+                <div class="form-group">
+                    <label for="event-title">Event Title
+                        <input type="text" id="event-title" name="title">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-date">Date
+                        <input id="event-date" name="date" type="date">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-time">Time
+                        <input id="event-time" name="time" type="time">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-location">Location
+                        <input id="event-location" name="location" type="text">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-category">Category
+                        <select id="event-category" name="category">
+                            <option value="">Select one</option>
+                            <option value="Active">Active</option>
+                            <option value="Food & Drink">Food & Drink</option>
+                            <option value="Games">Games</option>
+                            <option value="Creative">Creative</option>
+                            <option value="Nature">Nature</option>
+                            <option value="Learning & Culture">Learning & Culture</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="your-date">Your Date
+                        <input id="your-date" name="partner" type="text">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-notes">Notes
+                        <textarea id="event-notes" name="notes"></textarea>
+                    </label>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="button medium" id="cancel-add-event">Cancel</button>
+                    <button type="submit" class="button high" id="save-add-event">Add Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Event Confirmation -->
+    <div class="modal-overlay" id="add-event-confirm-modal">
+        <div class="card overlay-card">
+            <div class="header">
+                <h2>Add Event</h2>
+                <button type="button" class="close-overlay" id="close-add-event-confirm">
+                    <img src="images/X.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+            <hr>
+            <div class="event-details">
+                <p id="add-event-confirm-message">Are you sure you want to add this event to your calendar?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="button medium" id="cancel-add-event-confirm">Cancel</button>
+                <button type="button" class="button high" id="confirm-add-event">Add Event</button>
+            </div>
         </div>
     </div>
 

@@ -1,4 +1,4 @@
-import { openModal, closeModal, initializeModal, auth, db, getCurrentUser } from "./script.js";
+import { openModal, closeModal, initializeModal, auth, db, getCurrentUser, showIdeaDetail, getAllIdeas } from "./script.js";
 import "./auth.js";
 import {
     collection,
@@ -481,6 +481,25 @@ function openViewEvent(eventData) {
     document.getElementById("view-event-notes").textContent = eventData.notes || "No notes";
     document.getElementById("view-event-partner").textContent = eventData.partner || "Not set";
 
+    // Show/hide View Idea button based on whether event has a linked idea
+    const viewIdeaBtn = document.getElementById("view-idea-btn");
+    if (viewIdeaBtn) {
+        if (eventData.ideaId) {
+            viewIdeaBtn.style.display = "";
+            viewIdeaBtn.onclick = async () => {
+                closeModal(viewEventModalEl);
+                const allIdeas = await getAllIdeas();
+                const idea = allIdeas.find(i => i.id === eventData.ideaId);
+                if (idea) {
+                    showIdeaDetail(idea);
+                }
+            };
+        } else {
+            viewIdeaBtn.style.display = "none";
+            viewIdeaBtn.onclick = null;
+        }
+    }
+
     openModal(viewEventModalEl);
 }
 
@@ -687,6 +706,9 @@ if (confirmAddEventButton) {
             partner: document.getElementById("your-date").value.trim(),
             notes: document.getElementById("event-notes").value.trim()
         };
+
+        const ideaIdValue = (document.getElementById("event-idea-id")?.value || "").trim();
+        if (ideaIdValue) newEvent.ideaId = ideaIdValue;
 
         try {
             await addDoc(collection(db, "users", user.uid, "events"), newEvent);

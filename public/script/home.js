@@ -1,10 +1,7 @@
-import { createIdeaCardHTML, getLikedIdeas, toggleLike, openModal, closeModal, initializeModal, getAllIdeas, db, auth, showIdeaDetail } from "./script.js";
+import { createIdeaCardHTML, getLikedIdeas, toggleLike, openModal, closeModal, initializeModal, getAllIdeas, db, auth, showIdeaDetail, getCurrentUser } from "./script.js";
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 import "./auth.js";
-
-const storage = getStorage();
 
 
 // -------------------- RENDER FUNCTIONS --------------------
@@ -198,12 +195,12 @@ addIdeaForm.addEventListener("submit", (event) => {
     const name = String(formData.get("name") || "").trim();
 
     if (!name) {
-        alert("Please enter a name for your date idea.");
+        alert("Please enter a title for your suggestion.");
         return;
     }
 
     if (addIdeaConfirmMessage) {
-        addIdeaConfirmMessage.textContent = `Are you sure you want to add "${name}" as a new date idea?`;
+        addIdeaConfirmMessage.textContent = `Are you sure you want to submit "${name}" as a suggestion?`;
     }
 
     closeModal(addIdeaModalEl);
@@ -219,51 +216,111 @@ if (cancelAddIdeaConfirmButton) {
 
 if (confirmAddIdeaButton) {
     confirmAddIdeaButton.addEventListener("click", async () => {
+        const user = getCurrentUser();
+        if (!user) {
+            alert("Please log in to submit a suggestion.");
+            return;
+        }
+
         const formData = new FormData(addIdeaForm);
 
-        const name = String(formData.get("name") || "").trim();
-        const description = String(formData.get("description") || "").trim();
-        const category = String(formData.get("category") || "");
-        const priceValue = Number(formData.get("price") || 0);
-        const location = String(formData.get("location") || "");
-        const energy = String(formData.get("energy") || "");
-        const duration = String(formData.get("duration") || "");
-        const imageFile = formData.get("image");
-
-        const tags = [];
-        if (location) tags.push(location);
-        if (energy) tags.push(energy);
-        if (duration) tags.push(duration);
+        const title = String(formData.get("name") || "").trim();
+        const website = String(formData.get("website") || "").trim();
+        const notes = String(formData.get("notes") || "").trim();
 
         try {
-            let imageUrl = "";
-
-            if (imageFile && imageFile.size > 0) {
-                const fileName = `${Date.now()}_${imageFile.name}`;
-                const storageRef = ref(storage, `activity-images/${fileName}`);
-
-                await uploadBytes(storageRef, imageFile);
-                imageUrl = await getDownloadURL(storageRef);
-            }
-
-            const newActivity = {
-                title: name,
-                description,
-                dollars: priceValue,
-                category,
-                image: imageUrl,
-                tags
-            };
-
-            await addDoc(collection(db, "activities"), newActivity);
-
-            await renderHomeIdeas();
+            await addDoc(collection(db, "suggestions"), {
+                title,
+                website,
+                notes,
+                userId: user.uid,
+                createdAt: new Date().toISOString()
+            });
 
             addIdeaForm.reset();
             closeModal(addIdeaConfirmModalEl);
 
+            alert("Your suggestion has been submitted for review!");
+
         } catch (e) {
-            alert("There was an error adding your date idea.");
+            console.error("Error submitting suggestion:", e);
+            alert("There was an error submitting your suggestion.");
+        }
+    });
+}
+
+// ============================== ADD EVENT TO CALENDAR ==============================
+const addEventModal = initializeModal("add-event-modal", {
+    closeButtonSelector: "#close-add-event"
+});
+const addEventModalEl = document.getElementById("add-event-modal");
+const addEventForm = document.getElementById("add-event-form");
+const cancelAddEventBtn = document.getElementById("cancel-add-event");
+
+const addEventConfirmModalEl = document.getElementById("add-event-confirm-modal");
+const addEventConfirmMsg = document.getElementById("add-event-confirm-message");
+const cancelAddEventConfirmBtn = document.getElementById("cancel-add-event-confirm");
+const confirmAddEventBtn = document.getElementById("confirm-add-event");
+
+initializeModal("add-event-confirm-modal", {
+    closeButtonSelector: "#close-add-event-confirm"
+});
+
+if (cancelAddEventBtn) {
+    cancelAddEventBtn.addEventListener("click", () => {
+        closeModal(addEventModalEl);
+        if (addEventForm) addEventForm.reset();
+    });
+}
+
+if (addEventForm) {
+    addEventForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const title = (document.getElementById("event-title")?.value || "").trim();
+        const date = (document.getElementById("event-date")?.value || "").trim();
+        if (!title || !date) return;
+
+        if (addEventConfirmMsg) {
+            addEventConfirmMsg.textContent = `Are you sure you want to add "${title}" to your calendar?`;
+        }
+
+        closeModal(addEventModalEl);
+        openModal(addEventConfirmModalEl);
+    });
+}
+
+if (cancelAddEventConfirmBtn) {
+    cancelAddEventConfirmBtn.addEventListener("click", () => {
+        closeModal(addEventConfirmModalEl);
+        openModal(addEventModalEl);
+    });
+}
+
+if (confirmAddEventBtn) {
+    confirmAddEventBtn.addEventListener("click", async () => {
+        const user = getCurrentUser();
+        if (!user) return;
+
+        const newEvent = {
+            title: (document.getElementById("event-title")?.value || "").trim(),
+            date: (document.getElementById("event-date")?.value || "").trim(),
+            time: (document.getElementById("event-time")?.value || "").trim(),
+            location: (document.getElementById("event-location")?.value || "").trim(),
+            category: (document.getElementById("event-category")?.value || "").trim(),
+            partner: (document.getElementById("your-date")?.value || "").trim(),
+            notes: (document.getElementById("event-notes")?.value || "").trim()
+        };
+
+        const ideaId = (document.getElementById("event-idea-id")?.value || "").trim();
+        if (ideaId) newEvent.ideaId = ideaId;
+
+        try {
+            await addDoc(collection(db, "users", user.uid, "events"), newEvent);
+            closeModal(addEventConfirmModalEl);
+            if (addEventForm) addEventForm.reset();
+        } catch (error) {
+            console.error("Error adding event:", error);
         }
     });
 }
