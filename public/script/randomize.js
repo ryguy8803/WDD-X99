@@ -1,4 +1,4 @@
-import { renderDollarSigns, saveLikedIdeas, getLikedIdeas, getAllIdeas, showIdeaDetail } from "./script.js";
+import { renderDollarSigns, saveLikedIdeas, getLikedIdeas, getAllIdeas, showIdeaDetail, initializeTimeInputs } from "./script.js";
 import { openModal, closeModal, initializeModal } from "./script.js";
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { db, getCurrentUser } from "./script.js";
@@ -109,6 +109,13 @@ const addEventPartner = document.getElementById("your-date");
 const addEventNotes = document.getElementById("event-notes");
 const addEventIdeaId = document.getElementById("event-idea-id");
 const cancelAddEventButton = document.getElementById("cancel-add-event");
+
+const addTimeInputs = initializeTimeInputs(
+    "event-time",
+    "event-hour",
+    "event-minute",
+    "event-period"
+);
 
 let currentRandomIdea = null;
 let currentPreferences = null;
@@ -567,6 +574,8 @@ initializeModal("add-event-confirm-modal", {
 if (addEventForm) {
     addEventForm.addEventListener("submit", (event) => {
         event.preventDefault();
+
+        addTimeInputs?.syncHiddenValue();
 
         const user = getCurrentUser();
         if (!user) return;

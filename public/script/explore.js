@@ -1,5 +1,5 @@
 import { GEMINI_API_KEY } from "./config.js";
-import { createIdeaCardHTML, toggleLike, getAllIdeas, showIdeaDetail, auth, db, openModal, closeModal, initializeModal, getCurrentUser } from "./script.js";
+import { createIdeaCardHTML, toggleLike, getAllIdeas, showIdeaDetail, auth, db, openModal, closeModal, initializeModal, getCurrentUser, initializeTimeInputs } from "./script.js";
 import { updateDoc, addDoc, collection, getDocs, serverTimestamp, doc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 import "./auth.js";
@@ -353,6 +353,13 @@ initializeModal("add-event-confirm-modal", {
     closeButtonSelector: "#close-add-event-confirm"
 });
 
+const addTimeInputs = initializeTimeInputs(
+    "event-time",
+    "event-hour",
+    "event-minute",
+    "event-period"
+);
+
 if (cancelAddEventButton) {
     cancelAddEventButton.addEventListener("click", () => {
         closeModal(addEventModalEl);
@@ -363,6 +370,8 @@ if (cancelAddEventButton) {
 if (addEventForm) {
     addEventForm.addEventListener("submit", (event) => {
         event.preventDefault();
+
+        addTimeInputs?.syncHiddenValue();
 
         const title = (document.getElementById("event-title")?.value || "").trim();
         const date = (document.getElementById("event-date")?.value || "").trim();

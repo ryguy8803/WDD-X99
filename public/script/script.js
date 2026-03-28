@@ -571,3 +571,111 @@ window.addEventListener('favoritesChanged', (event) => {
         }
     });
 });
+
+// ============================== CUSTOM TIME INPUT HELPERS ==============================
+function padTimeUnit(value) {
+    return String(value).padStart(2, "0");
+}
+
+function build24HourTime(hourValue, minuteValue, periodValue) {
+    const hour = Number(hourValue);
+    const minute = Number(minuteValue);
+
+    if (
+        Number.isNaN(hour) ||
+        Number.isNaN(minute) ||
+        hour < 1 ||
+        hour > 12 ||
+        minute < 0 ||
+        minute > 59 ||
+        !periodValue
+    ) {
+        return "";
+    }
+
+    let hours24 = hour % 12;
+    if (periodValue === "PM") {
+        hours24 += 12;
+    }
+
+    return `${padTimeUnit(hours24)}:${padTimeUnit(minute)}`;
+}
+
+export function initializeTimeInputs(hiddenId, hourId, minuteId, periodId) {
+    const hiddenInput = document.getElementById(hiddenId);
+    const hourInput = document.getElementById(hourId);
+    const minuteInput = document.getElementById(minuteId);
+    const periodInput = document.getElementById(periodId);
+    const periodToggle = document.getElementById(periodId + "-toggle");
+
+    if (!hiddenInput || !hourInput || !minuteInput || !periodInput) return null;
+
+    const syncHiddenValue = () => {
+        hiddenInput.value = build24HourTime(
+            hourInput.value.trim(),
+            minuteInput.value.trim(),
+            periodInput.value
+        );
+    };
+
+    const setVisibleFromHidden = (value = "") => {
+        const parsed = parse24HourTime(value);
+
+        hourInput.value = parsed.hour;
+        minuteInput.value = parsed.minute;
+        periodInput.value = parsed.period;
+        hiddenInput.value = value || "";
+
+        if (periodToggle) {
+            const buttons = periodToggle.querySelectorAll("button");
+            buttons.forEach((btn) => {
+                btn.classList.toggle("active", btn.dataset.period === parsed.period);
+            });
+        }
+    };
+
+    hourInput.addEventListener("input", syncHiddenValue);
+    minuteInput.addEventListener("input", syncHiddenValue);
+
+    if (periodToggle) {
+        const buttons = periodToggle.querySelectorAll("button");
+        buttons.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                periodInput.value = btn.dataset.period;
+                buttons.forEach((b) => b.classList.remove("active"));
+                btn.classList.add("active");
+                syncHiddenValue();
+            });
+        });
+    }
+
+    minuteInput.addEventListener("blur", () => {
+        if (minuteInput.value !== "" && !Number.isNaN(Number(minuteInput.value))) {
+            minuteInput.value = padTimeUnit(Number(minuteInput.value));
+            syncHiddenValue();
+        }
+    });
+
+    return { syncHiddenValue, setVisibleFromHidden };
+}
+
+function parse24HourTime(value) {
+    if (!value || !value.includes(":")) {
+        return { hour: "", minute: "", period: "PM" };
+    }
+
+    const [rawHour, rawMinute] = value.split(":").map(Number);
+    if (Number.isNaN(rawHour) || Number.isNaN(rawMinute)) {
+        return { hour: "", minute: "", period: "PM" };
+    }
+
+    const period = rawHour >= 12 ? "PM" : "AM";
+    let hour12 = rawHour % 12;
+    if (hour12 === 0) hour12 = 12;
+
+    return {
+        hour: String(hour12),
+        minute: padTimeUnit(rawMinute),
+        period
+    };
+}

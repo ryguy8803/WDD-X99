@@ -1,4 +1,4 @@
-import { createIdeaCardHTML, getLikedIdeas, toggleLike, openModal, closeModal, initializeModal, getAllIdeas, db, auth, showIdeaDetail, getCurrentUser } from "./script.js";
+import { createIdeaCardHTML, getLikedIdeas, toggleLike, openModal, closeModal, initializeModal, getAllIdeas, db, auth, showIdeaDetail, getCurrentUser, initializeTimeInputs } from "./script.js";
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 import "./auth.js";
@@ -266,6 +266,13 @@ initializeModal("add-event-confirm-modal", {
     closeButtonSelector: "#close-add-event-confirm"
 });
 
+const addTimeInputs = initializeTimeInputs(
+    "event-time",
+    "event-hour",
+    "event-minute",
+    "event-period"
+);
+
 if (cancelAddEventBtn) {
     cancelAddEventBtn.addEventListener("click", () => {
         closeModal(addEventModalEl);
@@ -276,6 +283,8 @@ if (cancelAddEventBtn) {
 if (addEventForm) {
     addEventForm.addEventListener("submit", (event) => {
         event.preventDefault();
+
+        addTimeInputs?.syncHiddenValue();
 
         const title = (document.getElementById("event-title")?.value || "").trim();
         const date = (document.getElementById("event-date")?.value || "").trim();

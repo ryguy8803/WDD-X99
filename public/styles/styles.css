@@ -268,7 +268,7 @@ label svg {
 
 
 /* Text Field and Text Area*/
-input[type="text"], input[type="password"], input[type="time"],  input[type="date"], input[type="email"], textarea {
+input[type="text"], input[type="password"], input[type="number"], input[type="tel"], input[type="date"], input[type="email"], textarea {
     padding: var(--small-medium-spacing) var(--small-medium-spacing);
     border: 1.5px solid var(--gray-30);
     border-radius: var(--small-spacing);
@@ -277,14 +277,12 @@ input[type="text"], input[type="password"], input[type="time"],  input[type="dat
     font-family: var(--inter-font);
     background-color: var(--gray-10);
     color: var(--gray-70);
-    -webkit-appearance: none;
-    appearance: none;
     }
-input[type="text"]:focus, input[type="text"]:focus-visible, input[type="password"]:focus, input[type="password"]:focus-visible, input[type="time"]:focus, input[type="time"]:focus-visible, input[type="date"]:focus, input[type="date"]:focus-visible, input[type="email"]:focus, input[type="email"]:focus-visible, textarea:focus, textarea:focus-visible {
+input[type="text"]:focus, input[type="text"]:focus-visible, input[type="password"]:focus, input[type="password"]:focus-visible, input[type="number"]:focus, input[type="number"]:focus-visible, input[type="tel"]:focus, input[type="tel"]:focus-visible, input[type="date"]:focus, input[type="date"]:focus-visible, input[type="email"]:focus, input[type="email"]:focus-visible, textarea:focus, textarea:focus-visible {
         outline: 2px solid var(--purple);
         outline-offset: 1px;
     }
-input[type="text"]::placeholder, input[type="password"]::placeholder, input[type="time"]::placeholder, input[type="date"]::placeholder, input[type="email"]::placeholder, textarea::placeholder {
+input[type="text"]::placeholder, input[type="password"]::placeholder, input[type="number"]::placeholder, input[type="tel"]::placeholder, input[type="date"]::placeholder, input[type="email"]::placeholder, textarea::placeholder {
         color: var(--gray-30);
     }
 textarea {
@@ -294,14 +292,9 @@ textarea {
 
 /* Drop Down Select */
 select {
-    padding: var(--small-medium-spacing) var(--small-medium-spacing);
+    padding: var(--small-spacing) var(--small-medium-spacing);
     border: 1.5px solid var(--gray-30);
     border-radius: var(--small-spacing);
-    width: 100%;
-    font-size: 16px;
-    font-family: var(--inter-font);
-    background-color: var(--gray-10);
-    color: var(--gray-70);
 }
 select:focus, select:focus-visible {
         outline: 2px solid var(--purple);
@@ -310,6 +303,50 @@ select:focus, select:focus-visible {
 select::placeholder {
         color: var(--gray-30);
     }
+
+/* Custom Time Input */
+.time-input-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto;
+    gap: var(--small-spacing);
+    align-items: center;
+    width: 100%;
+}
+.time-input-row input, .time-input-row select {
+        width: 100%;
+    }
+
+.time-period-toggle {
+    display: flex;
+    border: 1.5px solid var(--gray-30);
+    border-radius: var(--small-spacing);
+    overflow: hidden;
+    min-width: 90px;
+}
+
+.time-period-toggle button {
+        flex: 1;
+        padding: var(--small-spacing);
+        background: var(--gray-10);
+        border: none;
+        cursor: pointer;
+        font: inherit;
+    }
+
+.time-period-toggle button.active {
+            background: var(--purple);
+            color: white;
+        }
+
+.time-period-toggle button:not(.active):hover {
+            background: var(--gray-20);
+        }
+
+.time-separator {
+    font-size: var(--h4);
+    line-height: 1;
+    align-self: center;
+}
 
 /* Checkbox */
 .checkbox {
@@ -1603,6 +1640,24 @@ select::placeholder {
     #upcoming-dates-list .event-card {
         width: 100%;
     }
+
+    .time-input-row {
+        grid-template-columns: 1fr auto 1fr;
+    }
+
+    .time-period-toggle {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+
+        .time-period-toggle button {
+            width: 100%;
+        }
+
+    .event-form select {
+        width: 100%;
+        grid-column: 1 / -1;
+    }
 }
 
 @media screen and (min-width: 500px) { 
@@ -1834,4 +1889,10 @@ select::placeholder {
     .upcoming-dates-section {
         gap: var(--extra-large-spacing);
     }
+}
+
+.event-form select {
+    width: 100%;
+    display: block;
+    padding: var(--small-medium-spacing);
 }
