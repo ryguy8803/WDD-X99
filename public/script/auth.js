@@ -31,10 +31,12 @@ openEditAccountButtons.forEach((button) => {
 
 // Setup back button from edit account to settings
 const backEditAccountButton = document.getElementById("back-edit-account");
-backEditAccountButton.addEventListener("click", () => {
-    closeModal(editAccountModal);
-    openModal(userSettingsModal);
-});
+if (backEditAccountButton) {
+    backEditAccountButton.addEventListener("click", () => {
+        closeModal(editAccountModal);
+        openModal(userSettingsModal);
+    });
+}
 
 // Initialize Edit Account Form Modal
 const editAccountFormModal = initializeModal("edit-account-form-modal", {
@@ -44,24 +46,30 @@ const editAccountFormModal = initializeModal("edit-account-form-modal", {
 
 // Setup form open button
 const openEditAccountFormButton = document.getElementById("open-edit-account-form");
-openEditAccountFormButton.addEventListener("click", () => {
-    closeModal(editAccountModal);
-    openModal(editAccountFormModal);
-});
+if (openEditAccountFormButton) {
+    openEditAccountFormButton.addEventListener("click", () => {
+        closeModal(editAccountModal);
+        openModal(editAccountFormModal);
+    });
+}
 
 
 // Setup cancel/back buttons on form
 const cancelEditAccountFormButton = document.getElementById("cancel-edit-account-form");
 const backEditAccountFormButton = document.getElementById("back-edit-account-form");
 
-cancelEditAccountFormButton.addEventListener("click", () => {
-    closeModal(editAccountFormModal);
-    openModal(editAccountModal);
-});
-backEditAccountFormButton.addEventListener("click", () => {
-    closeModal(editAccountFormModal);
-    openModal(editAccountModal);
-});
+if (cancelEditAccountFormButton) {
+    cancelEditAccountFormButton.addEventListener("click", () => {
+        closeModal(editAccountFormModal);
+        openModal(editAccountModal);
+    });
+}
+if (backEditAccountFormButton) {
+    backEditAccountFormButton.addEventListener("click", () => {
+        closeModal(editAccountFormModal);
+        openModal(editAccountModal);
+    });
+}
 
 
 // Delete Account Confirmation Modal
@@ -74,14 +82,16 @@ const confirmDeleteAccountButton = document.getElementById("confirm-delete-accou
 
 // Setup delete account button — opens confirmation modal
 const deleteAccountButton = document.getElementById("delete-account");
-deleteAccountButton.addEventListener("click", () => {
-    const user = auth.currentUser;
-    if (!user) {
-        alert("No signed-in user found.");
-        return;
-    }
-    openModal(deleteAccountConfirmModalEl);
-});
+if (deleteAccountButton) {
+    deleteAccountButton.addEventListener("click", () => {
+        const user = auth.currentUser;
+        if (!user) {
+            alert("No signed-in user found.");
+            return;
+        }
+        openModal(deleteAccountConfirmModalEl);
+    });
+}
 
 if (cancelDeleteAccountConfirmButton) {
     cancelDeleteAccountConfirmButton.addEventListener("click", () => {
@@ -133,10 +143,12 @@ const editAccountForm = document.getElementById("edit-account-form");
 const editUsernameInput = document.getElementById("edit-username");
 
 // Setup form submission — show confirmation first
-editAccountForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    openModal(saveAccountConfirmModalEl);
-});
+if (editAccountForm) {
+    editAccountForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        openModal(saveAccountConfirmModalEl);
+    });
+}
 
 if (cancelSaveAccountConfirmButton) {
     cancelSaveAccountConfirmButton.addEventListener("click", () => {
@@ -180,9 +192,9 @@ const readProfile = async () => {
 
 const applyProfile = (profile) => {
     if (!profile) return;
-    editAccountUsernameValue.textContent = profile.username;
-    userSettingsTitle.textContent = profile.username;
-    editUsernameInput.value = profile.username;
+    if (editAccountUsernameValue) editAccountUsernameValue.textContent = profile.username;
+    if (userSettingsTitle) userSettingsTitle.textContent = profile.username;
+    if (editUsernameInput) editUsernameInput.value = profile.username;
 };
 
 const saveProfile = async (profile) => {

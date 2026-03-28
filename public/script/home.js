@@ -82,64 +82,6 @@ const addIdeaConfirmModal = initializeModal("add-idea-confirm-modal", {
 const addIdeaConfirmModalEl = document.getElementById("add-idea-confirm-modal");
 const addIdeaModalEl = document.getElementById("add-idea-modal");
 
-// ✅ USER SETTINGS (FIXED BUG)
-const userSettingsModal = initializeModal("user-settings-modal", {
-    openButtonSelector: ".open-user-settings",
-    closeButtonSelector: "#close-user-settings"
-});
-
-const editAccountModal = initializeModal("edit-account-modal", {
-    closeButtonSelector: "#close-edit-account"
-});
-
-const editAccountFormModal = initializeModal("edit-account-form-modal", {
-    closeButtonSelector: "#close-edit-account-form"
-});
-
-
-// -------------------- MODAL NAVIGATION --------------------
-
-const openEditAccountButton = document.querySelector(".open-edit-account");
-const backEditAccountButton = document.getElementById("back-edit-account");
-const openEditAccountFormButton = document.getElementById("open-edit-account-form");
-const backEditAccountFormButton = document.getElementById("back-edit-account-form");
-const cancelEditAccountFormButton = document.getElementById("cancel-edit-account-form");
-
-if (openEditAccountButton) {
-    openEditAccountButton.addEventListener("click", () => {
-        closeModal(document.getElementById("user-settings-modal"));
-        openModal(document.getElementById("edit-account-modal"));
-    });
-}
-
-if (backEditAccountButton) {
-    backEditAccountButton.addEventListener("click", () => {
-        closeModal(document.getElementById("edit-account-modal"));
-        openModal(document.getElementById("user-settings-modal"));
-    });
-}
-
-if (openEditAccountFormButton) {
-    openEditAccountFormButton.addEventListener("click", () => {
-        closeModal(document.getElementById("edit-account-modal"));
-        openModal(document.getElementById("edit-account-form-modal"));
-    });
-}
-
-if (backEditAccountFormButton) {
-    backEditAccountFormButton.addEventListener("click", () => {
-        closeModal(document.getElementById("edit-account-form-modal"));
-        openModal(document.getElementById("edit-account-modal"));
-    });
-}
-
-if (cancelEditAccountFormButton) {
-    cancelEditAccountFormButton.addEventListener("click", () => {
-        closeModal(document.getElementById("edit-account-form-modal"));
-        openModal(document.getElementById("edit-account-modal"));
-    });
-}
-
 
 // -------------------- AUTH --------------------
 

@@ -269,6 +269,9 @@ label {
 
 /* Text Field and Text Area*/
 input[type="text"], input[type="password"], input[type="number"], input[type="tel"], input[type="date"], input[type="email"], textarea {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
     padding: var(--small-medium-spacing) var(--small-medium-spacing);
     border: 1.5px solid var(--gray-30);
     border-radius: var(--small-spacing);
@@ -292,7 +295,10 @@ textarea {
 
 /* Drop Down Select */
 select {
-    padding: var(--small-spacing) var(--small-medium-spacing);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding: var(--small-medium-spacing) var(--small-medium-spacing);
     border: 1.5px solid var(--gray-30);
     border-radius: var(--small-spacing);
      &:focus, &:focus-visible {

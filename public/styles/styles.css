@@ -269,6 +269,9 @@ label svg {
 
 /* Text Field and Text Area*/
 input[type="text"], input[type="password"], input[type="number"], input[type="tel"], input[type="date"], input[type="email"], textarea {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
     padding: var(--small-medium-spacing) var(--small-medium-spacing);
     border: 1.5px solid var(--gray-30);
     border-radius: var(--small-spacing);
@@ -292,9 +295,16 @@ textarea {
 
 /* Drop Down Select */
 select {
-    padding: var(--small-spacing) var(--small-medium-spacing);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding: var(--small-medium-spacing) var(--small-medium-spacing);
     border: 1.5px solid var(--gray-30);
     border-radius: var(--small-spacing);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right var(--small-medium-spacing) center;
+    padding-right: calc(var(--small-medium-spacing) * 2 + 12px);
 }
 select:focus, select:focus-visible {
         outline: 2px solid var(--purple);
